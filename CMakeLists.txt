@@ -11,26 +11,12 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-project( Clothoids )
-include(./cmake/CMakeLists-common.txt)
+file(READ LICENSE CLOTHOIDS_VERSION)
 
 project(
-  ${PROJECT_NAME}
-  VERSION ${EB_PROJECT_VERSION}
-  HOMEPAGE_URL "https://ebertolazzi.github.io/Clothoids/"
-)
-
-include(./cmake/CMakeLists-cflags.txt)
-include(./cmake/CMakeLists-utilities.txt)
-
-# Evaluating the suffix to append to target built by this CMake file
-ebertolazzi_artifacts_suffix(ARTIFACTS_STATIC_SUFFIX TRUE)
-if( EB_BUILD_SHARED )
-  ebertolazzi_artifacts_suffix(ARTIFACTS_DYNAMIC_SUFFIX FALSE)
-endif()
-
-message( STATUS "Compiler used: ${CMAKE_CXX_COMPILER_ID}" )
-message( STATUS "BASE SUFFIXES = ${ARTIFACTS_STATIC_SUFFIX} ${ARTIFACTS_DYNAMIC_SUFFIX}" )
+  Clothoids
+  VERSION ${CLOTHOIDS_VERSION}
+  HOMEPAGE_URL "https://github.com/MatteoRagni/Clothoids-1")
 
 #   ___
 #  / __| ___ _  _ _ _ __ ___ ___
