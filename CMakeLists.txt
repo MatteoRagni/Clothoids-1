@@ -23,16 +23,37 @@ project(
 #  \__ \/ _ \ || | '_/ _/ -_|_-<
 #  |___/\___/\_,_|_| \__\___/__/
 #
-set( SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src" )
+set(CLOTHOIDS_SRCS
+  AABBtree.cc
+  Biarc.cc
+  BiarcList.cc
+  Circle.cc
+  Clothoid.cc
+  ClothoidDistance.cc
+  ClothoidG2.cc
+  ClothoidList.cc
+  Fresnel.cc
+  G2lib_intersect.cc
+  G2lic.cc
+  Line.cc
+  PolyLine.cc
+  Triangle2D.cc)
 
-set( SOURCES )
-file( GLOB S ${SOURCE_DIR}/*.cc )
-foreach(F ${S})
-  # build relative path respect to source directory
-  file( RELATIVE_PATH RF ${SOURCE_DIR} "${F}" )
-  list( APPEND SOURCES ${RF} )
-endforeach(F ${S})
-
+set(CLOTHOIDS_HDRS
+  Clothoids/AABBtree.hxx
+  Clothoids/BaseCurve_using.hxx
+  Clothoids/BaseCurve.hxx
+  Clothoids/Biarc.hxx
+  Clothoids/BiarcList.hxx
+  Clothoids/Circle.hxx
+  Clothoids/Clothoid.hxx
+  Clothoids/ClothoidList.hxx
+  Clothoids/Fresnel.hxx
+  Clothoids/G2lib.hxx
+  Clothoids/Line.hxx
+  Clothoids/PolyLine.hxx
+  Clothoids/Triangle2D.hxx
+  Clothoids.hh)
 #   _  _             _
 #  | || |___ __ _ __| |___ _ _ ___
 #  | __ / -_) _` / _` / -_) '_(_-<
