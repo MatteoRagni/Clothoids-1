@@ -31,10 +31,8 @@ namespace G2lib {
   using std::vector;
   using std::pair;
 
-  #ifdef G2LIB_USE_CXX11
   using std::make_shared;
-  using std::shared_ptr; // promemoria shared_ptr<Foo>(&foo, [](void*){});
-  #endif
+  using std::shared_ptr;
 
   class AABBtree;
 
@@ -50,11 +48,7 @@ namespace G2lib {
   //!
   class BBox {
   public:
-    #ifdef G2LIB_USE_CXX11
     typedef shared_ptr<BBox const> PtrBBox;
-    #else
-    typedef BBox const * PtrBBox;
-    #endif
 
   private:
     real_type m_xmin; //!< left bottom
@@ -66,12 +60,9 @@ namespace G2lib {
 
     BBox();
 
-    #ifdef G2LIB_USE_CXX11
     BBox( BBox const & ) = default;
     BBox( BBox && ) = default;
-    #else
-    BBox( BBox const & );
-    #endif
+
 
   public:
 
@@ -132,26 +123,13 @@ namespace G2lib {
     //! copy a bbox
     //!
     BBox const &
-    operator = ( BBox const & rhs ) {
-      m_xmin = rhs.m_xmin;
-      m_ymin = rhs.m_ymin;
-      m_xmax = rhs.m_xmax;
-      m_ymax = rhs.m_ymax;
-      m_id   = rhs.m_id;
-      m_ipos = rhs.m_ipos;
-      return *this;
-    }
+    operator = ( BBox const & rhs );
 
     //!
     //! detect if two bbox collide
     //!
     bool
-    collision( BBox const & box ) const {
-      return !( (box.m_xmin > m_xmax ) ||
-                (box.m_xmax < m_xmin ) ||
-                (box.m_ymin > m_ymax ) ||
-                (box.m_ymax < m_ymin ) );
-    }
+    collision( BBox const & box ) const;
 
     //!
     //! Build bbox for a list of bbox
@@ -175,12 +153,7 @@ namespace G2lib {
     //! Pretty print a bbox
     //!
     void
-    print( ostream_type & stream ) const {
-      fmt::print( stream,
-        "BBOX (xmin,ymin,xmax,ymax) = ( {}, {}, {}, {} )\n",
-        m_xmin, m_ymin, m_xmax, m_ymax
-      );
-    }
+    print( ostream_type & stream ) const;
 
     friend class AABBtree;
   };
@@ -215,14 +188,9 @@ namespace G2lib {
   class AABBtree {
   public:
 
-  #ifdef G2LIB_USE_CXX11
-    typedef shared_ptr<BBox const> PtrBBox;
-    typedef shared_ptr<AABBtree>   PtrAABB;
-  #else
-    typedef BBox const *           PtrBBox;
-    typedef AABBtree *             PtrAABB;
-  #endif
-
+  
+  typedef shared_ptr<BBox const> PtrBBox;
+  typedef shared_ptr<AABBtree>   PtrAABB;
   typedef pair<PtrBBox,PtrBBox> PairPtrBBox;
   typedef vector<PtrBBox>       VecPtrBBox;
   typedef vector<PairPtrBBox>   VecPairPtrBBox;

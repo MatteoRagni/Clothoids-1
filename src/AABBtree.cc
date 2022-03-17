@@ -27,6 +27,8 @@
 
 #include "Clothoids.hh"
 
+#include <fmt/core.h>
+
 // Workaround for Visual Studio
 #ifdef min
   #undef min
@@ -119,6 +121,38 @@ namespace G2lib {
     return hypot(dx,dy);
   }
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  void
+  BBox::print( ostream_type & stream ) const {
+    fmt.print(stream, 
+      "BBOX (xmin,ymin,xmax,ymax) = ({}, {}, {}, {})\n",
+      m_xmin, m_ymin, m_xmax, m_ymax);
+  }
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  BBox const &
+  BBox::operator = ( BBox const & rhs ) {
+    m_xmin = rhs.m_xmin;
+    m_ymin = rhs.m_ymin;
+    m_xmax = rhs.m_xmax;
+    m_ymax = rhs.m_ymax;
+    m_id   = rhs.m_id;
+    m_ipos = rhs.m_ipos;
+    return *this;
+  }
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  bool
+  BBox::collision( BBox const & box ) const {
+    return !( (box.m_xmin > m_xmax ) ||
+              (box.m_xmax < m_xmin ) ||
+              (box.m_ymin > m_ymax ) ||
+              (box.m_ymax < m_ymin ) );
+  }
+
   /*\
    |      _        _    ____  ____  _
    |     / \      / \  | __ )| __ )| |_ _ __ ___  ___
@@ -126,8 +160,6 @@ namespace G2lib {
    |   / ___ \  / ___ \| |_) | |_) | |_| | |  __/  __/
    |  /_/   \_\/_/   \_\____/|____/ \__|_|  \___|\___|
   \*/
-
-  #ifdef G2LIB_USE_CXX11
 
   AABBtree::AABBtree() {
     pBBox.reset();
@@ -150,38 +182,6 @@ namespace G2lib {
     return children.empty() && !pBBox;
   }
 
-  #else
-
-  AABBtree::AABBtree()
-  : pBBox(nullptr)
-  {
-    children.clear();
-  }
-
-  AABBtree::~AABBtree() {
-    if ( pBBox != nullptr ) {
-      delete pBBox;
-      pBBox = nullptr;
-    }
-    children.clear();
-  }
-
-  void
-  AABBtree::clear() {
-    if ( pBBox != nullptr ) {
-      delete pBBox;
-      pBBox = nullptr;
-    }
-    children.clear();
-  }
-
-  bool
-  AABBtree::empty() const {
-    return children.empty() && pBBox == nullptr;
-  }
-
-  #endif
-
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   void
@@ -197,13 +197,7 @@ namespace G2lib {
       return;
     }
 
-    ///pBBox = make_shared<BBox>( bboxes, 0, 0 );
-    #ifdef G2LIB_USE_CXX11
     pBBox = shared_ptr<BBox>( new BBox(bboxes, 0, 0) );
-    #else
-    if ( pBBox != nullptr ) { delete pBBox; pBBox = nullptr; }
-    pBBox = new BBox( bboxes, 0, 0 );
-    #endif
 
     real_type xmin = pBBox -> Xmin();
     real_type ymin = pBBox -> Ymin();
@@ -243,13 +237,8 @@ namespace G2lib {
       negBoxes.erase( midIdx, negBoxes.end() );
     }
 
-    #ifdef G2LIB_USE_CXX11
     PtrAABB neg = make_shared<AABBtree>();
     PtrAABB pos = make_shared<AABBtree>();
-    #else
-    PtrAABB neg = new AABBtree();
-    PtrAABB pos = new AABBtree();
-    #endif
 
     neg->build(negBoxes);
     if (!neg->empty()) children.push_back(neg);
