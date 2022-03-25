@@ -145,13 +145,12 @@ namespace G2lib {
 
   int_type
   ClothoidList::findAtS( real_type & s ) const {
-    bool ok;
-    int_type & lastInterval = *m_lastInterval.search( std::this_thread::get_id(), ok );
-    Utils::searchInterval<int_type,real_type>(
+    auto lastInterval = m_lastInterval.search( std::this_thread::get_id());
+    Utils::search_interval<int_type,real_type>(
       static_cast<int_type>(m_s0.size()),
       &m_s0.front(), s, lastInterval, m_curve_is_closed, true
     );
-    return lastInterval;
+    return *lastInterval;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

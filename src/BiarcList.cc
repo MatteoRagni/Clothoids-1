@@ -149,7 +149,7 @@ namespace G2lib {
     //   &m_s0.front(), s, lastInterval, false, true
     // );
     auto lastInterval = m_lastInterval.search(std::this_thread::get_id());
-    search_interval<int_type,real_type>(
+    Utils::search_interval<int_type,real_type>(
       static_cast<int_type>(m_s0.size()),
       &m_s0.front(), s, lastInterval, false, true);
     return *lastInterval;

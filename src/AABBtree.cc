@@ -125,7 +125,7 @@ namespace G2lib {
 
   void
   BBox::print( ostream_type & stream ) const {
-    fmt.print(stream, 
+    fmt::print(stream, 
       "BBOX (xmin,ymin,xmax,ymax) = ({}, {}, {}, {})\n",
       m_xmin, m_ymin, m_xmax, m_ymax);
   }
