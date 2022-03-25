@@ -19,6 +19,9 @@
 
 #include "Clothoids.hh"
 
+#include "fmt/ostream.h"
+#include "fmt/core.h"
+
 // Workaround for Visual Studio
 #ifdef min
   #undef min

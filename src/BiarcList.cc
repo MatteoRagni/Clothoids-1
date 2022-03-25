@@ -142,12 +142,6 @@ namespace G2lib {
 
   int_type
   BiarcList::findAtS( real_type & s ) const {
-    bool ok;
-    // int_type & lastInterval = *m_lastInterval.search( std::this_thread::get_id(), ok );
-    // Utils::searchInterval<int_type,real_type>(
-    //   static_cast<int_type>(m_s0.size()),
-    //   &m_s0.front(), s, lastInterval, false, true
-    // );
     auto lastInterval = m_lastInterval.search(std::this_thread::get_id());
     Utils::search_interval<int_type,real_type>(
       static_cast<int_type>(m_s0.size()),
@@ -286,13 +280,19 @@ namespace G2lib {
     real_type const * y
   ) {
     size_t nn = size_t(n);
-    Utils::Malloc<real_type> mem( "BiarcList::build_G1" );
-    mem.allocate( 5 * nn );
-    real_type * theta     = mem( nn );
-    real_type * theta_min = mem( nn );
-    real_type * theta_max = mem( nn );
-    real_type * omega     = mem( nn );
-    real_type * len       = mem( nn );
+    // Utils::Malloc<real_type> mem( "BiarcList::build_G1" );
+    // mem.allocate( 5 * nn );
+    // real_type * theta     = mem( nn );
+    // real_type * theta_min = mem( nn );
+    // real_type * theta_max = mem( nn );
+    // real_type * omega     = mem( nn );
+    // real_type * len       = mem( nn );
+    std::vector<real_type> mem(5 * nn, 0.0);
+    real_type * theta     = &mem.front();
+    real_type * theta_min = theta + nn;
+    real_type * theta_max = theta_min + nn;
+    real_type * omega     = theta_max + nn;
+    real_type * len       = omega + nn;
     G2lib::xy_to_guess_angle(
       n, x, y, theta, theta_min, theta_max, omega, len
     );
@@ -1024,11 +1024,7 @@ namespace G2lib {
          Utils::isZero( max_angle-m_aabb_max_angle ) &&
          Utils::isZero( max_size-m_aabb_max_size ) ) return;
 
-    #ifdef G2LIB_USE_CXX11
     vector<shared_ptr<BBox const> > bboxes;
-    #else
-    vector<BBox const *> bboxes;
-    #endif
 
     bbTriangles_ISO( offs, m_aabb_tri, max_angle, max_size );
     bboxes.reserve(m_aabb_tri.size());
@@ -1037,15 +1033,9 @@ namespace G2lib {
     for ( it = m_aabb_tri.begin(); it != m_aabb_tri.end(); ++it, ++ipos ) {
       real_type xmin, ymin, xmax, ymax;
       it->bbox( xmin, ymin, xmax, ymax );
-      #ifdef G2LIB_USE_CXX11
       bboxes.push_back( make_shared<BBox const>(
         xmin, ymin, xmax, ymax, G2LIB_CLOTHOID, ipos
       ) );
-      #else
-      bboxes.push_back(
-        new BBox( xmin, ymin, xmax, ymax, G2LIB_CLOTHOID, ipos )
-      );
-      #endif
     }
     m_aabb_tree.build(bboxes);
     m_aabb_done      = true;

@@ -11,7 +11,7 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-file(READ LICENSE CLOTHOIDS_VERSION)
+file(READ "./VERSION" CLOTHOIDS_VERSION)
 
 project(
   Clothoids
@@ -34,7 +34,7 @@ set(CLOTHOIDS_SRCS
   ClothoidList.cc
   Fresnel.cc
   G2lib_intersect.cc
-  G2lic.cc
+  G2lib.cc
   Line.cc
   PolyLine.cc
   Triangle2D.cc)
@@ -48,78 +48,28 @@ set(CLOTHOIDS_HDRS
   Clothoids/Circle.hxx
   Clothoids/Clothoid.hxx
   Clothoids/ClothoidList.hxx
+  Clothoids/Constants.hxx
   Clothoids/Fresnel.hxx
   Clothoids/G2lib.hxx
   Clothoids/Line.hxx
   Clothoids/PolyLine.hxx
   Clothoids/Triangle2D.hxx
+  Clothoids/Types.hxx
+  Clothoids/Utils.hxx
   Clothoids.hh)
-#   _  _             _
-#  | || |___ __ _ __| |___ _ _ ___
-#  | __ / -_) _` / _` / -_) '_(_-<
-#  |_||_\___\__,_\__,_\___|_| /__/
-#
-set( PUBLIC_HEADERS )
-file(
-  GLOB S
-  ${SOURCE_DIR}/*.h*
-  ${SOURCE_DIR}/*/*.h*
-)
-foreach (F ${S})
-  # build relative path respect to source directory
-  file( RELATIVE_PATH RF ${SOURCE_DIR} "${F}" )
-  list( APPEND PUBLIC_HEADERS ${RF} )
-endforeach(F ${S})
 
-# extra include directory for compilation
-include_directories( ./lib3rd/include )
+set(CLOTHOIDS_SRCS_BUILD)
+foreach(s ${CLOTHOIDS_SRCS})
+set(CLOTHOIDS_SRCS_BUILD ${CLOTHOIDS_SRCS_BUILD} src/${s})
+endforeach()
 
-#       _                           _                 _
-#    __| | ___ _ __   ___ _ __   __| | ___ _ __   ___(_) ___  ___
-#   / _` |/ _ \ '_ \ / _ \ '_ \ / _` |/ _ \ '_ \ / __| |/ _ \/ __|
-#  | (_| |  __/ |_) |  __/ | | | (_| |  __/ | | | (__| |  __/\__ \
-#   \__,_|\___| .__/ \___|_| |_|\__,_|\___|_| |_|\___|_|\___||___/
-#             |_|
-#
-set(DEPEND_TARGETS)
+set(CLOTHOIDS_HDRS_BUILD)
+foreach(h ${CLOTHOIDS_HDRS})
+set(CLOTHOIDS_HDRS_BUILD ${CLOTHOIDS_HDRS_BUILD} include/${h})
+endforeach()
 
-# DEPENDENCIES (TRY TO USE ALREADY COMPILED SUBMODULE IN LARGE PROJECT)
-set(UPDIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
-find_library(
-  UTILS Utils${ARTIFACTS_STATIC_SUFFIX}
-  HINTS ${UPDIR}/Utils/lib/lib
-  NO_DEFAULT_PATH
-)
-if( UTILS )
-  message(STATUS "Found Utils${ARTIFACTS_STATIC_SUFFIX}")
-  ebertolazzi_copy_directory(
-    "${UPDIR}/Utils/lib"
-    "${CMAKE_CURRENT_SOURCE_DIR}/lib3rd"
-  )
-else()
-  message(STATUS "NOT Found Utils${ARTIFACTS_STATIC_SUFFIX} use submodule")
-  add_subdirectory(./submodules/Utils)
-  include_directories(./submodules/Utils/src)
-  set( UTILS ebertolazzi_Utils_Static )
-  set( DEPEND_TARGETS ${DEPEND_TARGETS} ${UTILS} )
-endif()
-
-# DEPENDENCIES (TRY TO USE ALREADY COMPILED SUBMODULE IN LARGE PROJECT)
-find_library(
-  ROOTS quarticRootsFlocke${ARTIFACTS_STATIC_SUFFIX}
-  HINTS ${UPDIR}/quarticRootsFlocke/lib/lib
-  NO_DEFAULT_PATH
-)
-if( ROOTS )
-  message(STATUS "Found quarticRootsFlocke${ARTIFACTS_STATIC_SUFFIX}")
-  include_directories(${UPDIR}/quarticRootsFlocke/lib/include)
-else()
-  message(STATUS "NOT Found quarticRootsFlocke${ARTIFACTS_STATIC_SUFFIX}")
-  add_subdirectory(./submodules/quarticRootsFlocke)
-  include_directories(./submodules/quarticRootsFlocke/src)
-  set( ROOTS ebertolazzi_quarticRootsFlocke_Static )
-  set( DEPEND_TARGETS ${DEPEND_TARGETS} ${ROOTS} )
-endif()
+add_subdirectory(./deps/quarticRootsFlocke)
+add_subdirectory(./deps/fmt)
 
 #   _____                  _
 #  |_   _|_ _ _ _ __ _ ___| |_ ___
@@ -127,90 +77,72 @@ endif()
 #    |_|\__,_|_| \__, \___|\__/__/
 #                |___/
 #
-# define target
-ebertolazzi_setup_target(
-  ${PROJECT_NAME}
-  TRUE # build static
-  "${SOURCE_DIR}"
-  "${SOURCES}"
-  "${SOURCE_DIR}"
-  "${PUBLIC_HEADERS}"
-)
-if ( EB_BUILD_SHARED )
-  ebertolazzi_setup_target(
-    ${PROJECT_NAME}
-    FALSE # build dynamic
-    "${SOURCE_DIR}"
-    "${SOURCES}"
-    "${SOURCE_DIR}"
-    "${PUBLIC_HEADERS}"
-  )
-  target_link_libraries( ${EB_NAMESPACE}_${PROJECT_NAME} ${ROOTS} ${UTILS} )
-endif()
-
-if ( DEPEND_TARGETS )
-  add_dependencies( ${EB_NAMESPACE}_${PROJECT_NAME}_Static ${DEPEND_TARGETS} )
-endif()
+add_library(ClothoidsStatic STATIC)
+target_sources(ClothoidsStatic
+  PRIVATE "${CLOTHOIDS_SRCS_BUILD}"
+  PUBLIC "${CLOTHOIDS_HDRS_BUILD}")
+target_include_directories(ClothoidsStatic PRIVATE "include")
+target_link_libraries(ClothoidsStatic PRIVATE ebertolazzi_quarticRootsFlocke_Static fmt::fmt-header-only)
 
 #   _____       _
 #  |_   _|__ __| |_ ___
 #    | |/ -_|_-<  _(_-<
 #    |_|\___/__/\__/__/
 #
-if ( EB_ENABLE_TESTS )
-
-  enable_testing()
-
-  set( EXELISTBIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/bin" )
-  set( EXELISTCPP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src_tests" )
-
-  set(
-    EXELISTCPP
-    testBiarc
-    testDistance
-    testDistanceCircuit
-    testG2
-    testG2plot
-    testG2stat
-    testG2stat2arc
-    testG2statCLC
-    testIntersect
-    testIntersect2
-    testIntersect3
-    testPolyline
-    testTriangle2D
-  )
-
-  add_custom_target( "${PROJECT_NAME}_all_tests" ALL )
-
-  set( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin )
-  set( LIBS ${EB_NAMESPACE}_${PROJECT_NAME}_Static ${UTILS} ${ROOTS} ${CMAKE_DL_LIBS} )
-  foreach( S ${EXELISTCPP} )
-    add_executable( ${S} ${CMAKE_CURRENT_SOURCE_DIR}/src_tests/${S}.cc )
-    target_link_libraries( ${S} ${LIBS} )
-    add_test(
-      NAME "${S}"
-      COMMAND ./bin/${S}
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    )
-    add_dependencies( "${PROJECT_NAME}_all_tests" ${S} )
-  endforeach()
-
-endif()
+# if ( EB_ENABLE_TESTS )
+# 
+#   enable_testing()
+# 
+#   set( EXELISTBIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/bin" )
+#   set( EXELISTCPP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src_tests" )
+# 
+#   set(
+#     EXELISTCPP
+#     testBiarc
+#     testDistance
+#     testDistanceCircuit
+#     testG2
+#     testG2plot
+#     testG2stat
+#     testG2stat2arc
+#     testG2statCLC
+#     testIntersect
+#     testIntersect2
+#     testIntersect3
+#     testPolyline
+#     testTriangle2D
+#   )
+# 
+#   add_custom_target( "${PROJECT_NAME}_all_tests" ALL )
+# 
+#   set( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin )
+#   set( LIBS ${EB_NAMESPACE}_${PROJECT_NAME}_Static ${UTILS} ${ROOTS} ${CMAKE_DL_LIBS} )
+#   foreach( S ${EXELISTCPP} )
+#     add_executable( ${S} ${CMAKE_CURRENT_SOURCE_DIR}/src_tests/${S}.cc )
+#     target_link_libraries( ${S} ${LIBS} )
+#     add_test(
+#       NAME "${S}"
+#       COMMAND ./bin/${S}
+#       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+#     )
+#     add_dependencies( "${PROJECT_NAME}_all_tests" ${S} )
+#   endforeach()
+# 
+# endif()
 
 #   ___         _        _ _
 #  |_ _|_ _  __| |_ __ _| | |
 #   | || ' \(_-<  _/ _` | | |
 #  |___|_||_/__/\__\__,_|_|_|
 #
-install(
-  TARGETS ${TARGETS_TO_BE_INSTALLED}
-  # EXPORT (da definire)
-  LIBRARY DESTINATION ${INSTALL_PREFIX}/dll
-  ARCHIVE DESTINATION ${INSTALL_PREFIX}/lib
-  RUNTIME DESTINATION ${INSTALL_PREFIX}/bin
-  PUBLIC_HEADER DESTINATION ${PROJECT_PUBLIC_HEADER_DESTINATION}
-)
+# install(
+#   TARGETS ${TARGETS_TO_BE_INSTALLED}
+#   # EXPORT (da definire)
+#   LIBRARY DESTINATION ${INSTALL_PREFIX}/dll
+#   ARCHIVE DESTINATION ${INSTALL_PREFIX}/lib
+#   RUNTIME DESTINATION ${INSTALL_PREFIX}/bin
+#   PUBLIC_HEADER DESTINATION ${PROJECT_PUBLIC_HEADER_DESTINATION}
+# )
 
 #   ___         _
 #  | _ \__ _ __| |____ _ __ _ ___
@@ -219,6 +151,6 @@ install(
 #                       |___/
 #
 
-include( ./cmake/CMakeLists-cpack.txt )
-
-ebertolazzi_final_messages()
+# include( ./cmake/CMakeLists-cpack.txt )
+# 
+# ebertolazzi_final_messages()

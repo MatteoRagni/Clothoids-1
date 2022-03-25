@@ -19,6 +19,9 @@
 
 #include "Clothoids.hh"
 
+#include "fmt/ostream.h"
+#include "fmt/core.h"
+
 // Microsoft visual studio Workaround
 #ifdef max
   #undef max

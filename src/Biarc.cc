@@ -23,6 +23,7 @@
 
 #include "Clothoids.hh"
 
+
 namespace G2lib {
 
   using std::numeric_limits;
@@ -92,7 +93,6 @@ namespace G2lib {
     }
   }
 
-  explicit
   Biarc::Biarc(
     real_type x0,
     real_type y0,

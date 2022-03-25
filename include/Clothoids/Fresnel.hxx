@@ -442,8 +442,10 @@ namespace G2lib {
 
     void
     info( ostream_type & s ) const;
-
+  
   };
+
+  #endif
 }
 
 ///

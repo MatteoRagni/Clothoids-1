@@ -42,6 +42,9 @@
 
 #include "Clothoids.hh"
 
+#include "fmt/ostream.h"
+#include "fmt/core.h"
+
 // workaround for windows that defines max and min as macros!
 #ifdef max
   #undef max

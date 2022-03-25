@@ -20,6 +20,9 @@
 #include "Clothoids.hh"
 #include "PolynomialRoots.hh"
 
+#include "fmt/ostream.h"
+#include "fmt/core.h"
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #define A_THRESOLD   0.01
 #define A_SERIE_SIZE 3

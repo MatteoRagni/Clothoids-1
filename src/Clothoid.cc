@@ -19,6 +19,9 @@
 
 #include "Clothoids.hh"
 
+#include "fmt/ostream.h"
+#include "fmt/core.h"
+
 // workaround for windows that defines max and min as macros!
 #ifdef max
   #undef max
@@ -336,12 +339,8 @@ namespace G2lib {
          Utils::isZero( max_angle-m_aabb_max_angle ) &&
          Utils::isZero( max_size-m_aabb_max_size ) ) return;
 
-    #ifdef G2LIB_USE_CXX11
     vector<shared_ptr<BBox const> > bboxes;
-    #else
-    vector<BBox const *> bboxes;
-    #endif
-
+  
     bbTriangles_ISO( offs, m_aabb_tri, max_angle, max_size );
     bboxes.reserve(m_aabb_tri.size());
     vector<Triangle2D>::const_iterator it;
@@ -349,15 +348,9 @@ namespace G2lib {
     for ( it = m_aabb_tri.begin(); it != m_aabb_tri.end(); ++it, ++ipos ) {
       real_type xmin, ymin, xmax, ymax;
       it->bbox( xmin, ymin, xmax, ymax );
-      #ifdef G2LIB_USE_CXX11
       bboxes.push_back( make_shared<BBox const>(
         xmin, ymin, xmax, ymax, G2LIB_CLOTHOID, ipos
       ) );
-      #else
-      bboxes.push_back(
-        new BBox( xmin, ymin, xmax, ymax, G2LIB_CLOTHOID, ipos )
-      );
-      #endif
     }
     m_aabb_tree.build(bboxes);
     m_aabb_done      = true;

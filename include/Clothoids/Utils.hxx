@@ -4,6 +4,7 @@
 #include <thread>
 #include <mutex>
 
+#include "fmt/ostream.h"
 #include "fmt/core.h"
 
 #ifndef G2LIB_UTILS_ERROR0
@@ -33,7 +34,7 @@ namespace G2lib {
 
     static inline bool isZero(double x) { return FP_ZERO == std::fpclassify(x); }
 
-    static inline bool isRegular(double x) { return !(FP_INFINITE == fpclassify(x) || FP_NAN == fpclassify(x)); }
+    static inline bool isRegular(double x) { return !(FP_INFINITE == std::fpclassify(x) || FP_NAN == std::fpclassify(x)); }
 
     template<typename Data> class ThreadLocalData {
      public:
@@ -85,7 +86,8 @@ namespace G2lib {
     template<typename T_int, typename T_real>
     void search_interval(
         T_int npts, T_real const * X, T_real & x, std::shared_ptr<T_int> lastInterval, bool closed, bool can_extend) {
-      search_interval(npts, X, x, *lastInterval, closed, can_extend);
+      int & lastInterval_ = *lastInterval;
+      search_interval<T_int, T_real>(npts, X, x, lastInterval, closed, can_extend);
     }
 
     template<typename T_int, typename T_real>

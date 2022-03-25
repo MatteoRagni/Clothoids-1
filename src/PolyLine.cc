@@ -19,6 +19,9 @@
 
 #include "Clothoids.hh"
 
+#include "fmt/ostream.h"
+#include "fmt/core.h"
+
 // Workaround for Visual Studio
 #ifdef min
   #undef min
@@ -447,24 +450,16 @@ namespace G2lib {
 
   void
   PolyLine::build_AABBtree( AABBtree & aabbtree ) const {
-    #ifdef G2LIB_USE_CXX11
     vector<shared_ptr<BBox const> > bboxes;
-    #else
-    vector<BBox const *> bboxes;
-    #endif
     bboxes.reserve(m_polylineList.size());
     vector<LineSegment>::const_iterator it;
     int_type ipos = 0;
     for ( it = m_polylineList.begin(); it != m_polylineList.end(); ++it, ++ipos ) {
       real_type xmin, ymin, xmax, ymax;
       it->bbox( xmin, ymin, xmax, ymax );
-      #ifdef G2LIB_USE_CXX11
       bboxes.push_back( make_shared<BBox const>(
         xmin, ymin, xmax, ymax, G2LIB_LINE, ipos
       ) );
-      #else
-      bboxes.push_back( new BBox( xmin, ymin, xmax, ymax, G2LIB_LINE, ipos ) );
-      #endif
     }
     aabbtree.build(bboxes);
   }
