@@ -66,7 +66,7 @@ namespace G2lib {
     case G2LIB_BIARC_LIST:
     case G2LIB_CLOTHOID_LIST:
     case G2LIB_POLYLINE:
-      UTILS_ERROR(
+     G2LIB_UTILS_ERROR(
         "ClothoidList constructor cannot convert from: {}\n",
         CurveType_name[C.type()]
       );
@@ -84,7 +84,7 @@ namespace G2lib {
     real_type _dk,
     real_type _L
   ) {
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       _L > 0,
       "ClothoidCurve::build( x0={}, y0={}, theta0={}, k={}, dk={}, L={} )\n"
       "L must be positive!\n",
@@ -114,7 +114,7 @@ namespace G2lib {
     real_type ss  = s_begin;
     real_type thh = theta(s_begin);
     for ( int_type npts = 0; ss < s_end; ++npts ) {
-      UTILS_ASSERT0(
+     G2LIB_UTILS_ASSERT0(
         npts < 100000000,
         "ClothoidCurve::optimized_sample_internal "
         "is generating too much points (>100000000)\n"
@@ -200,7 +200,7 @@ namespace G2lib {
     real_type thh = m_CD.theta(ss);
     real_type MX  = min( m_L, max_size );
     for ( int_type npts = 0; ss < s_end; ++npts ) {
-      UTILS_ASSERT0(
+     G2LIB_UTILS_ASSERT0(
         npts < 100000000,
         "ClothoidCurve::bbTriangles_internal "
         "is generating too much triangles (>100000000)\n"
@@ -634,7 +634,7 @@ namespace G2lib {
     AABBtree::VecPtrBBox candidateList;
     m_aabb_tree.min_distance( qx, qy, candidateList );
     AABBtree::VecPtrBBox::const_iterator ic;
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       candidateList.size() > 0,
       "ClothoidCurve::closest_point_internal no candidate\n"
     );

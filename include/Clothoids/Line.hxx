@@ -20,6 +20,8 @@
 ///
 /// file: Line.hxx
 ///
+#pragma once
+#include "BaseCurve.hxx"
 
 namespace G2lib {
 
@@ -162,7 +164,7 @@ namespace G2lib {
         Triangle2D t( xmin, ymin, xmax, ymax, xc+nx, yc+ny, 0, 0, icurve );
         tvec.push_back( t );
       } else {
-        UTILS_ERROR(
+       G2LIB_UTILS_ERROR(
           "LineSegment bbTriangles found a degenerate line\n"
           "bbox = [ xmin={}, ymin={}, xmax={}, ymax={} ] max_angle={} max_size={}\n",
           xmin, ymin, xmax, ymax, max_angle, max_size
@@ -188,7 +190,7 @@ namespace G2lib {
         Triangle2D t( xmin, ymin, xmax, ymax, xc+nx, yc+ny, 0, 0, icurve );
         tvec.push_back( t );
       } else {
-        UTILS_ERROR(
+       G2LIB_UTILS_ERROR(
           "LineSegment bbTriangles found a degenerate line\n"
           "bbox = [ xmin={}, ymin={}, xmax={}, ymax={} ]\n"
           "offs={} max_angle={} max_size={}\n",
@@ -552,8 +554,6 @@ namespace G2lib {
     { stream << "LineSegment\n" << *this << '\n'; }
 
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
     void
     build(
@@ -675,53 +675,6 @@ namespace G2lib {
     operator << ( ostream_type & stream, LineSegment const & c );
 
     friend class ClothoidCurve;
-
-    //@@@@ BACK COMPATIBILITY
-
-    #ifdef CLOTHOIDS_BACK_COMPATIBILITY
-
-    void
-    changeOrigin( real_type newx0, real_type newy0 )
-    { change_origin( newx0, newy0 ); }
-
-    real_type xBegin()     const { return x_begin(); }
-    real_type yBegin()     const { return y_begin(); }
-    real_type xEnd()       const { return x_end(); }
-    real_type yEnd()       const { return y_end(); }
-    real_type xBegin_ISO( real_type offs ) const { return x_begin_ISO( offs ); }
-    real_type yBegin_ISO( real_type offs ) const { return y_Begin_ISO( offs ); }
-    real_type xEnd_ISO( real_type offs )   const { return x_end_ISO( offs ); }
-    real_type yEnd_ISO( real_type offs )   const { return y_end_ISO( offs ); }
-
-    int_type
-    closestPoint_ISO(
-      real_type   qx,
-      real_type   qy,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst
-    ) const {
-      return closest_point_ISO( qx, qy, x, y, s, t, dst );
-    }
-
-    int_type
-    closestPoint_ISO(
-      real_type   qx,
-      real_type   qy,
-      real_type   offs,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst
-    ) const {
-      return closest_point_ISO( qx, qy, offs, x, y, s, t, dst );
-    }
-
-    #endif
-
   };
 
 }

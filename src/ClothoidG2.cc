@@ -118,7 +118,7 @@ namespace G2lib {
 
   void
   G2solve2arc::setTolerance( real_type tol ) {
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       tol > 0 && tol <= 0.1,
       "G2solve2arc::setTolerance, tolerance = {} must be in (0,0.1]\n", tol
     );
@@ -129,7 +129,7 @@ namespace G2lib {
 
   void
   G2solve2arc::setMaxIter( int miter ) {
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       miter > 0 && miter <= 1000,
       "G2solve2arc::setMaxIter, maxIter = {} must be in [1,1000]\n", miter
     );
@@ -377,7 +377,7 @@ namespace G2lib {
 
   void
   G2solveCLC::setTolerance( real_type tol ) {
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       tol > 0 && tol <= 0.1,
       "G2solveCLC::setTolerance, tolerance = {} must be in (0,0.1]\n", tol
     );
@@ -388,7 +388,7 @@ namespace G2lib {
 
   void
   G2solveCLC::setMaxIter( int miter ) {
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       miter > 0 && miter <= 1000,
       "G2solveCLC::setMaxIter, maxIter = {} must be in [1,1000]\n", miter
     );
@@ -482,7 +482,7 @@ namespace G2lib {
 
   void
   G2solve3arc::setTolerance( real_type tol ) {
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       tol > 0 && tol <= 0.1,
       "G2solve3arc::setTolerance, tolerance = {} must be in (0,0.1]\n", tol
     );
@@ -493,7 +493,7 @@ namespace G2lib {
 
   void
   G2solve3arc::setMaxIter( int miter ) {
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       miter > 0 && miter <= 1000,
       "G2solve3arc::setMaxIter, maxIter = {} must be in [1,1000]\n", miter
     );
@@ -1214,10 +1214,11 @@ namespace G2lib {
     real_type * theta_max
   ) const {
     size_t nn = size_t( m_npts );
-    Utils::Malloc<real_type> mem( "ClothoidSplineG2::guess" );
-    mem.allocate( 2*nn );
-    real_type * omega = mem(nn);
-    real_type * len   = mem(nn);
+    // Utils::Malloc<real_type> mem( "ClothoidSplineG2::guess" );
+    std::vector<real_type> mem(2 * nn, 0.0);
+    // mem.allocate( 2*nn );
+    real_type * omega = &mem.front();
+    real_type * len   = omega + nn;
     G2lib::xy_to_guess_angle(
       m_npts, m_x, m_y, theta_guess, theta_min, theta_max, omega, len
     );
@@ -1232,20 +1233,20 @@ namespace G2lib {
     m_npts = n;
     size_t n1 = size_t(n-1);
 
-    realValues.reallocate( 2*size_t(n) + 10 * n1 );
-
-    m_x    = realValues( size_t(n) );
-    m_y    = realValues( size_t(n) );
-    m_k    = realValues( n1 );
-    m_dk   = realValues( n1 );
-    m_L    = realValues( n1 );
-    m_kL   = realValues( n1 );
-    m_L_1  = realValues( n1 );
-    m_L_2  = realValues( n1 );
-    m_k_1  = realValues( n1 );
-    m_k_2  = realValues( n1 );
-    m_dk_1 = realValues( n1 );
-    m_dk_2 = realValues( n1 );
+    realValues = std::vector<real_type>(2*size_t(n) + 10 * n1, 0.0);
+  
+    m_x    = &realValues.front();
+    m_y    = m_x + n;
+    m_k    = m_y + n;
+    m_dk   = m_k + n1;
+    m_L    = m_dk + n1;
+    m_kL   = m_L + n1; 
+    m_L_1  = m_kL + n1;
+    m_L_2  = m_L_1 + n1;
+    m_k_1  = m_L_2 + n1;
+    m_k_2  = m_k_1 + n1;
+    m_dk_1 = m_k_2 + n1;
+    m_dk_2 = m_dk_1 + n1;
     std::copy_n( xvec, n, m_x );
     std::copy_n( yvec, n, m_y );
   }

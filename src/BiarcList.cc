@@ -108,7 +108,7 @@ namespace G2lib {
       break;
     case G2LIB_CLOTHOID:
     case G2LIB_CLOTHOID_LIST:
-      UTILS_ERROR(
+     G2LIB_UTILS_ERROR(
         "BiarcList constructor cannot convert from: {}\n",
         CurveType_name[C.type()]
       );
@@ -143,12 +143,16 @@ namespace G2lib {
   int_type
   BiarcList::findAtS( real_type & s ) const {
     bool ok;
-    int_type & lastInterval = *m_lastInterval.search( std::this_thread::get_id(), ok );
-    Utils::searchInterval<int_type,real_type>(
+    // int_type & lastInterval = *m_lastInterval.search( std::this_thread::get_id(), ok );
+    // Utils::searchInterval<int_type,real_type>(
+    //   static_cast<int_type>(m_s0.size()),
+    //   &m_s0.front(), s, lastInterval, false, true
+    // );
+    auto lastInterval = m_lastInterval.search(std::this_thread::get_id());
+    search_interval<int_type,real_type>(
       static_cast<int_type>(m_s0.size()),
-      &m_s0.front(), s, lastInterval, false, true
-    );
-    return lastInterval;
+      &m_s0.front(), s, lastInterval, false, true);
+    return *lastInterval;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -222,7 +226,7 @@ namespace G2lib {
     real_type y1,
     real_type theta1
   ) {
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       !m_biarcList.empty(),
       "BiarcList::push_back_G1(...) empty list!\n"
     );
@@ -259,7 +263,7 @@ namespace G2lib {
     real_type const * y,
     real_type const * theta
   ) {
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       n > 1,
       "BiarcList::build_G1, at least 2 points are necessary\n"
     );
@@ -299,11 +303,11 @@ namespace G2lib {
 
   Biarc const &
   BiarcList::get( int_type idx ) const {
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       !m_biarcList.empty(),
       "BiarcList::get( {} ) empty list\n", idx
     );
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       idx >= 0 && idx < int_type(m_biarcList.size()),
       "BiarcList::get( {} ) bad index, must be in [0,{}]\n",
       idx, m_biarcList.size()-1
@@ -973,7 +977,7 @@ namespace G2lib {
 
   void
   BiarcList::trim( real_type s_begin, real_type s_end ) {
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       s_begin >= m_s0.front() && s_end <= m_s0.back() && s_end > s_begin,
       "BiarcList::trim( s_begin={}, s_end={} ) bad range, must be in [ {}, {} ]\n",
       s_begin, s_end, m_s0.front(), m_s0.back()
@@ -1180,7 +1184,7 @@ namespace G2lib {
     AABBtree::VecPtrBBox candidateList;
     m_aabb_tree.min_distance( qx, qy, candidateList );
     AABBtree::VecPtrBBox::const_iterator ic;
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       candidateList.size() > 0,
       "BiarcList::closest_point_internal no candidate\n"
     );
@@ -1304,7 +1308,7 @@ namespace G2lib {
     real_type & t
   ) const {
 
-    UTILS_ASSERT0( !m_biarcList.empty(), "BiarcList::findST, empty list\n" );
+   G2LIB_UTILS_ASSERT0( !m_biarcList.empty(), "BiarcList::findST, empty list\n" );
     vector<Biarc>::const_iterator     ic = m_biarcList.begin();
     vector<real_type>::const_iterator is = m_s0.begin();
 
@@ -1347,10 +1351,10 @@ namespace G2lib {
     real_type & t
   ) const {
 
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       !m_biarcList.empty(), "BiarcList::findST, empty list\n"
     );
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       ibegin >= 0 && ibegin <= iend &&
       iend < int_type(m_biarcList.size()),
       "BiarcList::findST( ibegin={}, iend={}, x, y, s, t )\n"

@@ -311,7 +311,7 @@ namespace G2lib {
     real_type dkappa,
     real_type L
   ) {
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       !m_clotoidList.empty(),
       "ClothoidList::push_back_G1(...) empty list!\n"
     );
@@ -346,7 +346,7 @@ namespace G2lib {
     real_type y1,
     real_type theta1
   ) {
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       !m_clotoidList.empty(),
       "ClothoidList::push_back_G1(...) empty list!\n"
     );
@@ -386,7 +386,7 @@ namespace G2lib {
     reserve( n-1 );
     ClothoidCurve c;
 
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       n > 1, "ClothoidList::build_G1, at least 2 points are necessary\n"
     );
 
@@ -403,11 +403,11 @@ namespace G2lib {
       real_type thetaC(0);
       if ( ciclic ) {
         ok = b.build_3P( x[n-2], y[n-2], x[0], y[0], x[1], y[1] );
-        UTILS_ASSERT0( ok, "ClothoidList::build_G1, failed\n" );
+       G2LIB_UTILS_ASSERT0( ok, "ClothoidList::build_G1, failed\n" );
         thetaC = b.theta_middle();
       }
       ok = b.build_3P( x[0], y[0], x[1], y[1], x[2], y[2] );
-      UTILS_ASSERT0( ok, "ClothoidList::build_G1, failed\n" );
+     G2LIB_UTILS_ASSERT0( ok, "ClothoidList::build_G1, failed\n" );
       real_type theta0 = ciclic ? thetaC : b.theta_begin();
       real_type theta1 = b.theta_middle();
       c.build_G1( x[0], y[0], theta0, x[1], y[1], theta1 );
@@ -415,7 +415,7 @@ namespace G2lib {
       for ( int_type k = 2; k < n-1; ++k ) {
         theta0 = theta1;
         ok = b.build_3P( x[k-1], y[k-1], x[k], y[k], x[k+1], y[k+1] );
-        UTILS_ASSERT0( ok, "ClothoidList::build_G1, failed\n" );
+       G2LIB_UTILS_ASSERT0( ok, "ClothoidList::build_G1, failed\n" );
         theta1 = b.theta_middle();
         c.build_G1( x[k-1], y[k-1], theta0, x[k], y[k], theta1 );
         push_back(c);
@@ -438,7 +438,7 @@ namespace G2lib {
     real_type const * theta
   ) {
 
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       n > 1, "ClothoidList::build_G1, at least 2 points are necessary\n"
     );
 
@@ -470,7 +470,7 @@ namespace G2lib {
     real_type k  = kappa[0];
     real_type L  = s[1]-s[0];
     real_type dk = (kappa[1]-k)/L;
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       Utils::isRegular( k ) && Utils::isRegular( L ) && Utils::isRegular( dk ),
       "ClothoidList::build, failed first segment found\n"
       "L = {} k = {} dk = {}\n",
@@ -485,7 +485,7 @@ namespace G2lib {
         continue; // skip too small segment
       }
       dk = (kappa[i]-k)/L;
-      UTILS_ASSERT(
+     G2LIB_UTILS_ASSERT(
         Utils::isRegular( k ) && Utils::isRegular( L ) && Utils::isRegular( dk ),
         "ClothoidList::build, failed at segment N.{} found\n"
         "L = {} k = {} dk = {}\n",
@@ -527,10 +527,10 @@ namespace G2lib {
 
   ClothoidCurve const &
   ClothoidList::get( int_type idx ) const {
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       !m_clotoidList.empty(), "ClothoidList::get( {} ) empty list\n", idx
     );
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       idx >= 0 && idx < int_type(m_clotoidList.size()),
       "ClothoidList::get( {} ) bad index, must be in [0,{}]\n",
       idx, m_clotoidList.size()-1
@@ -1199,7 +1199,7 @@ namespace G2lib {
     this->copy( newCL );
 
 #if 0
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       s_begin >= m_s0.front() && s_end <= m_s0.back() && s_end > s_begin,
       "ClothoidList::trim( s_begin={}, s_end={} ) bad range, must be in [{},{}]\n",
       s_begin, s_end, m_s0.front(), m_s0.back()
@@ -1461,7 +1461,7 @@ namespace G2lib {
     AABBtree::VecPtrBBox candidateList;
     m_aabb_tree.min_distance( qx, qy, candidateList );
     AABBtree::VecPtrBBox::const_iterator ic;
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       candidateList.size() > 0, "ClothoidList::closest_point_internal no candidate\n"
     );
     int_type icurve = 0;
@@ -1549,7 +1549,7 @@ namespace G2lib {
     AABBtree::VecPtrBBox candidateList;
     m_aabb_tree.min_distance( qx, qy, candidateList );
     AABBtree::VecPtrBBox::const_iterator ic;
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       candidateList.size() > 0, "ClothoidList::closest_segment no candidate\n"
     );
     int_type icurve = 0;
@@ -1588,7 +1588,7 @@ namespace G2lib {
     real_type & dst,
     int_type  & icurve
   ) const {
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       !m_clotoidList.empty(),
       "ClothoidList::closest_point_in_range_ISO, empty list\n"
     );
@@ -1604,7 +1604,7 @@ namespace G2lib {
     int_type ie = icurve_end   % nsegs; // to avoid infinite loop in case of bad input
     if ( ib < 0 ) ib += nsegs;
     if ( ie < 0 ) ie += nsegs;
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       ib >= 0 && ie >= 0,
       "ClothoidList::closest_point_in_range_ISO, ib = {} ie = {}\n",
       ib, ie
@@ -1664,7 +1664,7 @@ namespace G2lib {
     real_type & dst,
     int_type  & icurve
   ) const {
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       !m_clotoidList.empty(),
       "ClothoidList::closest_point_in_s_range_ISO, empty list\n"
     );
@@ -1852,7 +1852,7 @@ namespace G2lib {
     real_type & t
   ) const {
 
-    UTILS_ASSERT0( !m_clotoidList.empty(), "ClothoidList::findST, empty list\n" );
+   G2LIB_UTILS_ASSERT0( !m_clotoidList.empty(), "ClothoidList::findST, empty list\n" );
     vector<ClothoidCurve>::const_iterator ic = m_clotoidList.begin();
     vector<real_type>::const_iterator     is = m_s0.begin();
 
@@ -1895,11 +1895,11 @@ namespace G2lib {
     real_type & t
   ) const {
 
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       !m_clotoidList.empty(),
       "ClothoidList::findST, empty list\n"
     );
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       ibegin >= 0 && ibegin <= iend && iend < int_type(m_clotoidList.size()),
       "ClothoidList::findST( ibegin={}, iend={}, x, y, s, t ) bad range not in [0,{}]\n",
       ibegin, iend, m_clotoidList.size()-1
@@ -2022,7 +2022,7 @@ namespace G2lib {
     // check segment
     real_type err1 = std::abs( kappa0 - c.kappa_begin() ) * c.length();
     real_type err2 = std::abs( kappa1 - c.kappa_end() ) * c.length();
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       err1 < epsi && err2 < epsi,
       "load_segment, failed tolerance on curvature\n"
       "begin error = {}, end error = {}\n",

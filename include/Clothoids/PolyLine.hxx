@@ -20,6 +20,9 @@
 ///
 /// file: PolyLine.hxx
 ///
+#pragma once
+#include "Utils.hxx"
+#include "BaseCurve.hxx"
 
 namespace G2lib {
 
@@ -48,7 +51,7 @@ namespace G2lib {
     real_type           m_xe;
     real_type           m_ye;
 
-    mutable Utils::BinarySearch<int_type> m_lastInterval;
+    mutable Utils::ThreadLocalData<int_type> m_lastInterval;
 
     mutable bool     m_aabb_done;
     mutable AABBtree m_aabb_tree;
@@ -74,9 +77,7 @@ namespace G2lib {
 
     void
     resetLastInterval() {
-      bool ok;
-      int_type & lastInterval = *m_lastInterval.search( std::this_thread::get_id(), ok );
-      lastInterval = 0;
+      *m_lastInterval.search(std::this_thread::get_id()) = 0;
     }
 
   public:
@@ -161,7 +162,7 @@ namespace G2lib {
       real_type & /* xmax */,
       real_type & /* ymax */
     ) const override {
-      UTILS_ERROR0( "PolyLine::bbox( offs ... ) not available!\n" );
+     G2LIB_UTILS_ERROR0( "PolyLine::bbox( offs ... ) not available!\n" );
     }
 
     /*\
@@ -206,7 +207,7 @@ namespace G2lib {
 
     real_type
     length_ISO( real_type ) const override {
-      UTILS_ERROR0( "PolyLine::length( offs ) not available!\n" );
+     G2LIB_UTILS_ERROR0( "PolyLine::length( offs ) not available!\n" );
       return 0;
     }
 
@@ -437,7 +438,7 @@ namespace G2lib {
       real_type & /* T    */,
       real_type & /* DST  */
     ) const override {
-      UTILS_ERROR( "PolyLine::closest_point_ISO( ... offs ... ) not available!\n" );
+     G2LIB_UTILS_ERROR( "PolyLine::closest_point_ISO( ... offs ... ) not available!\n" );
     }
 
     /*\
@@ -457,7 +458,7 @@ namespace G2lib {
       PolyLine const & CL,
       real_type        offs_CL
     ) const {
-      UTILS_ASSERT0(
+     G2LIB_UTILS_ASSERT0(
         Utils::isZero(offs) && Utils::isZero(offs_CL),
         "PolyLine::collision( offs ... ) not available!\n"
       );
@@ -519,7 +520,7 @@ namespace G2lib {
       IntersectList  & ilist,
       bool             swap_s_vals
     ) {
-      UTILS_ASSERT0(
+     G2LIB_UTILS_ASSERT0(
         Utils::isZero(offs) && Utils::isZero(offs_pl),
         "PolyLine::intersect( offs ... ) not available!\n"
       );
@@ -544,50 +545,6 @@ namespace G2lib {
         m_aabb_done = true;
       }
     }
-    //@@@@ BACK COMPATIBILITY
-    #ifdef CLOTHOIDS_BACK_COMPATIBILITY
-
-    real_type thetaBegin() const { return theta_begin(); }
-    real_type thetaEnd()   const { return theta_end(); }
-    real_type xBegin()     const { return x_begin(); }
-    real_type yBegin()     const { return y_begin(); }
-    real_type xEnd()       const { return x_end(); }
-    real_type yEnd()       const { return y_end(); }
-    real_type xBegin_ISO( real_type offs ) const { return x_begin_ISO( offs ); }
-    real_type yBegin_ISO( real_type offs ) const { return y_Begin_ISO( offs ); }
-    real_type xEnd_ISO( real_type offs )   const { return x_end_ISO( offs ); }
-    real_type yEnd_ISO( real_type offs )   const { return y_end_ISO( offs ); }
-
-    int_type numSegments() const { return num_segments(); }
-
-    int_type
-    closestPoint_ISO(
-      real_type   x,
-      real_type   y,
-      real_type & X,
-      real_type & Y,
-      real_type & S,
-      real_type & T,
-      real_type & DST
-    ) const {
-      return closest_point_ISO( x, y, X, Y, S, T, DST );
-    }
-
-    int_type
-    closest_point_ISO(
-      real_type   x,
-      real_type   y,
-      real_type   offs,
-      real_type & X,
-      real_type & Y,
-      real_type & S,
-      real_type & T,
-      real_type & DST 
-    ) const {
-      return closest_point_ISO( x, y, offs, X, Y, S, T, DST );
-    }
-
-    #endif
   };
 
 }

@@ -20,6 +20,8 @@
 ///
 /// file: Triangle2D.hxx
 ///
+#pragma once
+#include "Types.hxx"
 
 namespace G2lib {
 

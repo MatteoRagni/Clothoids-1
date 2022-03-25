@@ -20,6 +20,8 @@
 ///
 /// file: G2lib.hh
 ///
+#pragma once
+#include "Types.hxx"
 
 //!
 //! Clothoid computations routine
@@ -34,24 +36,6 @@ namespace G2lib {
   extern real_type const machepsi1000; //!< \f$ 1000\varepsilon \f$
   extern real_type const sqrtMachepsi; //!< \f$ \sqrt{\varepsilon} \f$
   extern bool            intersect_with_AABBtree;
-
-  #ifdef G2LIB_COMPATIBILITY_MODE
-
-  extern bool use_ISO;
-
-  static
-  inline
-  void
-  lib_use_ISO()
-  { use_ISO = true; }
-
-  static
-  inline
-  void
-  lib_use_SAE()
-  { use_ISO = false; }
-
-  #endif
 
   //!
   //! Disable AABB tree in computation

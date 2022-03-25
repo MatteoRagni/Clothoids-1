@@ -49,7 +49,7 @@ namespace G2lib {
     case G2LIB_BIARC_LIST:
     case G2LIB_CLOTHOID_LIST:
     case G2LIB_POLYLINE:
-      UTILS_ERROR(
+     G2LIB_UTILS_ERROR(
         "LineSegment constructor cannot convert from: {}\n",
         CurveType_name[C.type()]
       );

@@ -30,8 +30,6 @@
 #ifndef CLOTHOIDS_dot_HH
 #define CLOTHOIDS_dot_HH
 
-#include "Utils.hh"
-
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -44,15 +42,6 @@
 #include <algorithm>
 #include <iterator>
 
-// check if compiler is C++11
-#ifndef G2LIB_DO_NOT_USE_CXX11
-  #define G2LIB_USE_CXX11
-#endif
-
-#ifdef G2LIB_USE_CXX11
-#include <memory>  // shared_ptr
-#endif
-
 #ifdef G2LIB_DEBUG
   #define G2LIB_DEBUG_MESSAGE(...) std::cout << fmt::format(__VA_ARGS__) << std::flush
 #else
@@ -63,12 +52,6 @@
   #define GLIB2_TOL_ANGLE 1e-8
 #endif
 
-namespace G2lib {
-  typedef std::basic_istream<char> istream_type;
-  typedef std::basic_ostream<char> ostream_type;
-  typedef double real_type;
-  typedef int    int_type;
-}
 
 #include "Clothoids/G2lib.hxx"
 #include "Clothoids/Triangle2D.hxx"
@@ -82,7 +65,6 @@ namespace G2lib {
 #include "Clothoids/PolyLine.hxx"
 #include "Clothoids/BiarcList.hxx"
 #include "Clothoids/ClothoidList.hxx"
-#include "Clothoids/ClothoidAsyPlot.hxx"
 
 #endif
 

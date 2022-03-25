@@ -20,6 +20,9 @@
 ///
 /// file: BiarcList.hh
 ///
+#pragma once
+#include "BaseCurve.hxx"
+#include "Utils.hxx"
 
 namespace G2lib {
 
@@ -52,7 +55,7 @@ namespace G2lib {
     vector<real_type> m_s0;
     vector<Biarc>     m_biarcList;
 
-    mutable Utils::BinarySearch<int_type> m_lastInterval;
+    mutable Utils::ThreadLocalData<int_type> m_lastInterval;
 
     mutable bool               m_aabb_done;
     mutable AABBtree           m_aabb_tree;
@@ -63,10 +66,12 @@ namespace G2lib {
 
     #ifndef DOXYGEN_SHOULD_SKIP_THIS
     class T2D_collision_list_ISO {
+    
       BiarcList const * m_pList1;
       real_type const   m_offs1;
       BiarcList const * m_pList2;
       real_type const   m_offs2;
+    
     public:
       T2D_collision_list_ISO(
         BiarcList const * pList1,
@@ -89,13 +94,12 @@ namespace G2lib {
         return C1.collision_ISO( m_offs1, C2, m_offs2 );
       }
     };
+    
     #endif
 
     void
-    resetLastInterval() {
-      bool ok;
-      int_type & lastInterval = *m_lastInterval.search( std::this_thread::get_id(), ok );
-      lastInterval = 0;
+    resetLastInterval() { 
+      *(m_lastInterval.search(std::this_thread::get_id())) = 0; 
     }
 
     int_type
@@ -843,51 +847,6 @@ namespace G2lib {
       IntersectList   & ilist,
       bool              swap_s_vals
     ) const;
-
-    //@@@@ BACK COMPATIBILITY
-    #ifdef CLOTHOIDS_BACK_COMPATIBILITY
-
-    real_type thetaBegin() const { return theta_begin(); }
-    real_type thetaEnd()   const { return theta_end(); }
-    real_type xBegin()     const { return x_begin(); }
-    real_type yBegin()     const { return y_begin(); }
-    real_type xEnd()       const { return x_end(); }
-    real_type yEnd()       const { return y_end(); }
-    real_type xBegin_ISO( real_type offs ) const { return x_begin_ISO( offs ); }
-    real_type yBegin_ISO( real_type offs ) const { return y_Begin_ISO( offs ); }
-    real_type xEnd_ISO( real_type offs )   const { return x_end_ISO( offs ); }
-    real_type yEnd_ISO( real_type offs )   const { return y_end_ISO( offs ); }
-
-    int_type numSegments() const { return num_segments(); }
-
-    int_type
-    closestPoint_ISO(
-      real_type   qx,
-      real_type   qy,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst
-    ) const {
-      return closest_point_ISO( qx, qy, x, y, s, t, dst );
-    }
-
-    int_type
-    closestPoint_ISO(
-      real_type   qx,
-      real_type   qy,
-      real_type   offs,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst
-    ) const {
-      return closest_point_ISO( qx, qy, offs, x, y, s, t, dst );
-    }
-
-    #endif
 
   };
 

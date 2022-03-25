@@ -75,7 +75,7 @@ namespace G2lib {
     case G2LIB_BIARC_LIST:
     case G2LIB_CLOTHOID_LIST:
     case G2LIB_POLYLINE:
-      UTILS_ERROR(
+     G2LIB_UTILS_ERROR(
         "CircleArc constructor cannot convert from: {}\n",
         CurveType_name[C.type()]
       );
@@ -316,7 +316,7 @@ namespace G2lib {
 
   void
   CircleArc::trim( real_type s_begin, real_type s_end ) {
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       s_end > s_begin,
       "CircleArc::trim( begin={}, s_end={} ) s_end must be > s_begin\n",
       s_begin, s_end

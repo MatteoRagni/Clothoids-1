@@ -20,6 +20,9 @@
 ///
 /// file: Biarc.hxx
 ///
+#pragma once
+
+#include "BaseCurve.hxx"
 
 namespace G2lib {
 
@@ -47,14 +50,7 @@ namespace G2lib {
     CircleArc m_C0, m_C1;
 
     void
-    gfun( real_type alpha, real_type g[3] ) const {
-      real_type so  = sin(alpha);
-      real_type co  = cos(alpha);
-      real_type oco = alpha*co;
-      g[0] = so + oco;
-      g[1] = 2*co - alpha*so;
-      g[2] = -3*so - oco;
-    }
+    gfun( real_type alpha, real_type g[3] ) const;
 
   public:
 
@@ -96,16 +92,7 @@ namespace G2lib {
       real_type x1,
       real_type y1,
       real_type theta1
-    )
-    : BaseCurve(G2LIB_BIARC)
-    {
-      bool ok = build( x0, y0, theta0, x1, y1, theta1 );
-      UTILS_ASSERT(
-        ok,
-        "Biarc( x0={}, y0={}, theta0={}, x1={}, y1={}, theta1={}) cannot be computed\n",
-        x0, y0, theta0, x1, y1, theta1
-      );
-    }
+    );
 
     explicit
     Biarc( BaseCurve const & C );
@@ -597,55 +584,6 @@ namespace G2lib {
     friend
     ostream_type &
     operator << ( ostream_type & stream, Biarc const & bi );
-
-    //@@@@ BACK COMPATIBILITY
-    #ifdef CLOTHOIDS_BACK_COMPATIBILITY
-
-    real_type thetaBegin() const { return theta_begin(); }
-    real_type thetaEnd()   const { return theta_end(); }
-    real_type kappaBegin() const { return kappa_begin(); }
-    real_type kappaEnd()   const { return kappa_end(); }
-    real_type xBegin()     const { return x_begin(); }
-    real_type yBegin()     const { return y_begin(); }
-    real_type xEnd()       const { return x_end(); }
-    real_type yEnd()       const { return y_end(); }
-    real_type xBegin_ISO( real_type offs ) const { return x_begin_ISO( offs ); }
-    real_type yBegin_ISO( real_type offs ) const { return y_Begin_ISO( offs ); }
-    real_type xEnd_ISO( real_type offs )   const { return x_end_ISO( offs ); }
-    real_type yEnd_ISO( real_type offs )   const { return y_end_ISO( offs ); }
-
-    real_type xMiddle()     const { return x_middle(); }
-    real_type yMiddle()     const { return y_middle(); }
-    real_type thetaMiddle() const { return theta_middle(); }
-
-    int_type
-    closestPoint_ISO(
-      real_type   qx,
-      real_type   qy,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst
-    ) const {
-      return closest_point_ISO( qx, qy, x, y, s, t, dst );
-    }
-
-    int_type
-    closestPoint_ISO(
-      real_type   qx,
-      real_type   qy,
-      real_type   offs,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst
-    ) const {
-      return closest_point_ISO( qx, qy, offs, x, y, s, t, dst );
-    }
-
-    #endif
 
   };
 

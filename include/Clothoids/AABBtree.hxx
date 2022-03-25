@@ -24,10 +24,15 @@
 ///
 /// file: AABBtree.hxx
 ///
+#pragma once
+#include <memory>
+#include <vector>
+#include <utility>
+
+#include "Types.hxx"
 
 namespace G2lib {
 
-  using std::setw;
   using std::vector;
   using std::pair;
 

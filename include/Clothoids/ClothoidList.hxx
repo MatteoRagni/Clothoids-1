@@ -20,6 +20,9 @@
 ///
 /// file: ClothoidList.hh
 ///
+#pragma once
+#include "Utils.hxx"
+#include "BaseCurve.hxx"
 
 namespace G2lib {
 
@@ -839,7 +842,7 @@ namespace G2lib {
     vector<real_type>     m_s0;
     vector<ClothoidCurve> m_clotoidList;
 
-    mutable Utils::BinarySearch<int_type> m_lastInterval;
+    mutable Utils::ThreadLocalData<int_type> m_lastInterval;
 
     mutable bool               m_aabb_done;
     mutable AABBtree           m_aabb_tree;
@@ -881,9 +884,7 @@ namespace G2lib {
 
     void
     resetLastInterval() {
-      bool ok;
-      int_type & lastInterval = *m_lastInterval.search( std::this_thread::get_id(), ok );
-      lastInterval = 0;
+      *m_lastInterval.search(std::this_thread::get_id()) = 0;
     }
 
     int_type
@@ -2105,133 +2106,6 @@ namespace G2lib {
     //!
     void load( istream_type & stream, real_type epsi = 1e-8 );
 
-    //@@@@ BACK COMPATIBILITY
-
-    #ifdef CLOTHOIDS_BACK_COMPATIBILITY
-
-    void
-    changeOrigin( real_type newx0, real_type newy0 )
-    { change_origin( newx0, newy0 ); }
-
-    real_type thetaBegin() const { return theta_begin(); }
-    real_type thetaEnd()   const { return theta_end(); }
-    real_type xBegin()     const { return x_begin(); }
-    real_type yBegin()     const { return y_begin(); }
-    real_type xEnd()       const { return x_end(); }
-    real_type yEnd()       const { return y_end(); }
-    real_type xBegin_ISO( real_type offs ) const { return x_begin_ISO( offs ); }
-    real_type yBegin_ISO( real_type offs ) const { return y_Begin_ISO( offs ); }
-    real_type xEnd_ISO( real_type offs )   const { return x_end_ISO( offs ); }
-    real_type yEnd_ISO( real_type offs )   const { return y_end_ISO( offs ); }
-
-    int_type numSegments() const { return num_segments(); }
-
-    int_type
-    closestSegment( real_type qx, real_type qy ) const {
-      return closest_segment( qx, qy );
-    }
-
-    int_type
-    closestPoint_ISO(
-      real_type   qx,
-      real_type   qy,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst
-    ) const {
-      return closest_point_ISO( qx, qy, x, y, s, t, dst );
-    }
-
-    int_type
-    closestPoint_ISO(
-      real_type   qx,
-      real_type   qy,
-      real_type   offs,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst
-    ) const {
-      return closest_point_ISO( qx, qy, offs, x, y, s, t, dst );
-    }
-
-    int_type
-    closestPointInRange_ISO(
-      real_type   qx,
-      real_type   qy,
-      int_type    icurve_begin,
-      int_type    icurve_end,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst,
-      int_type  & icurve
-    ) const {
-      return closest_point_in_range_ISO(
-        qx, qy, icurve_begin, icurve_end, x, y, s, t, dst, icurve
-      );
-    }
-
-    int_type
-    closestPointInRange_SAE(
-      real_type   qx,
-      real_type   qy,
-      int_type    icurve_begin,
-      int_type    icurve_end,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst,
-      int_type  & icurve
-    ) const {
-      return closest_point_in_range_SAE(
-        qx, qy, icurve_begin, icurve_end, x, y, s, t, dst, icurve
-      );
-    }
-
-    int_type
-    closestPointInSRange_ISO(
-      real_type   qx,
-      real_type   qy,
-      real_type   s_begin,
-      real_type   s_end,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst,
-      int_type  & icurve
-    ) const {
-      return closest_point_in_s_range_ISO(
-        qx, qy, s_begin, s_end, x, y, s, t, dst, icurve
-      );
-    }
-
-    int_type
-    closestPointInSRange_SAE(
-      real_type   qx,
-      real_type   qy,
-      real_type   s_begin,
-      real_type   s_end,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst,
-      int_type  & icurve
-    ) const {
-      return closest_point_in_s_range_SAE(
-        qx, qy, s_begin, s_end, x, y, s, t, dst, icurve
-      );
-    }
-
-    #endif
-
   };
 
   /*\
@@ -2252,7 +2126,8 @@ namespace G2lib {
 
   private:
 
-    Utils::Malloc<real_type> realValues;
+    // Utils::Malloc<real_type> realValues;
+    std::vector<real_type> realValues;
 
     real_type * m_x;
     real_type * m_y;
@@ -2281,7 +2156,7 @@ namespace G2lib {
   public:
 
     ClothoidSplineG2()
-    : realValues("ClothoidSplineG2"), m_tt(P1)
+    : /* realValues("ClothoidSplineG2"),*/ m_tt(P1)
     {}
 
     ~ClothoidSplineG2() {}

@@ -20,6 +20,14 @@
 ///
 /// file: BaseCurve.hh
 ///
+#pragma once
+#include <utility>
+#include <vector>
+
+#include "Utils.hxx"
+#include "G2lib.hxx"
+#include "Constants.hxx"
+#include "Triangle2D.hxx"
 
 namespace G2lib {
 
@@ -101,28 +109,6 @@ namespace G2lib {
     return collision_ISO( C1, -offs_C1, C2, -offs_C2 );
   }
 
-  #ifdef G2LIB_COMPATIBILITY_MODE
-  //!
-  //! Return `true` the the two curves intersect.
-  //!
-  //! \param[in] C1      first curve
-  //! \param[in] offs_C1 offset of the first curve
-  //! \param[in] C2      second curve
-  //! \param[in] offs_C2 offset of the second curve
-  //!
-  inline
-  bool
-  collision(
-    BaseCurve const & C1,
-    real_type         offs_C1,
-    BaseCurve const & C2,
-    real_type         offs_C2
-  ) {
-    if ( G2lib::use_ISO ) return collision_ISO( C1, offs_C1, C2, offs_C2 );
-    else                  return collision_SAE( C1, offs_C1, C2, offs_C2 );
-  }
-  #endif
-
   //!
   //! Collect the intersection of the two curve.
   //!
@@ -185,33 +171,6 @@ namespace G2lib {
     intersect_ISO( C1, -offs_C1, C2, -offs_C2, ilist, swap_s_vals );
   }
 
-  #ifdef G2LIB_COMPATIBILITY_MODE
-  //!
-  //! Collect the intersections of the two curve.
-  //!
-  //! \param[in]  C1          first curve
-  //! \param[in]  offs_C1     offset of the first curve
-  //! \param[in]  C2          second curve
-  //! \param[in]  offs_C2     offset of the second curve
-  //! \param[out] ilist       list of the intersection (as parameter on the curves)
-  //! \param[out] swap_s_vals if true store `(s2,s1)` instead of `(s1,s2)` for each
-  //!                         intersection
-  //!
-  inline
-  void
-  intersect(
-    BaseCurve const & C1,
-    real_type         offs_C1,
-    BaseCurve const & C2,
-    real_type         offs_C2,
-    IntersectList   & ilist,
-    bool              swap_s_vals
-  ) {
-    if ( G2lib::use_ISO ) intersect_ISO( C1, offs_C1, C2, offs_C2, ilist, swap_s_vals );
-    else                  intersect_SAE( C1, offs_C1, C2, offs_C2, ilist, swap_s_vals );
-  }
-  #endif
-
   //!
   //! Base classe for all the curve ìn in the library.
   //!
@@ -259,15 +218,6 @@ namespace G2lib {
     real_type
     length_SAE( real_type offs ) const
     { return this->length_ISO(-offs); }
-
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //!
-    //! Length of the curve with offset (ISO/SAE)
-    //!
-    real_type
-    length( real_type offs ) const
-    { return G2lib::use_ISO ? this->length_ISO(offs) : this->length_SAE(offs); }
-    #endif
 
     /*\
      |   _     _
@@ -332,29 +282,6 @@ namespace G2lib {
     ) const {
       this->bbox_ISO( -offs, xmin, ymin, xmax, ymax );
     }
-
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //! 
-    //! Compute the bounding box of the curve (ISO/SAE).
-    //! 
-    //! \param[in]  off  curve offset
-    //! \param[out] xmin left bottom
-    //! \param[out] ymin left bottom
-    //! \param[out] xmax right top
-    //! \param[out] ymax right top
-    //! 
-    void
-    bbox(
-      real_type   offs,
-      real_type & xmin,
-      real_type & ymin,
-      real_type & xmax,
-      real_type & ymax
-    ) const {
-      if ( G2lib::use_ISO ) this->bbox_ISO( offs, xmin, ymin, xmax, ymax );
-      else                  this->bbox_SAE( offs, xmin, ymin, xmax, ymax );
-    }
-    #endif
 
     /*\
      |   _    _   _____    _                _
@@ -516,36 +443,6 @@ namespace G2lib {
     //!
     real_type y_end_SAE( real_type offs ) const { return this->y_end_ISO(-offs); }
 
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //!
-    //! Initial x-coordinate with offset (ISO or SAE).
-    //!
-    real_type
-    xBegin( real_type offs ) const
-    { return G2lib::use_ISO ? this->x_begin_ISO(offs) : this->x_begin_SAE(offs); }
-
-    //!
-    //! Initial y-coordinate with offset (ISO or SAE).
-    //!
-    real_type
-    yBegin( real_type offs ) const
-    { return G2lib::use_ISO ? this->y_begin_ISO(offs) : this->y_begin_SAE(offs); }
-
-    //!
-    //! Final x-coordinate with offset (ISO or SAE).
-    //!
-    real_type
-    xEnd( real_type offs ) const
-    { return G2lib::use_ISO ? this->x_end_ISO(offs) : this->x_end_SAE(offs); }
-
-    //!
-    //! Final y-coordinate with offset (ISO or SAE).
-    //!
-    real_type
-    yEnd( real_type offs ) const
-    { return G2lib::use_ISO ? this->y_end_ISO(offs) : this->y_end_SAE(offs); }
-    #endif
-
     //!
     //! Initial tangent x-coordinate.
     //!
@@ -605,36 +502,6 @@ namespace G2lib {
     //! Intial normal y-coordinate (SAE).
     //!
     real_type ny_End_SAE() const { return -ny_End_ISO(); }
-
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //!
-    //! Intial normal x-coordinate.
-    //!
-    real_type
-    nx_Begin() const
-    { return G2lib::use_ISO ? this->nx_Begin_ISO() : this->nx_Begin_SAE(); }
-
-    //!
-    //! Intial normal y-coordinate.
-    //!
-    real_type
-    ny_Begin() const
-    { return G2lib::use_ISO ? this->ny_Begin_ISO() : this->ny_Begin_SAE(); }
-
-    //!
-    //! Final normal x-coordinate.
-    //!
-    real_type
-    nx_End() const
-    { return G2lib::use_ISO ? this->nx_End_ISO() : this->nx_End_SAE(); }
-
-    //!
-    //! Final normal y-coordinate.
-    //!
-    real_type
-    ny_End() const
-    { return G2lib::use_ISO ? this->ny_End_ISO() : this->ny_End_SAE(); }
-    #endif
 
     /*\
      |  _   _          _
@@ -817,56 +684,6 @@ namespace G2lib {
     //!
     real_type ny_SAE_DDD( real_type s ) const { return -tx_DDD(s); }
 
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //!
-    //! Normal x-coordinate at curvilinear coodinate `s` (ISO/SAE).
-    //!
-    real_type nx( real_type s ) const
-    { return G2lib::use_ISO ? this->nx_ISO(s) : this->nx_SAE(s); }
-
-    //!
-    //! Normal derivative x-coordinate at curvilinear coodinate `s` (ISO/SAE).
-    //!
-    real_type nx_D( real_type s ) const
-    { return G2lib::use_ISO ? this->nx_ISO_D(s) : this->nx_SAE_D(s); }
-
-    //!
-    //! Normal second derivative x-coordinate at curvilinear coodinate `s` (ISO/SAE).
-    //!
-    real_type nx_DD( real_type s ) const
-    { return G2lib::use_ISO ? this->nx_ISO_DD(s) : this->nx_SAE_DD(s); }
-
-    //!
-    //! Normal third derivative x-coordinate at curvilinear coodinate `s` (ISO/SAE).
-    //!
-    real_type nx_DDD( real_type s ) const
-    { return G2lib::use_ISO ? this->nx_ISO_DDD(s) : this->nx_SAE_DDD(s); }
-    
-    //!
-    //! Normal y-coordinate at curvilinear coodinate `s` (ISO/SAE).
-    //!
-    real_type ny( real_type s ) const
-    { return G2lib::use_ISO ? this->ny_ISO(s) : this->ny_SAE(s); }
-
-    //!
-    //! Normal derivative y-coordinate at curvilinear coodinate `s` (ISO/SAE).
-    //!
-    real_type ny_D( real_type s ) const
-    { return G2lib::use_ISO ? this->ny_ISO_D(s) : this->ny_SAE_D(s); }
-
-    //!
-    //! Normal second derivative y-coordinate at curvilinear coodinate `s` (ISO/SAE).
-    //!
-    real_type ny_DD( real_type s ) const
-    { return G2lib::use_ISO ? this->ny_ISO_DD(s) : this->ny_SAE_DD(s); }
-
-    //!
-    //! Normal third derivative y-coordinate at curvilinear coodinate `s` (ISO/SAE).
-    //!
-    real_type ny_DDD( real_type s ) const
-    { return G2lib::use_ISO ? this->ny_ISO_DDD(s) : this->ny_SAE_DDD(s); }
-    #endif
-
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
     //!
@@ -967,44 +784,6 @@ namespace G2lib {
     nor_SAE_DDD( real_type s, real_type & nx_DDD, real_type & ny_DDD ) const
     { tg_DDD( s, ny_DDD, nx_DDD ); ny_DDD = -ny_DDD; }
 
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //!
-    //! Normal at curvilinear coodinate `s` (ISO/SAE).
-    //!
-    void
-    nor( real_type s, real_type & nx, real_type & ny ) const {
-      if ( G2lib::use_ISO ) this->nor_ISO(s,nx,ny);
-      else                  this->nor_SAE(s,nx,ny);
-    }
-
-    //!
-    //! Normal derivative at curvilinear coodinate `s` (ISO/SAE).
-    //!
-    void
-    nor_D( real_type s, real_type & nx_D, real_type & ny_D ) const {
-      if ( G2lib::use_ISO ) this->nor_ISO_D(s,nx_D,ny_D);
-      else                  this->nor_SAE_D(s,nx_D,ny_D);
-    }
-
-    //!
-    //! Normal second derivative at curvilinear coodinate `s` (ISO/SAE).
-    //!
-    void
-    nor_DD( real_type s, real_type & nx_DD, real_type & ny_DD ) const {
-      if ( G2lib::use_ISO ) this->nor_ISO_DD(s,nx_DD,ny_DD);
-      else                  this->nor_SAE_DD(s,nx_DD,ny_DD);
-    }
-
-    //!
-    //! Normal third at curvilinear coodinate `s` (ISO/SAE).
-    //!
-    void
-    nor_DDD( real_type s, real_type & nx_DDD, real_type & ny_DDD ) const {
-      if ( G2lib::use_ISO ) this->nor_ISO_DDD(s,nx_DDD,ny_DDD);
-      else                  this->nor_SAE_DDD(s,nx_DDD,ny_DDD);
-    }
-    #endif
-
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
     //!
@@ -1081,31 +860,6 @@ namespace G2lib {
       k  = theta_D( s );
       k /= 1-offs*k; // scale curvature
     }
-
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //!
-    //! Evaluate curve with offset at curvilinear coordinate `s` (ISO/SAE).
-    //!
-    //! \param[in]  s    curvilinear coordinate
-    //! \param[in]  offs offset
-    //! \param[out] th   angle
-    //! \param[out] k    curvature
-    //! \param[out] x    x-coordinate
-    //! \param[out] y    y-coordinate
-    //!
-    void
-    evaluate(
-      real_type   s,
-      real_type   offs,
-      real_type & th,
-      real_type & k,
-      real_type & x,
-      real_type & y
-    ) const {
-      if ( G2lib::use_ISO ) this->evaluate_ISO( s, offs, th, k, x, y );
-      else                  this->evaluate_SAE( s, offs, th, k, x, y );
-    }
-    #endif
 
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -1267,64 +1021,6 @@ namespace G2lib {
     //!
     real_type Y_SAE_DDD( real_type s, real_type offs ) const { return this->Y_ISO_DDD(s,-offs); }
 
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //!
-    //! x-coordinate at curvilinear coordinate `s` with offset `offs` (ISO/SAE).
-    //!
-    real_type
-    X( real_type s, real_type offs ) const
-    { return G2lib::use_ISO ? this->X_ISO( s, offs ) : this->X_SAE( s, offs ); }
-
-    //!
-    //! y-coordinate at curvilinear coordinate `s` with offset `offs` (ISO/SAE).
-    //!
-    real_type
-    Y( real_type s, real_type offs ) const
-    { return G2lib::use_ISO ? this->Y_ISO( s, offs ) : this->Y_SAE( s, offs ); }
-
-    //!
-    //! x-coordinate derivative at curvilinear coordinate `s` with offset `offs` (ISO/SAE).
-    //!
-    real_type
-    X_D( real_type s, real_type offs ) const
-    { return G2lib::use_ISO ? this->X_ISO_D( s, offs ) : this->X_SAE_D( s, offs ); }
-
-    //!
-    //! y-coordinate derivative at curvilinear coordinate `s` with offset `offs` (ISO/SAE).
-    //!
-    real_type
-    Y_D( real_type s, real_type offs ) const
-    { return G2lib::use_ISO ? this->Y_ISO_D( s, offs ) : this->Y_SAE_D( s, offs ); }
-
-    //!
-    //! x-coordinate second derivative at curvilinear coordinate `s` with offset `offs` (ISO/SAE).
-    //!
-    real_type
-    X_DD( real_type s, real_type offs ) const
-    { return G2lib::use_ISO ? this->X_ISO_DD( s, offs ) : this->X_SAE_DD( s, offs ); }
-
-    //!
-    //! y-coordinate second derivative at curvilinear coordinate `s` with offset `offs` (ISO/SAE).
-    //!
-    real_type
-    Y_DD( real_type s, real_type offs ) const
-    { return G2lib::use_ISO ? this->Y_ISO_DD( s, offs ) : this->Y_SAE_DD( s, offs ); }
-
-    //!
-    //! x-coordinate third derivative at curvilinear coordinate `s` with offset `offs` (ISO/SAE).
-    //!
-    real_type
-    X_DDD( real_type s, real_type offs ) const
-    { return G2lib::use_ISO ? this->X_ISO_DDD( s, offs ) : this->X_SAE_DDD( s, offs ); }
-
-    //!
-    //! y-coordinate third derivative at curvilinear coordinate `s` with offset `offs` (ISO/SAE).
-    //!
-    real_type
-    Y_DDD( real_type s, real_type offs ) const
-    { return G2lib::use_ISO ? this->Y_ISO_DDD( s, offs ) : this->Y_SAE_DDD( s, offs ); }
-    #endif
-
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
     //! 
@@ -1362,27 +1058,6 @@ namespace G2lib {
       this->eval_ISO( s, -offs, x, y );
     }
 
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //! 
-    //! Compute curve at position `s` with offset `offs` (ISO/SAE).
-    //! 
-    //! \param[in]  s     parameter on the curve
-    //! \param[in]  offs  offset of the curve
-    //! \param[out] x     coordinate
-    //! \param[out] y     coordinate
-    //! 
-    void
-    eval(
-      real_type   s,
-      real_type   offs,
-      real_type & x,
-      real_type & y
-    ) const {
-      if ( G2lib::use_ISO ) this->eval_ISO( s, offs, x, y );
-      else                  this->eval_SAE( s, offs, x, y );
-    }
-    #endif
-
     //!
     //! Compute derivative curve at position `s` with offset `offs` (ISO).
     //! 
@@ -1417,27 +1092,6 @@ namespace G2lib {
     ) const {
       this->eval_ISO_D( s, -offs, x_D, y_D );
     }
-
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //! 
-    //! Compute derivative curve at position `s` with offset `offs`  (ISO/SAE).
-    //! 
-    //! \param[in]  s     parameter on the curve
-    //! \param[in]  offs  offset of the curve
-    //! \param[out] x_D   x-coordinate first derivative
-    //! \param[out] y_D   y-coordinate first derivative
-    //! 
-    void
-    eval_D(
-      real_type   s,
-      real_type   offs,
-      real_type & x_D,
-      real_type & y_D
-    ) const {
-      if ( G2lib::use_ISO ) this->eval_ISO_D( s, offs, x_D, y_D );
-      else                  this->eval_SAE_D( s, offs, x_D, y_D );
-    }
-    #endif
 
     //!
     //! Compute second derivative curve at position `s` with offset `offs` (ISO).
@@ -1474,27 +1128,6 @@ namespace G2lib {
       this->eval_ISO_DD( s, -offs, x_DD, y_DD );
     }
 
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //! 
-    //! Compute second derivative curve at position `s` with offset `offs`  (ISO/SAE).
-    //! 
-    //! \param[in]  s     parameter on the curve
-    //! \param[in]  offs  offset of the curve
-    //! \param[out] x_DD  x-coordinate second derivative
-    //! \param[out] y_DD  y-coordinate second derivative
-    //! 
-    void
-    eval_DD(
-      real_type   s,
-      real_type   offs,
-      real_type & x_DD,
-      real_type & y_DD
-    ) const {
-      if ( G2lib::use_ISO ) this->eval_ISO_DD( s, offs, x_DD, y_DD );
-      else                  this->eval_SAE_DD( s, offs, x_DD, y_DD );
-    }
-    #endif
-
     //!
     //! Compute third derivative curve at position `s` with offset `offs` (ISO).
     //!
@@ -1529,27 +1162,6 @@ namespace G2lib {
     ) const {
       this->eval_ISO_DDD( s, -offs, x_DDD, y_DDD );
     }
-
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //! 
-    //! Compute third derivative curve at position `s` with offset `offs` (ISO/SAE).
-    //! 
-    //! \param[in]  s     parameter on the curve
-    //! \param[in]  offs  offset of the curve
-    //! \param[out] x_DDD x-coordinate third derivative
-    //! \param[out] y_DDD y-coordinate third derivative
-    //! 
-    void
-    eval_DDD(
-      real_type   s,
-      real_type   offs,
-      real_type & x_DDD,
-      real_type & y_DDD
-    ) const {
-      if ( G2lib::use_ISO ) this->eval_ISO_DDD( s, offs, x_DDD, y_DDD );
-      else                  this->eval_SAE_DDD( s, offs, x_DDD, y_DDD );
-    }
-    #endif
 
     /*\
      |  _                        __
@@ -1652,28 +1264,6 @@ namespace G2lib {
       return G2lib::collision_SAE( *this, offs, C, offs_C );
     }
 
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //!
-    //! Check collision with another curve with offset (ISO/SAE).
-    //!
-    //! \param[in] offs   curve offset
-    //! \param[in] C      second curve to check collision
-    //! \param[in] offs_C curve offset of the second curve
-    //! \return true if collision is detected
-    //!
-    bool
-    collision(
-      real_type         offs,
-      BaseCurve const & C,
-      real_type         offs_C
-    ) const {
-      if ( G2lib::use_ISO )
-        return G2lib::collision_ISO( *this, offs, C, offs_C );
-      else
-        return G2lib::collision_SAE( *this, offs, C, offs_C );
-    }
-    #endif
-
     //!
     //! Intersect the curve with another curve.
     //!
@@ -1732,32 +1322,6 @@ namespace G2lib {
     ) const {
       G2lib::intersect_SAE( *this, offs, C, offs_C, ilist, swap_s_vals );
     }
-
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //!
-    //! Intersect the curve with another curve with offset (ISO/SAE).
-    //!
-    //! \param[in]  offs        offset first curve
-    //! \param[in]  C           second curve intersect
-    //! \param[in]  offs_C      offset second curve
-    //! \param[out] ilist       list of the intersection (as parameter on the curves)
-    //! \param[in]  swap_s_vals if true store `(s2,s1)` instead of `(s1,s2)` for each
-    //!                         intersection
-    //!
-    void
-    intersect(
-      real_type         offs,
-      BaseCurve const & C,
-      real_type         offs_C,
-      IntersectList   & ilist,
-      bool              swap_s_vals
-    ) const {
-      if ( G2lib::use_ISO )
-        G2lib::intersect_ISO( *this, offs, C, offs_C, ilist, swap_s_vals );
-      else
-        G2lib::intersect_SAE( *this, offs, C, offs_C, ilist, swap_s_vals );
-    }
-    #endif
 
     /*\
      |      _ _     _
@@ -1822,38 +1386,6 @@ namespace G2lib {
       return res;
     }
 
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //!
-    //! Given a point find closest point on the curve.
-    //!
-    //! \param  qx  x-coordinate of the point
-    //! \param  qy  y-coordinate of the point
-    //! \param  x   x-coordinate of the projected point on the curve
-    //! \param  y   y-coordinate of the projected point on the curve
-    //! \param  s   parameter on the curve of the projection
-    //! \param  t   curvilinear coordinate of the point x,y (if orthogonal projection)
-    //! \param  dst distance point projected point
-    //! \return 1 = point is projected orthogonal
-    //!         0 = more than one projection (first returned)
-    //!        -1 = minimum point is not othogonal projection to curve
-    //! 
-    int_type
-    closest_point(
-      real_type   qx,
-      real_type   qy,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst
-    ) const {
-      if ( G2lib::use_ISO )
-        return this->closest_point_ISO( qx, qy, x, y, s, t, dst );
-      else
-        return this->closest_point_SAE( qx, qy, x, y, s, t, dst );
-    }
-    #endif
-
     //!
     //! Given a point find closest point on the curve.
     //!
@@ -1913,40 +1445,6 @@ namespace G2lib {
       return res;
     }
 
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //!
-    //! Given a point find closest point on the curve.
-    //!
-    //! \param  qx   x-coordinate of the point
-    //! \param  qy   y-coordinate of the point
-    //! \param  offs offset of the curve
-    //! \param  x    x-coordinate of the projected point on the curve
-    //! \param  y    y-coordinate of the projected point on the curve
-    //! \param  s    parameter on the curve of the projection
-    //! \param  t    curvilinear coordinate of the point x,y (if orthogonal projection)
-    //! \param  dst  distance point projected point
-    //! \return 1 = point is projected orthogonal
-    //!         0 = more than one projection (first returned)
-    //!        -1 = minimum point is not othogonal projection to curve
-    //! 
-    int_type
-    closest_point(
-      real_type   qx,
-      real_type   qy,
-      real_type   offs,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst
-    ) const {
-      if ( G2lib::use_ISO )
-        return this->closest_point_ISO( qx, qy, offs, x, y, s, t, dst );
-      else
-        return this->closest_point_SAE( qx, qy, offs, x, y, s, t, dst );
-    }
-    #endif
-
     //!
     //! Compute the distance between a point \f$ q=(q_x,q_y) \f$ and the curve.
     //!
@@ -1999,28 +1497,6 @@ namespace G2lib {
       this->closest_point_SAE( qx, qy, offs, x, y, s, t, dst );
       return dst;
     }
-
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //! 
-    //! Compute the distance between a point \f$ q=(q_x,q_y) \f$ and the curve with offset (ISO/SAE).
-    //!
-    //! \param[in] qx   component \f$ q_x \f$
-    //! \param[in] qy   component \f$ q_y \f$
-    //! \param[in] offs offset of the curve
-    //! \return the computed distance
-    //! 
-    virtual
-    real_type
-    distance(
-      real_type qx,
-      real_type qy,
-      real_type offs
-    ) const {
-      real_type x, y, s, t, dst;
-      this->closest_point( qx, qy, offs, x, y, s, t, dst );
-      return dst;
-    }
-    #endif
 
     /*\
      |    __ _           _ ____ _____
@@ -2088,37 +1564,6 @@ namespace G2lib {
       return icode >= 0;
     }
 
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    //!
-    //! Find the curvilinear coordinate of point \f$ (x,y) \f$
-    //! respect to the curve (ISO/SAE), i.e.
-    //!
-    //! \f[ 
-    //!     P = C(s)+N(s)t
-    //! \f]
-    //!
-    //! where \f$ C(s) \f$ is the curve position respect to the curvilinear coordinates
-    //! and \f$ C(s) \f$ is the normal at the point \f$ C(s) \f$.
-    //!
-    //! \param[in]  x component \f$ x \f$
-    //! \param[in]  y component \f$ y \f$
-    //! \param[out] s curvilinear coordinate
-    //! \param[out] t offset respect to the curve of \f$ (x,y) \f$
-    //! \return true if the coordinate are found
-    //!
-    bool
-    findST(
-      real_type   x,
-      real_type   y,
-      real_type & s,
-      real_type & t
-    ) const {
-      real_type X, Y, dst;
-      int_type icode = this->closest_point( x, y, X, Y, s, t, dst );
-      return icode >= 0;
-    }
-    #endif
-
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     //!
@@ -2127,86 +1572,6 @@ namespace G2lib {
     virtual
     void
     info( ostream_type & stream ) const = 0;
-
-    //@@@@ BACK COMPATIBILITY
-    #ifdef CLOTHOIDS_BACK_COMPATIBILITY
-
-    void
-    changeOrigin( real_type newx0, real_type newy0 )
-    { change_origin( newx0, newy0 ); }
-
-    real_type thetaBegin() const { return this->theta_begin(); }
-    real_type thetaEnd()   const { return this->theta_end(); }
-    real_type kappaBegin() const { return this->kappa_begin(); }
-    real_type kappaEnd()   const { return this->kappa_end(); }
-    real_type xBegin()     const { return this->x_begin(); }
-    real_type yBegin()     const { return this->y_begin(); }
-    real_type xEnd()       const { return this->x_end(); }
-    real_type yEnd()       const { return this->y_end(); }
-    real_type xBegin_ISO( real_type offs ) const { return this->x_begin_ISO(offs); }
-    real_type yBegin_ISO( real_type offs ) const { return this->y_begin_ISO(offs); }
-    real_type xEnd_ISO( real_type offs )   const { return this->x_end_ISO(offs); }
-    real_type yEnd_ISO( real_type offs )   const { return this->y_end_ISO(offs); }
-    real_type xBegin_SAE( real_type offs ) const { return this->x_begin_SAE(offs); }
-    real_type yBegin_SAE( real_type offs ) const { return this->y_begin_SAE(offs); }
-    real_type xEnd_SAE( real_type offs )   const { return this->x_end_SAE(offs); }
-    real_type yEnd_SAE( real_type offs )   const { return this->y_end_SAE(offs); }
-
-    int_type
-    closestPoint_ISO(
-      real_type   qx,
-      real_type   qy,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst
-    ) const {
-      return closest_point_ISO( qx, qy, x, y, s, t, dst );
-    }
-
-    int_type
-    closestPoint_SAE(
-      real_type   qx,
-      real_type   qy,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst
-    ) const {
-      return closest_point_SAE( qx, qy, x, y, s, t, dst );
-    }
-
-    int_type
-    closestPoint_ISO(
-      real_type   qx,
-      real_type   qy,
-      real_type   offs,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst
-    ) const {
-      return closest_point_ISO( qx, qy, offs, x, y, s, t, dst );
-    }
-
-    int_type
-    closestPoint_SAE(
-      real_type   qx,
-      real_type   qy,
-      real_type   offs,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst
-    ) const {
-      return closest_point_SAE( qx, qy, offs, x, y, s, t, dst );
-    }
-
-    #endif
 
   };
 

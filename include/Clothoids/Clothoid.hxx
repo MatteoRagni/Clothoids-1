@@ -20,6 +20,8 @@
 ///
 /// file: Clothoid.hh
 ///
+#pragma once
+#include "BaseCurve.hxx"
 
 namespace G2lib {
 
@@ -778,7 +780,7 @@ namespace G2lib {
 
     real_type
     length_ISO( real_type ) const override {
-      UTILS_ERROR0( "Offset length not available for Clothoids\n" );
+     G2LIB_UTILS_ERROR0( "Offset length not available for Clothoids\n" );
       return 0;
     }
 
@@ -888,20 +890,6 @@ namespace G2lib {
     real_type
     theta_DDD( real_type ) const override
     { return 0; }
-
-    // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-    #ifdef G2LIB_COMPATIBILITY_MODE
-    void
-    evaluate(
-      real_type   s,
-      real_type & th,
-      real_type & k,
-      real_type & x,
-      real_type & y
-    ) const override
-    { m_CD.evaluate( s, th, k, x, y ); }
-    #endif
 
     // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -1219,79 +1207,6 @@ namespace G2lib {
     friend
     ostream_type &
     operator << ( ostream_type & stream, ClothoidCurve const & c );
-
-    //@@@@ BACK COMPATIBILITY
-    #ifdef CLOTHOIDS_BACK_COMPATIBILITY
-
-    real_type
-    thetaTotalVariation() const
-    { return theta_total_variation(); }
-    
-    real_type
-    thetaMinMax( real_type & thMin, real_type & thMax ) const
-    { return theta_min_max(thMin,thMax); }
-
-    void
-    changeOrigin( real_type newx0, real_type newy0 )
-    { change_origin( newx0, newy0 ); }
-
-    void
-    changeCurvilinearOrigin( real_type s0, real_type newL )
-    { change_curvilinear_origin( s0, newL ); }
-
-    real_type thetaBegin() const { return theta_begin(); }
-    real_type thetaEnd()   const { return theta_end(); }
-    real_type kappaBegin() const { return kappa_begin(); }
-    real_type kappaEnd()   const { return kappa_end(); }
-    real_type xBegin()     const { return x_begin(); }
-    real_type yBegin()     const { return y_begin(); }
-    real_type xEnd()       const { return x_end(); }
-    real_type yEnd()       const { return y_end(); }
-    real_type xBegin_ISO( real_type offs ) const { return x_begin_ISO( offs ); }
-    real_type yBegin_ISO( real_type offs ) const { return y_Begin_ISO( offs ); }
-    real_type xEnd_ISO( real_type offs )   const { return x_end_ISO( offs ); }
-    real_type yEnd_ISO( real_type offs )   const { return y_end_ISO( offs ); }
-
-    real_type
-    closestPointBySample(
-      real_type   ds,
-      real_type   qx,
-      real_type   qy,
-      real_type & X,
-      real_type & Y,
-      real_type & S
-    ) const {
-      return closest_point_by_sample( ds, qx, qy, X, Y, S );
-    }
-
-    int_type
-    closestPoint_ISO(
-      real_type   qx,
-      real_type   qy,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst
-    ) const {
-      return closest_point_ISO( qx, qy, x, y, s, t, dst );
-    }
-
-    int_type
-    closestPoint_ISO(
-      real_type   qx,
-      real_type   qy,
-      real_type   offs,
-      real_type & x,
-      real_type & y,
-      real_type & s,
-      real_type & t,
-      real_type & dst
-    ) const {
-      return closest_point_ISO( qx, qy, offs, x, y, s, t, dst );
-    }
-
-    #endif
   };
 
 }

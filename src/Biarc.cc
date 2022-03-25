@@ -36,6 +36,16 @@ namespace G2lib {
    |  |____/|_|\__,_|_|  \___|
   \*/
 
+  void
+  Biarc::gfun( real_type alpha, real_type g[3] ) const {
+    real_type so  = sin(alpha);
+    real_type co  = cos(alpha);
+    real_type oco = alpha*co;
+    g[0] = so + oco;
+    g[1] = 2*co - alpha*so;
+    g[2] = -3*so - oco;
+  }
+
   Biarc::Biarc( BaseCurve const & C )
   : BaseCurve(G2LIB_BIARC)
   {
@@ -47,7 +57,7 @@ namespace G2lib {
           LS.x_begin(), LS.y_begin(), LS.theta_begin(),
           LS.x_end(),   LS.y_end(),   LS.theta_end()
         );
-        UTILS_ASSERT(
+       G2LIB_UTILS_ASSERT(
           ok,
           "Biarc constructor failed convert from: {}\n",
           CurveType_name[C.type()]
@@ -61,7 +71,7 @@ namespace G2lib {
           LS.x_begin(), LS.y_begin(), LS.theta_begin(),
           LS.x_end(),   LS.y_end(),   LS.theta_end()
         );
-        UTILS_ASSERT(
+       G2LIB_UTILS_ASSERT(
           ok,
           "Biarc constructor failed convert from: {}\n",
           CurveType_name[C.type()]
@@ -75,11 +85,30 @@ namespace G2lib {
     case G2LIB_BIARC_LIST:
     case G2LIB_CLOTHOID_LIST:
     case G2LIB_POLYLINE:
-      UTILS_ERROR(
+     G2LIB_UTILS_ERROR(
         "Biarc constructor cannot convert from: {}\n",
         CurveType_name[C.type()]
       );
     }
+  }
+
+  explicit
+  Biarc::Biarc(
+    real_type x0,
+    real_type y0,
+    real_type theta0,
+    real_type x1,
+    real_type y1,
+    real_type theta1
+  )
+  : BaseCurve(G2LIB_BIARC)
+  {
+    bool ok = build( x0, y0, theta0, x1, y1, theta1 );
+   G2LIB_UTILS_ASSERT(
+      ok,
+      "Biarc( x0={}, y0={}, theta0={}, x1={}, y1={}, theta1={}) cannot be computed\n",
+      x0, y0, theta0, x1, y1, theta1
+    );
   }
 
   bool
@@ -261,7 +290,7 @@ namespace G2lib {
 
   void
   Biarc::trim( real_type s_begin, real_type s_end ) {
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       s_end > s_begin,
       "Biarc::trim( begin={}, s_end={} ) s_end must be > s_begin\n",
       s_begin, s_end
@@ -867,7 +896,7 @@ namespace G2lib {
     real_type const * y,
     real_type       * theta
   ) {
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       n > 1, "build_guess_theta, at least 2 points are necessary\n"
     );
     Biarc b;
@@ -877,12 +906,12 @@ namespace G2lib {
       bool ok, ciclic = hypot( x[0]-x[n-1], y[0]-y[n-1] ) < 1e-10;
       if ( ciclic ) {
         ok = b.build_3P( x[n-2], y[n-2], x[0], y[0], x[1], y[1] );
-        UTILS_ASSERT0( ok, "build_guess_theta, failed\n" );
+       G2LIB_UTILS_ASSERT0( ok, "build_guess_theta, failed\n" );
         theta[0] = theta[n-1] = b.theta_middle();
       }
       for ( int_type k = 1; k < n-1; ++k ) {
         ok = b.build_3P( x[k-1], y[k-1], x[k], y[k], x[k+1], y[k+1] );
-        UTILS_ASSERT0( ok, "build_guess_theta, failed\n" );
+       G2LIB_UTILS_ASSERT0( ok, "build_guess_theta, failed\n" );
         theta[k] = b.theta_middle();
         if ( k == 1   && !ciclic ) theta[0]   = b.theta_begin();
         if ( k == n-2 && !ciclic ) theta[n-1] = b.theta_end();

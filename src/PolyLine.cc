@@ -71,7 +71,7 @@ namespace G2lib {
     case G2LIB_BIARC:
     case G2LIB_BIARC_LIST:
     case G2LIB_CLOTHOID_LIST:
-      UTILS_ERROR(
+     G2LIB_UTILS_ERROR(
         "PolyLine constructor cannot convert from: {}\n",
         CurveType_name[C.type()]
       );
@@ -176,11 +176,11 @@ namespace G2lib {
 
   LineSegment const &
   PolyLine::getSegment( int_type n ) const {
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       !m_polylineList.empty(),
       "PolyLine::getSegment(...) empty PolyLine\n"
     );
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       n >= 0 && n < int_type(m_polylineList.size()),
       "PolyLine::getSegment( {} ) out of range [0,{}]\n",
       n, m_polylineList.size()-1
@@ -219,7 +219,7 @@ namespace G2lib {
     real_type & ymax
   ) const {
 
-    UTILS_ASSERT0( !m_polylineList.empty(), "PolyLine::bbox, empty list\n" );
+   G2LIB_UTILS_ASSERT0( !m_polylineList.empty(), "PolyLine::bbox, empty list\n" );
 
     if ( m_aabb_done ) {
       m_aabb_tree.bbox( xmin, ymin, xmax, ymax );
@@ -368,7 +368,7 @@ namespace G2lib {
 
   void
   PolyLine::trim( real_type s_begin, real_type s_end ) {
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       s_begin >= m_s0.front() && s_end <= m_s0.back() && s_end > s_begin,
       "void::trim( s_begin={}, s_end={} ) bad range, must be in [{},{}]\n",
       s_begin, s_end, m_s0.front(), m_s0.back()
@@ -658,7 +658,7 @@ namespace G2lib {
     real_type & T,
     real_type & DST
   ) const{
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       !m_polylineList.empty(),
       "PolyLine::closest_point_ISO, empty list\n"
     );
@@ -717,11 +717,11 @@ namespace G2lib {
     vector<real_type> & ss0,
     vector<real_type> & ss1
   ) const {
-    UTILS_ASSERT0(
+   G2LIB_UTILS_ASSERT0(
       !m_polylineList.empty(),
       "PolyLine::intersect, empty list\n"
     );
-    UTILS_ASSERT(
+   G2LIB_UTILS_ASSERT(
       !pl.m_polylineList.empty(),
       "PolyLine::intersect, empty secondary list\n"
     );
@@ -735,11 +735,11 @@ namespace G2lib {
     for ( ip = intersectionList.begin(); ip != intersectionList.end(); ++ip ) {
       size_t ipos0 = size_t(ip->first->Ipos());
       size_t ipos1 = size_t(ip->second->Ipos());
-      UTILS_ASSERT(
+     G2LIB_UTILS_ASSERT(
         ipos0 < m_polylineList.size(),
         "Bad ipos0 = {}\n", ipos0
       );
-      UTILS_ASSERT(
+     G2LIB_UTILS_ASSERT(
         ipos1 < pl.m_polylineList.size(),
         "Bad ipos1 = {}\n", ipos1
       );

@@ -49,10 +49,6 @@ namespace G2lib {
   real_type const sqrtMachepsi = sqrt(machepsi);
   bool            intersect_with_AABBtree = true;
 
-  #ifdef G2LIB_COMPATIBILITY_MODE
-  bool use_ISO = true;
-  #endif
-
   char const *CurveType_name[] = {
     "LINE",
     "POLYLINE",

@@ -20,6 +20,8 @@
 ///
 /// file: Fresnel.hxx
 ///
+#pragma once
+#include "Types.hxx"
 
 namespace G2lib {
 
@@ -442,9 +444,6 @@ namespace G2lib {
     info( ostream_type & s ) const;
 
   };
-
-  #endif
-
 }
 
 ///

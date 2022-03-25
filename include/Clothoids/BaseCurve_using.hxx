@@ -25,6 +25,13 @@
 /// file: BaseCurve_using.hxx
 ///
 
+/**
+ * @note This is a special file that is included inside the BaseCurve child
+ *       classes in order to fastly redefine part of their interface. This 
+ *       file is not intended for direct inclusion. This is why there is no header
+ *       guard for this file (and shall not be included)
+ */
+
 using BaseCurve::theta_begin;
 using BaseCurve::theta_end;
 
@@ -47,14 +54,6 @@ using BaseCurve::tx_Begin;
 using BaseCurve::ty_Begin;
 using BaseCurve::tx_End;
 using BaseCurve::ty_End;
-
-
-#ifdef G2LIB_COMPATIBILITY_MODE
-using BaseCurve::nx_Begin;
-using BaseCurve::ny_Begin;
-using BaseCurve::nx_End;
-using BaseCurve::ny_End;
-#endif
 
 using BaseCurve::nx_Begin_ISO;
 using BaseCurve::ny_Begin_ISO;
@@ -96,9 +95,6 @@ using BaseCurve::Y_ISO_D;
 using BaseCurve::Y_ISO_DD;
 using BaseCurve::Y_ISO_DDD;
 
-#ifdef G2LIB_COMPATIBILITY_MODE
-using BaseCurve::evaluate;
-#endif
 using BaseCurve::evaluate_ISO;
 using BaseCurve::evaluate_SAE;
 
@@ -117,10 +113,6 @@ using BaseCurve::eval_SAE_D;
 using BaseCurve::eval_SAE_DD;
 using BaseCurve::eval_SAE_DDD;
 
-#ifdef G2LIB_COMPATIBILITY_MODE
-using BaseCurve::closest_point;
-using BaseCurve::distance;
-#endif
 using BaseCurve::closest_point_ISO;
 using BaseCurve::closest_point_SAE;
 using BaseCurve::distance_ISO;
