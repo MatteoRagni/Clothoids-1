@@ -1,30 +1,30 @@
-/*--------------------------------------------------------------------------*\
- |                                                                          |
- |  Copyright (C) 2018                                                      |
- |                                                                          |
- |         , __                 , __                                        |
- |        /|/  \               /|/  \                                       |
- |         | __/ _   ,_         | __/ _   ,_                                |
- |         |   \|/  /  |  |   | |   \|/  /  |  |   |                        |
- |         |(__/|__/   |_/ \_/|/|(__/|__/   |_/ \_/|/                       |
- |                           /|                   /|                        |
- |                           \|                   \|                        |
- |                                                                          |
- |      Paolo Bevilacqua and Enrico Bertolazzi                              |
- |                                                                          |
- |      (1) Dipartimento di Ingegneria e Scienza dell'Informazione          |
- |      (2) Dipartimento di Ingegneria Industriale                          |
- |                                                                          |
- |      Universita` degli Studi di Trento                                   |
- |      email: paolo.bevilacqua@unitn.it                                    |
- |      email: enrico.bertolazzi@unitn.it                                   |
- |                                                                          |
-\*--------------------------------------------------------------------------*/
-
-///
-/// file: Clothoids.hh
-///
-
+/** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * @file Clothoids.hh
+ * @author Matteo Ragni (info@ragni.me)
+ *
+ * @copyright Copyright (c) 2022 Matteo Ragni
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * Based on the work of:
+ * Enrico Bertolazzi http://ebertolazzi.github.io/Clothoids/
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #pragma once
 
 #ifndef CLOTHOIDS_dot_HH
@@ -42,17 +42,8 @@
 #include <algorithm>
 #include <iterator>
 
-#ifdef G2LIB_DEBUG
-  #define G2LIB_DEBUG_MESSAGE(...) std::cout << fmt::format(__VA_ARGS__) << std::flush
-#else
-  #define G2LIB_DEBUG_MESSAGE(...)
-#endif
-
-#ifndef GLIB2_TOL_ANGLE
-  #define GLIB2_TOL_ANGLE 1e-8
-#endif
-
-
+#include "Clothoids/Types.hxx"
+#include "Clothoids/Constants.hxx"
 #include "Clothoids/G2lib.hxx"
 #include "Clothoids/Triangle2D.hxx"
 #include "Clothoids/BaseCurve.hxx"

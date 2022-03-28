@@ -1,29 +1,30 @@
-/*--------------------------------------------------------------------------*\
- |                                                                          |
- |  Copyright (C) 2018                                                      |
- |                                                                          |
- |         , __                 , __                                        |
- |        /|/  \               /|/  \                                       |
- |         | __/ _   ,_         | __/ _   ,_                                |
- |         |   \|/  /  |  |   | |   \|/  /  |  |   |                        |
- |         |(__/|__/   |_/ \_/|/|(__/|__/   |_/ \_/|/                       |
- |                           /|                   /|                        |
- |                           \|                   \|                        |
- |                                                                          |
- |      Paolo Bevilacqua and Enrico Bertolazzi                              |
- |                                                                          |
- |      (1) Dipartimento di Ingegneria e Scienza dell'Informazione          |
- |      (2) Dipartimento di Ingegneria Industriale                          |
- |                                                                          |
- |      Universita` degli Studi di Trento                                   |
- |      email: paolo.bevilacqua@unitn.it                                    |
- |      email: enrico.bertolazzi@unitn.it                                   |
- |                                                                          |
-\*--------------------------------------------------------------------------*/
-
-///
-/// file: AABBtree.hxx
-///
+/** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * @file AABBtree.hxx
+ * @author Matteo Ragni (info@ragni.me)
+ *
+ * @copyright Copyright (c) 2022 Matteo Ragni
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * Based on the work of:
+ * Enrico Bertolazzi http://ebertolazzi.github.io/Clothoids/
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #pragma once
 #include <memory>
 #include <vector>
@@ -33,8 +34,8 @@
 
 namespace G2lib {
 
-  using std::vector;
   using std::pair;
+  using std::vector;
 
   using std::make_shared;
   using std::shared_ptr;
@@ -52,25 +53,23 @@ namespace G2lib {
   //! Class to manipulate bounding box
   //!
   class BBox {
-  public:
+   public:
     typedef shared_ptr<BBox const> PtrBBox;
 
-  private:
-    real_type m_xmin; //!< left bottom
-    real_type m_ymin; //!< left bottom
-    real_type m_xmax; //!< right top
-    real_type m_ymax; //!< right top
-    int_type  m_id;   //!< id of the bbox
-    int_type  m_ipos; //!< rank of the bounding box used in external algorithms
+   private:
+    real_type m_xmin;  //!< left bottom
+    real_type m_ymin;  //!< left bottom
+    real_type m_xmax;  //!< right top
+    real_type m_ymax;  //!< right top
+    int_type  m_id;    //!< id of the bbox
+    int_type  m_ipos;  //!< rank of the bounding box used in external algorithms
 
     BBox();
 
-    BBox( BBox const & ) = default;
-    BBox( BBox && ) = default;
+    BBox(BBox const &) = default;
+    BBox(BBox &&)      = default;
 
-
-  public:
-
+   public:
     //!
     //! Construct a bounding box with additional information
     //!
@@ -81,14 +80,7 @@ namespace G2lib {
     //! \param[in] id   identifier of the box
     //! \param[in] ipos ranking position of the box
     //!
-    BBox(
-      real_type xmin,
-      real_type ymin,
-      real_type xmax,
-      real_type ymax,
-      int_type  id,
-      int_type  ipos
-    ) {
+    BBox(real_type xmin, real_type ymin, real_type xmax, real_type ymax, int_type id, int_type ipos) {
       m_xmin = xmin;
       m_ymin = ymin;
       m_xmax = xmax;
@@ -104,61 +96,51 @@ namespace G2lib {
     //! \param[in] id     identifier of the box
     //! \param[in] ipos   ranking position of the box
     //!
-    BBox(
-      vector<PtrBBox> const & bboxes,
-      int_type                id,
-      int_type                ipos
-    ) {
+    BBox(vector<PtrBBox> const & bboxes, int_type id, int_type ipos) {
       m_id   = id;
       m_ipos = ipos;
-      this -> join( bboxes );
+      this->join(bboxes);
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    real_type Xmin() const { return m_xmin; } //!< x-minimum coordinate of the bbox
-    real_type Ymin() const { return m_ymin; } //!< y-minimum coordinate of the bbox
-    real_type Xmax() const { return m_xmax; } //!< x-maximum coordinate of the bbox
-    real_type Ymax() const { return m_ymax; } //!< y-maximum coordinate of the bbox
+    real_type Xmin() const { return m_xmin; }  //!< x-minimum coordinate of the bbox
+    real_type Ymin() const { return m_ymin; }  //!< y-minimum coordinate of the bbox
+    real_type Xmax() const { return m_xmax; }  //!< x-maximum coordinate of the bbox
+    real_type Ymax() const { return m_ymax; }  //!< y-maximum coordinate of the bbox
 
-    int_type const & Id()   const { return m_id; }   //!< return BBOX id
-    int_type const & Ipos() const { return m_ipos; } //!< return BBOX position
+    int_type const & Id() const { return m_id; }      //!< return BBOX id
+    int_type const & Ipos() const { return m_ipos; }  //!< return BBOX position
 
     //!
     //! copy a bbox
     //!
-    BBox const &
-    operator = ( BBox const & rhs );
+    BBox const & operator=(BBox const & rhs);
 
     //!
     //! detect if two bbox collide
     //!
-    bool
-    collision( BBox const & box ) const;
+    bool collision(BBox const & box) const;
 
     //!
     //! Build bbox for a list of bbox
     //!
-    void
-    join( vector<PtrBBox> const & bboxes );
+    void join(vector<PtrBBox> const & bboxes);
 
     //!
     //! distance of the point `(x,y)` to the bbox
     //!
-    real_type
-    distance( real_type x, real_type y ) const;
+    real_type distance(real_type x, real_type y) const;
 
     //!
     //! Maximum distance of the point `(x,y)` to the point of bbox
     //!
-    real_type
-    maxDistance( real_type x, real_type y ) const;
+    real_type maxDistance(real_type x, real_type y) const;
 
     //!
     //! Pretty print a bbox
     //!
-    void
-    print( ostream_type & stream ) const;
+    void print(ostream_type & stream) const;
 
     friend class AABBtree;
   };
@@ -166,9 +148,7 @@ namespace G2lib {
   //!
   //! Pretty print a bbox
   //!
-  inline
-  ostream_type &
-  operator << ( ostream_type & stream, BBox const & bb ) {
+  inline ostream_type & operator<<(ostream_type & stream, BBox const & bb) {
     bb.print(stream);
     return stream;
   }
@@ -191,22 +171,19 @@ namespace G2lib {
   //!
   //!
   class AABBtree {
-  public:
+   public:
+    typedef shared_ptr<BBox const> PtrBBox;
+    typedef shared_ptr<AABBtree>   PtrAABB;
+    typedef pair<PtrBBox, PtrBBox> PairPtrBBox;
+    typedef vector<PtrBBox>        VecPtrBBox;
+    typedef vector<PairPtrBBox>    VecPairPtrBBox;
 
-  
-  typedef shared_ptr<BBox const> PtrBBox;
-  typedef shared_ptr<AABBtree>   PtrAABB;
-  typedef pair<PtrBBox,PtrBBox> PairPtrBBox;
-  typedef vector<PtrBBox>       VecPtrBBox;
-  typedef vector<PairPtrBBox>   VecPairPtrBBox;
-
-  private:
-
+   private:
     // bbox of the tree
     PtrBBox         pBBox;
     vector<PtrAABB> children;
 
-    AABBtree( AABBtree const & tree );
+    AABBtree(AABBtree const & tree);
 
     //!
     //! Compute the minimum of the maximum distance
@@ -219,14 +196,7 @@ namespace G2lib {
     //!                   used in the recursive call.
     //!
     //!
-    static
-    real_type
-    min_maxdist(
-      real_type        x,
-      real_type        y,
-      AABBtree const & tree,
-      real_type        mmDist
-    );
+    static real_type min_maxdist(real_type x, real_type y, AABBtree const & tree, real_type mmDist);
 
     //!
     //! Select the candidate bboxes which have distance less than mmDist
@@ -238,20 +208,12 @@ namespace G2lib {
     //! \param[out] candidateList  list of bbox which have minim distance less than `mmDist`
     //!
     //!
-    static
-    void
-    min_maxdist_select(
-      real_type        x,
-      real_type        y,
-      real_type        mmDist,
-      AABBtree const & tree,
-      VecPtrBBox     & candidateList
-    );
+    static void min_maxdist_select(
+        real_type x, real_type y, real_type mmDist, AABBtree const & tree, VecPtrBBox & candidateList);
 
-  public:
-
+   public:
     //! Create an empty AABB tree.
-    AABBtree();  
+    AABBtree();
 
     //! destroy the stored AABB tree.
     ~AABBtree();
@@ -263,7 +225,7 @@ namespace G2lib {
 
     //! Check if AABB tree is empty.
     bool empty() const;
-    
+
     //!
     //! Get the Bounding Box of the whole AABB tree
     //!
@@ -272,13 +234,7 @@ namespace G2lib {
     //! \param[in] xmax x-maximum box coordinate
     //! \param[in] ymax y-maximum box coordinate
     //!
-    void
-    bbox(
-      real_type & xmin,
-      real_type & ymin,
-      real_type & xmax,
-      real_type & ymax
-    ) const {
+    void bbox(real_type & xmin, real_type & ymin, real_type & xmax, real_type & ymax) const {
       xmin = pBBox->m_xmin;
       ymin = pBBox->m_ymin;
       xmax = pBBox->m_xmax;
@@ -288,14 +244,12 @@ namespace G2lib {
     //!
     //! Build AABB tree given a list of bbox
     //!
-    void
-    build( vector<PtrBBox> const & bboxes );
+    void build(vector<PtrBBox> const & bboxes);
 
     //!
     //! Pretty print the AABB tree
     //!
-    void
-    print( ostream_type & stream, int level = 0 ) const;
+    void print(ostream_type & stream, int level = 0) const;
 
     //!
     //! Check if two AABB tree collide
@@ -305,49 +259,43 @@ namespace G2lib {
     //! \param[in] swap_tree if true exchange the tree in computation
     //! \return true if the two tree collides
     //!
-    template <typename COLLISION_fun>
-    bool
-    collision(
-      AABBtree const & tree,
-      COLLISION_fun    ifun,
-      bool             swap_tree = false
-    ) const {
-
+    template<typename COLLISION_fun>
+    bool collision(AABBtree const & tree, COLLISION_fun ifun, bool swap_tree = false) const {
       // check bbox with
-      if ( !tree.pBBox->collision(*pBBox) ) return false;
+      if (!tree.pBBox->collision(*pBBox))
+        return false;
 
-      int icase = (children.empty() ? 0 : 1) +
-                  (tree.children.empty()? 0 : 2);
+      int icase = (children.empty() ? 0 : 1) + (tree.children.empty() ? 0 : 2);
 
-      switch ( icase ) {
-      case 0: // both leaf, use GeomPrimitive intersection algorithm
-        if ( swap_tree ) return ifun( tree.pBBox, pBBox );
-        else             return ifun( pBBox, tree.pBBox );
-      case 1: // first is a tree, second is a leaf
-        { typename vector<PtrAABB>::const_iterator it;
-          for ( it = children.begin(); it != children.end(); ++it )
-            if ( tree.collision( **it, ifun, !swap_tree ) )
+      switch (icase) {
+        case 0:  // both leaf, use GeomPrimitive intersection algorithm
+          if (swap_tree)
+            return ifun(tree.pBBox, pBBox);
+          else
+            return ifun(pBBox, tree.pBBox);
+        case 1:  // first is a tree, second is a leaf
+        {
+          typename vector<PtrAABB>::const_iterator it;
+          for (it = children.begin(); it != children.end(); ++it)
+            if (tree.collision(**it, ifun, !swap_tree))
               return true;
-        }
-        break;
-      case 2: // first leaf, second is a tree
-        { typename vector<PtrAABB>::const_iterator it;
-          for ( it = tree.children.begin();
-                it != tree.children.end(); ++it )
-            if ( this->collision( **it, ifun, swap_tree ) )
+        } break;
+        case 2:  // first leaf, second is a tree
+        {
+          typename vector<PtrAABB>::const_iterator it;
+          for (it = tree.children.begin(); it != tree.children.end(); ++it)
+            if (this->collision(**it, ifun, swap_tree))
               return true;
-        }
-        break;
-      case 3: // first is a tree, second is a tree
-        { typename vector<PtrAABB>::const_iterator c1;
+        } break;
+        case 3:  // first is a tree, second is a tree
+        {
+          typename vector<PtrAABB>::const_iterator c1;
           typename vector<PtrAABB>::const_iterator c2;
-          for ( c1 = children.begin(); c1 != children.end(); ++c1 )
-            for ( c2 = tree.children.begin();
-                  c2 != tree.children.end(); ++c2 )
-              if ( (*c1)->collision( **c2, ifun, swap_tree ) )
+          for (c1 = children.begin(); c1 != children.end(); ++c1)
+            for (c2 = tree.children.begin(); c2 != tree.children.end(); ++c2)
+              if ((*c1)->collision(**c2, ifun, swap_tree))
                 return true;
-        }
-        break;
+        } break;
       }
       return false;
     }
@@ -359,30 +307,19 @@ namespace G2lib {
     //! \param[out] intersectionList list of pair bbox that overlaps
     //! \param[in]  swap_tree        if true exchange the tree in computation
     //!
-    void
-    intersect(
-      AABBtree const & tree,
-      VecPairPtrBBox & intersectionList,
-      bool             swap_tree = false
-    ) const;
+    void intersect(AABBtree const & tree, VecPairPtrBBox & intersectionList, bool swap_tree = false) const;
 
-    //! 
+    //!
     //! Select all the bboxes candidate to be at minimum distance.
-    //! 
+    //!
     //! \param[in]  x             x-coordinate of the point
     //! \param[in]  y             y-coordinate of the point
     //! \param[out] candidateList candidate list
-    //! 
-    void
-    min_distance(
-      real_type    x,
-      real_type    y,
-      VecPtrBBox & candidateList
-    ) const;
-
+    //!
+    void min_distance(real_type x, real_type y, VecPtrBBox & candidateList) const;
   };
 
-}
+}  // namespace G2lib
 
 ///
 /// eof: AABBtree.hxx

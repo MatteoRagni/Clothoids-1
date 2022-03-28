@@ -1,25 +1,30 @@
-/*--------------------------------------------------------------------------*\
- |                                                                          |
- |  Copyright (C) 2017                                                      |
- |                                                                          |
- |         , __                 , __                                        |
- |        /|/  \               /|/  \                                       |
- |         | __/ _   ,_         | __/ _   ,_                                |
- |         |   \|/  /  |  |   | |   \|/  /  |  |   |                        |
- |         |(__/|__/   |_/ \_/|/|(__/|__/   |_/ \_/|/                       |
- |                           /|                   /|                        |
- |                           \|                   \|                        |
- |                                                                          |
- |      Enrico Bertolazzi                                                   |
- |      Dipartimento di Ingegneria Industriale                              |
- |      Universita` degli Studi di Trento                                   |
- |      email: enrico.bertolazzi@unitn.it                                   |
- |                                                                          |
-\*--------------------------------------------------------------------------*/
-
-///
-/// file: G2lib.hh
-///
+/** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * @file G2lib.hxx
+ * @author Matteo Ragni (info@ragni.me)
+ *
+ * @copyright Copyright (c) 2022 Matteo Ragni
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * Based on the work of:
+ * Enrico Bertolazzi http://ebertolazzi.github.io/Clothoids/
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #pragma once
 #include "Types.hxx"
 
@@ -27,81 +32,61 @@
 //! Clothoid computations routine
 //!
 namespace G2lib {
-
-  extern real_type const m_1_sqrt_pi;  //!< \f$ 1/\sqrt{\pi} \f$
-
-  extern real_type const machepsi;     //!< machine espilon \f$ \varepsilon \f$
-  extern real_type const machepsi10;   //!< \f$ 10\varepsilon \f$
-  extern real_type const machepsi100;  //!< \f$ 100\varepsilon \f$
-  extern real_type const machepsi1000; //!< \f$ 1000\varepsilon \f$
-  extern real_type const sqrtMachepsi; //!< \f$ \sqrt{\varepsilon} \f$
   extern bool            intersect_with_AABBtree;
 
   //!
   //! Disable AABB tree in computation
   //!
-  static
-  inline
-  void
-  noAABBtree()
-  { intersect_with_AABBtree = false; }
+  static inline void noAABBtree() { intersect_with_AABBtree = false; }
 
   //!
   //! Enable AABB tree in computation
   //!
-  static
-  inline
-  void
-  yesAABBtree()
-  { intersect_with_AABBtree = true; }
+  static inline void yesAABBtree() { intersect_with_AABBtree = true; }
 
   /*
    * sin(x)/x
    */
-  real_type Sinc( real_type x );     //!< \f$ \frac{\sin x}{x} \f$
-  real_type Sinc_D( real_type x );   //!< \f$ \frac{\mathrm{d}}{\mathrm{d}x} \frac{\sin x}{x} \f$
-  real_type Sinc_DD( real_type x );  //!< \f$ \left(\frac{\mathrm{d}}{\mathrm{d}x}\right)^2 \frac{\sin x}{x} \f$
-  real_type Sinc_DDD( real_type x ); //!< \f$ \left(\frac{\mathrm{d}}{\mathrm{d}x}\right)^3 \frac{\sin x}{x} \f$
+  real_type Sinc(real_type x);      //!< \f$ \frac{\sin x}{x} \f$
+  real_type Sinc_D(real_type x);    //!< \f$ \frac{\mathrm{d}}{\mathrm{d}x} \frac{\sin x}{x} \f$
+  real_type Sinc_DD(real_type x);   //!< \f$ \left(\frac{\mathrm{d}}{\mathrm{d}x}\right)^2 \frac{\sin x}{x} \f$
+  real_type Sinc_DDD(real_type x);  //!< \f$ \left(\frac{\mathrm{d}}{\mathrm{d}x}\right)^3 \frac{\sin x}{x} \f$
 
   /*
    * (1-cos(x))/x
    */
-  real_type Cosc( real_type x );     //!< \f$ \frac{1-\cos x}{x} \f$
-  real_type Cosc_D( real_type x );   //!< \f$ \frac{\mathrm{d}}{\mathrm{d}x} \frac{1-\cos x}{x} \f$
-  real_type Cosc_DD( real_type x );  //!< \f$ \left(\frac{\mathrm{d}}{\mathrm{d}x}\right)^2 \frac{1-\cos x}{x} \f$
-  real_type Cosc_DDD( real_type x ); //!< \f$ \left(\frac{\mathrm{d}}{\mathrm{d}x}\right)^3 \frac{1-\cos x}{x} \f$
+  real_type Cosc(real_type x);      //!< \f$ \frac{1-\cos x}{x} \f$
+  real_type Cosc_D(real_type x);    //!< \f$ \frac{\mathrm{d}}{\mathrm{d}x} \frac{1-\cos x}{x} \f$
+  real_type Cosc_DD(real_type x);   //!< \f$ \left(\frac{\mathrm{d}}{\mathrm{d}x}\right)^2 \frac{1-\cos x}{x} \f$
+  real_type Cosc_DDD(real_type x);  //!< \f$ \left(\frac{\mathrm{d}}{\mathrm{d}x}\right)^3 \frac{1-\cos x}{x} \f$
 
   /*
    * atan(x)/x
    */
-  real_type Atanc( real_type x );     //!< \f$ \frac{\arctan x}{x} \f$
-  real_type Atanc_D( real_type x );   //!< \f$ \frac{\mathrm{d}}{\mathrm{d}x} \frac{\arctan x}{x} \f$
-  real_type Atanc_DD( real_type x );  //!< \f$ \left(\frac{\mathrm{d}}{\mathrm{d}x}\right)^2 \frac{\arctan x}{x} \f$
-  real_type Atanc_DDD( real_type x ); //!< \f$ \left(\frac{\mathrm{d}}{\mathrm{d}x}\right)^3 \frac{\arctan x}{x} \f$
+  real_type Atanc(real_type x);      //!< \f$ \frac{\arctan x}{x} \f$
+  real_type Atanc_D(real_type x);    //!< \f$ \frac{\mathrm{d}}{\mathrm{d}x} \frac{\arctan x}{x} \f$
+  real_type Atanc_DD(real_type x);   //!< \f$ \left(\frac{\mathrm{d}}{\mathrm{d}x}\right)^2 \frac{\arctan x}{x} \f$
+  real_type Atanc_DDD(real_type x);  //!< \f$ \left(\frac{\mathrm{d}}{\mathrm{d}x}\right)^3 \frac{\arctan x}{x} \f$
 
   //!
   //! Add or remove multiple of \f$ 2\pi \f$ to an angle  in order to put it in the range \f$ [-\pi,\pi]\f$.
   //!
-  void rangeSymm( real_type & ang );
+  void rangeSymm(real_type & ang);
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //!
   //! Return minumum and maximum of three numbers
   //!
-  inline
-  void
-  minmax3(
-    real_type   a,
-    real_type   b,
-    real_type   c,
-    real_type & vmin,
-    real_type & vmax
-  ) {
+  inline void minmax3(real_type a, real_type b, real_type c, real_type & vmin, real_type & vmax) {
     vmin = vmax = a;
-    if ( b < vmin ) vmin = b;
-    else            vmax = b;
-    if      ( c < vmin ) vmin = c;
-    else if ( c > vmax ) vmax = c;
+    if (b < vmin)
+      vmin = b;
+    else
+      vmax = b;
+    if (c < vmin)
+      vmin = c;
+    else if (c > vmax)
+      vmax = c;
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -121,17 +106,8 @@ namespace G2lib {
   //! \return distance point circle
   //!
   //!
-  real_type
-  projectPointOnCircleArc(
-    real_type x0,
-    real_type y0,
-    real_type c0,
-    real_type s0,
-    real_type k,
-    real_type L,
-    real_type qx,
-    real_type qy
-  );
+  real_type projectPointOnCircleArc(
+      real_type x0, real_type y0, real_type c0, real_type s0, real_type k, real_type L, real_type qx, real_type qy);
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //!
@@ -147,15 +123,7 @@ namespace G2lib {
   //!
   //! \return distance point circle
   //!
-  real_type
-  projectPointOnCircle(
-    real_type x0,
-    real_type y0,
-    real_type theta0,
-    real_type k,
-    real_type qx,
-    real_type qy
-  );
+  real_type projectPointOnCircle(real_type x0, real_type y0, real_type theta0, real_type k, real_type qx, real_type qy);
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   //!
@@ -172,22 +140,7 @@ namespace G2lib {
   //!
   //! \return true if point is inside
   //!
-  inline
-  bool
-  pointInsideCircle(
-    real_type x0,
-    real_type y0,
-    real_type c0,
-    real_type s0,
-    real_type k,
-    real_type qx,
-    real_type qy
-  ) {
-    real_type cx  = x0 - s0/k;
-    real_type cy  = y0 + c0/k;
-    real_type dst = hypot( qx - cx, qy - cy );
-    return dst*k <= 1;
-  }
+  bool pointInsideCircle(real_type x0, real_type y0, real_type c0, real_type s0, real_type k, real_type qx, real_type qy);
 
   //!
   //! Solve the nonlinear system
@@ -205,17 +158,8 @@ namespace G2lib {
   //! \param[out] y y-coordinates of the solutions
   //! \return the number of solution 0, 1 or 2
   //!
-  int_type
-  solveLinearQuadratic(
-    real_type   A,
-    real_type   B,
-    real_type   C,
-    real_type   a,
-    real_type   b,
-    real_type   c,
-    real_type * x,
-    real_type * y
-  );
+  int_type solveLinearQuadratic(
+      real_type A, real_type B, real_type C, real_type a, real_type b, real_type c, real_type * x, real_type * y);
 
   //!
   //! Solve the nonlinear system
@@ -230,14 +174,7 @@ namespace G2lib {
   //! \param[out] y y-coordinates of the solutions
   //! \return the number of solution 0, 1 or 2
   //!
-  int_type
-  solveLinearQuadratic2(
-    real_type   A,
-    real_type   B,
-    real_type   C,
-    real_type * x,
-    real_type * y
-  );
+  int_type solveLinearQuadratic2(real_type A, real_type B, real_type C, real_type * x, real_type * y);
 
   //!
   //! Intersect the parametric arc
@@ -262,19 +199,17 @@ namespace G2lib {
   //!
   //! \return the number of solution 0, 1 or 2
   //!
-  int_type
-  intersectCircleCircle(
-    real_type   x1,
-    real_type   y1,
-    real_type   theta1,
-    real_type   kappa1,
-    real_type   x2,
-    real_type   y2,
-    real_type   theta2,
-    real_type   kappa2,
-    real_type * s1,
-    real_type * s2
-  );
+  int_type intersectCircleCircle(
+      real_type   x1,
+      real_type   y1,
+      real_type   theta1,
+      real_type   kappa1,
+      real_type   x2,
+      real_type   y2,
+      real_type   theta2,
+      real_type   kappa2,
+      real_type * s1,
+      real_type * s2);
 
   /*\
    |   ____        _           ____       ____
@@ -293,13 +228,12 @@ namespace G2lib {
     real_type epsi;
     bool      singular;
 
-  public:
-
+   public:
     Solve2x2() : epsi(1e-10) {}
     //!
     //! factorize matrix \f$ A \f$ , return false if factorization fails
     //!
-    bool factorize( real_type A[2][2] );
+    bool factorize(real_type A[2][2]);
 
     //!
     //! Solve the linear system \f$ Ax=b \f$ with
@@ -311,7 +245,7 @@ namespace G2lib {
     //! \return true if solution found
     //!
     //!
-    bool solve( real_type const b[2], real_type x[2] ) const;
+    bool solve(real_type const b[2], real_type x[2]) const;
   };
 
   //!
@@ -337,12 +271,7 @@ namespace G2lib {
   //!
   //!  Algorithm from FileExchage geom2d adapated from Sedgewick's book.
   //!
-  int_type
-  isCounterClockwise(
-    real_type const * P1,
-    real_type const * P2,
-    real_type const * P3
-  );
+  int_type isCounterClockwise(real_type const * P1, real_type const * P2, real_type const * P3);
 
   //!
   //! Check if a point is inside a triangle
@@ -356,13 +285,7 @@ namespace G2lib {
   //!         return -1 = Outsize
   //!         return  0 = on border
   //!
-  int_type
-  isPointInTriangle(
-    real_type const * pt,
-    real_type const * P1,
-    real_type const * P2,
-    real_type const * P3
-  );
+  int_type isPointInTriangle(real_type const * pt, real_type const * P1, real_type const * P2, real_type const * P3);
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   /*\
@@ -394,19 +317,17 @@ namespace G2lib {
   //!
   //! \endrst
   //!
-  void
-  xy_to_guess_angle(
-    int_type          npts,
-    real_type const * x,
-    real_type const * y,
-    real_type       * theta,
-    real_type       * theta_min,
-    real_type       * theta_max,
-    real_type       * omega,
-    real_type       * len
-  );
+  void xy_to_guess_angle(
+      int_type          npts,
+      real_type const * x,
+      real_type const * y,
+      real_type *       theta,
+      real_type *       theta_min,
+      real_type *       theta_max,
+      real_type *       omega,
+      real_type *       len);
 
-}
+}  // namespace G2lib
 
 ///
 /// eof: G2lib.hh

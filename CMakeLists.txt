@@ -1,13 +1,4 @@
-############################################################################
-#                                                                          #
-#  file: CMakeLists.txt                                                    #
-#  Copyright (C) 2016                                                      #
-#      Enrico Bertolazzi                                                   #
-#      Dipartimento di Ingegneria Industriale                              #
-#      Universita` degli Studi di Trento                                   #
-#      email: enrico.bertolazzi@ing.unitn.it                               #
-#                                                                          #
-############################################################################
+
 
 cmake_minimum_required(VERSION 3.14)
 
@@ -24,6 +15,8 @@ project(
 #  |___/\___/\_,_|_| \__\___/__/
 #
 set(CLOTHOIDS_SRCS
+  Utils.hxx
+  Constants.cc
   AABBtree.cc
   Biarc.cc
   BiarcList.cc
@@ -55,7 +48,6 @@ set(CLOTHOIDS_HDRS
   Clothoids/PolyLine.hxx
   Clothoids/Triangle2D.hxx
   Clothoids/Types.hxx
-  Clothoids/Utils.hxx
   Clothoids.hh)
 
 set(CLOTHOIDS_SRCS_BUILD)
@@ -81,7 +73,9 @@ add_library(ClothoidsStatic STATIC)
 target_sources(ClothoidsStatic
   PRIVATE "${CLOTHOIDS_SRCS_BUILD}"
   PUBLIC "${CLOTHOIDS_HDRS_BUILD}")
-target_include_directories(ClothoidsStatic PRIVATE "include")
+target_compile_definitions(ClothoidsStatic PUBLIC "_USE_MATH_DEFINES")
+target_include_directories(ClothoidsStatic PUBLIC "include")
+target_include_directories(ClothoidsStatic PRIVATE "src")
 target_link_libraries(ClothoidsStatic PRIVATE ebertolazzi_quarticRootsFlocke_Static fmt::fmt-header-only)
 
 #   _____       _
