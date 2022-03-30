@@ -372,7 +372,7 @@ namespace G2lib {
     // transform to standard clothoid
     real_type sflex = -CD.kappa0 / CD.dk;
 
-    G2LIB_UTILS_ASSERT(sflex <= 0, " bad sflex = {}\n", sflex);
+    G2LIB_UTILS_ASSERT(sflex <= 0, " bad sflex = %f\n", sflex);
 
     real_type thflex = CD.theta0 + 0.5 * CD.kappa0 * sflex;
     real_type ssf    = sin(thflex);
@@ -484,7 +484,7 @@ namespace G2lib {
 
     real_type ell = (DK - abs(CD.kappa0)) / abs(CD.dk);
 
-    G2LIB_UTILS_ASSERT(ell > 0 && ell < L, "bad ell = {} L = {}\n", ell, L);
+    G2LIB_UTILS_ASSERT(ell > 0 && ell < L, "bad ell = %f L = %f\n", ell, L);
 
     ClothoidData CDS;
     CD.eval(ell, CDS);

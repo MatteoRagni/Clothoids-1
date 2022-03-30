@@ -82,7 +82,7 @@ namespace G2lib {
       case G2LIB_BIARC:
       case G2LIB_BIARC_LIST:
       case G2LIB_CLOTHOID_LIST:
-        G2LIB_UTILS_ERROR("PolyLine constructor cannot convert from: {}\n", CurveType_name[C.type()]);
+        G2LIB_UTILS_ERROR("PolyLine constructor cannot convert from: %s\n", CurveType_name[C.type()]);
     }
   }
 
@@ -160,7 +160,7 @@ namespace G2lib {
   LineSegment const & PolyLine::getSegment(int_type n) const {
     G2LIB_UTILS_ASSERT0(!m_polylineList.empty(), "PolyLine::getSegment(...) empty PolyLine\n");
     G2LIB_UTILS_ASSERT(
-        n >= 0 && n < int_type(m_polylineList.size()), "PolyLine::getSegment( {} ) out of range [0,{}]\n", n,
+        n >= 0 && n < int_type(m_polylineList.size()), "PolyLine::getSegment( %d ) out of range [0,%d]\n", n,
         m_polylineList.size() - 1);
     return m_polylineList[size_t(n)];
   }
@@ -342,7 +342,7 @@ namespace G2lib {
   void PolyLine::trim(real_type s_begin, real_type s_end) {
     G2LIB_UTILS_ASSERT(
         s_begin >= m_s0.front() && s_end <= m_s0.back() && s_end > s_begin,
-        "void::trim( s_begin={}, s_end={} ) bad range, must be in [{},{}]\n", s_begin, s_end, m_s0.front(),
+        "void::trim( s_begin=%f, s_end=%f ) bad range, must be in [%f,%f]\n", s_begin, s_end, m_s0.front(),
         m_s0.back());
 
     size_t i_begin = size_t(findAtS(s_begin));
@@ -678,8 +678,8 @@ namespace G2lib {
     for (ip = intersectionList.begin(); ip != intersectionList.end(); ++ip) {
       size_t ipos0 = size_t(ip->first->Ipos());
       size_t ipos1 = size_t(ip->second->Ipos());
-      G2LIB_UTILS_ASSERT(ipos0 < m_polylineList.size(), "Bad ipos0 = {}\n", ipos0);
-      G2LIB_UTILS_ASSERT(ipos1 < pl.m_polylineList.size(), "Bad ipos1 = {}\n", ipos1);
+      G2LIB_UTILS_ASSERT(ipos0 < m_polylineList.size(), "Bad ipos0 = %d\n", ipos0);
+      G2LIB_UTILS_ASSERT(ipos1 < pl.m_polylineList.size(), "Bad ipos1 = %d\n", ipos1);
       real_type sss0, sss1;
       bool      ok = m_polylineList[ipos0].intersect(pl.m_polylineList[ipos1], sss0, sss1);
       if (ok) {
@@ -737,14 +737,13 @@ namespace G2lib {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   ostream_type & operator<<(ostream_type & stream, PolyLine const & P) {
-    fmt::print(
-        stream,
-        "nseg    = {}\n"
-        "x_begin = {}\n"
-        "y_begin = {}\n"
-        "x_end   = {}\n"
-        "y_end   = {}\n"
-        "length  = {}\n",
+    stream << Utils::format_string(
+        "nseg    = %f\n"
+        "x_begin = %f\n"
+        "y_begin = %f\n"
+        "x_end   = %f\n"
+        "y_end   = %f\n"
+        "length  = %f\n",
         P.num_segments(), P.x_begin(), P.y_begin(), P.x_end(), P.y_end(), P.length());
     return stream;
   }

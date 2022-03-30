@@ -259,7 +259,7 @@ namespace G2lib {
         sum += term;
         absterm = abs(term);
         G2LIB_UTILS_ASSERT(
-            oldterm >= absterm, "In FresnelCS f not converged to eps, x = {} oldterm = {} absterm = {}\n", x, oldterm,
+            oldterm >= absterm, "In FresnelCS f not converged to eps, x = %f oldterm = %f absterm = %f\n", x, oldterm,
             absterm);
         oldterm = absterm;
       } while (absterm > eps10 * abs(sum));
@@ -278,7 +278,7 @@ namespace G2lib {
         sum += term;
         absterm = abs(term);
         G2LIB_UTILS_ASSERT(
-            oldterm >= absterm, "In FresnelCS g not converged to eps, x = {} oldterm = {} absterm = {}\n", x, oldterm,
+            oldterm >= absterm, "In FresnelCS g not converged to eps, x = %f oldterm = %f absterm = %f\n", x, oldterm,
             absterm);
         oldterm = absterm;
       } while (absterm > eps10 * abs(sum));
@@ -343,7 +343,7 @@ namespace G2lib {
   // -------------------------------------------------------------------------
   // nk max 3
   static void evalXYaLarge(int_type nk, real_type a, real_type b, real_type * X, real_type * Y) {
-    G2LIB_UTILS_ASSERT(nk < 4 && nk > 0, "In evalXYaLarge first argument nk must be in 1..3, nk {}\n", nk);
+    G2LIB_UTILS_ASSERT(nk < 4 && nk > 0, "In evalXYaLarge first argument nk must be in 1..3, nk %d\n", nk);
 
     real_type s    = a > 0 ? +1 : -1;
     real_type absa = abs(a);
@@ -446,7 +446,7 @@ namespace G2lib {
   // -------------------------------------------------------------------------
 
   static void evalXYaSmall(real_type a, real_type b, int_type p, real_type & X, real_type & Y) {
-    G2LIB_UTILS_ASSERT(p < 11 && p > 0, "In evalXYaSmall p = {} must be in 1..10\n", p);
+    G2LIB_UTILS_ASSERT(p < 11 && p > 0, "In evalXYaSmall p = %d must be in 1..10\n", p);
 
     real_type X0[43], Y0[43];
 
@@ -475,8 +475,8 @@ namespace G2lib {
 
     G2LIB_UTILS_ASSERT(
         nkk < 46,
-        "In evalXYaSmall (nk,p) = ({},{})\n"
-        "nk + 4*p + 2 = {} must be less than 46\n",
+        "In evalXYaSmall (nk,p) = (%d,%d)\n"
+        "nk + 4*p + 2 = %d must be less than 46\n",
         nk, p, nkk);
 
     evalXYazero(nkk, b, X0, Y0);
@@ -521,7 +521,7 @@ namespace G2lib {
   // -------------------------------------------------------------------------
 
   void GeneralizedFresnelCS(int_type nk, real_type a, real_type b, real_type c, real_type * intC, real_type * intS) {
-    G2LIB_UTILS_ASSERT(nk > 0 && nk < 4, "nk = {} must be in 1..3\n", nk);
+    G2LIB_UTILS_ASSERT(nk > 0 && nk < 4, "nk = %d must be in 1..3\n", nk);
 
     if (abs(a) < A_THRESOLD)
       evalXYaSmall(nk, a, b, A_SERIE_SIZE, intC, intS);
@@ -1114,11 +1114,11 @@ namespace G2lib {
       A -= g / dg;
     } while (++niter <= 10 && abs(g) > tol);
 
-    G2LIB_UTILS_ASSERT(abs(g) <= tol, "Newton do not converge, g = {} niter = {}\n", g, niter);
+    G2LIB_UTILS_ASSERT(abs(g) <= tol, "Newton do not converge, g = %d niter = %d\n", g, niter);
     GeneralizedFresnelCS(2 * A, delta - A, phi0, intC[0], intS[0]);
     L = r / intC[0];
 
-    G2LIB_UTILS_ASSERT(L > 0, "Negative length L = {}\n", L);
+    G2LIB_UTILS_ASSERT(L > 0, "Negative length L = %f\n", L);
     this->kappa0 = (delta - A) / L;
     this->dk     = 2 * A / L / L;
 
@@ -1271,13 +1271,12 @@ namespace G2lib {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void ClothoidData::info(ostream_type & s) const {
-    fmt::print(
-        s,
-        "x0     = {}\n"
-        "y0     = {}\n"
-        "theta0 = {}\n"
-        "kappa0 = {}\n"
-        "dk     = {}\n",
+    s << Utils::format_string(
+        "x0     = %f\n"
+        "y0     = %f\n"
+        "theta0 = %f\n"
+        "kappa0 = %f\n"
+        "dk     = %f\n",
         x0, y0, theta0, kappa0, dk);
   }
 

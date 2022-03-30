@@ -102,7 +102,7 @@ namespace G2lib {
         break;
       case G2LIB_CLOTHOID:
       case G2LIB_CLOTHOID_LIST:
-        G2LIB_UTILS_ERROR("BiarcList constructor cannot convert from: {}\n", CurveType_name[C.type()]);
+        G2LIB_UTILS_ERROR("BiarcList constructor cannot convert from: %s\n", CurveType_name[C.type()]);
     }
   }
 
@@ -252,9 +252,9 @@ namespace G2lib {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   Biarc const & BiarcList::get(int_type idx) const {
-    G2LIB_UTILS_ASSERT(!m_biarcList.empty(), "BiarcList::get( {} ) empty list\n", idx);
+    G2LIB_UTILS_ASSERT(!m_biarcList.empty(), "BiarcList::get( %d ) empty list\n", idx);
     G2LIB_UTILS_ASSERT(
-        idx >= 0 && idx < int_type(m_biarcList.size()), "BiarcList::get( {} ) bad index, must be in [0,{}]\n", idx,
+        idx >= 0 && idx < int_type(m_biarcList.size()), "BiarcList::get( %d ) bad index, must be in [0,%d]\n", idx,
         m_biarcList.size() - 1);
     return m_biarcList[idx];
   }
@@ -795,7 +795,7 @@ namespace G2lib {
   void BiarcList::trim(real_type s_begin, real_type s_end) {
     G2LIB_UTILS_ASSERT(
         s_begin >= m_s0.front() && s_end <= m_s0.back() && s_end > s_begin,
-        "BiarcList::trim( s_begin={}, s_end={} ) bad range, must be in [ {}, {} ]\n", s_begin, s_end, m_s0.front(),
+        "BiarcList::trim( s_begin=%f, s_end=%f ) bad range, must be in [ %f, %f ]\n", s_begin, s_end, m_s0.front(),
         m_s0.back());
 
     size_t i_begin = size_t(findAtS(s_begin));
@@ -1089,8 +1089,8 @@ namespace G2lib {
     G2LIB_UTILS_ASSERT0(!m_biarcList.empty(), "BiarcList::findST, empty list\n");
     G2LIB_UTILS_ASSERT(
         ibegin >= 0 && ibegin <= iend && iend < int_type(m_biarcList.size()),
-        "BiarcList::findST( ibegin={}, iend={}, x, y, s, t )\n"
-        "bad range not in [0,{}]\n",
+        "BiarcList::findST( ibegin=%d, iend=%d, x, y, s, t )\n"
+        "bad range not in [0,%d]\n",
         ibegin, iend, m_biarcList.size() - 1);
     s = t         = 0;
     int_type iseg = 0;

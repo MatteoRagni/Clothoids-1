@@ -60,12 +60,12 @@ namespace G2lib {
       case G2LIB_LINE: {
         LineSegment const & LS = *static_cast<LineSegment const *>(&C);
         bool ok = this->build(LS.x_begin(), LS.y_begin(), LS.theta_begin(), LS.x_end(), LS.y_end(), LS.theta_end());
-        G2LIB_UTILS_ASSERT(ok, "Biarc constructor failed convert from: {}\n", CurveType_name[C.type()]);
+        G2LIB_UTILS_ASSERT(ok, "Biarc constructor failed convert from: %s\n", CurveType_name[C.type()]);
       } break;
       case G2LIB_CIRCLE: {
         CircleArc const & LS = *static_cast<CircleArc const *>(&C);
         bool ok = this->build(LS.x_begin(), LS.y_begin(), LS.theta_begin(), LS.x_end(), LS.y_end(), LS.theta_end());
-        G2LIB_UTILS_ASSERT(ok, "Biarc constructor failed convert from: {}\n", CurveType_name[C.type()]);
+        G2LIB_UTILS_ASSERT(ok, "Biarc constructor failed convert from: %s\n", CurveType_name[C.type()]);
       } break;
       case G2LIB_BIARC:
         *this = *static_cast<Biarc const *>(&C);
@@ -74,7 +74,7 @@ namespace G2lib {
       case G2LIB_BIARC_LIST:
       case G2LIB_CLOTHOID_LIST:
       case G2LIB_POLYLINE:
-        G2LIB_UTILS_ERROR("Biarc constructor cannot convert from: {}\n", CurveType_name[C.type()]);
+        G2LIB_UTILS_ERROR("Biarc constructor cannot convert from: %s\n", CurveType_name[C.type()]);
     }
   }
 
@@ -82,7 +82,7 @@ namespace G2lib {
       : BaseCurve(G2LIB_BIARC) {
     bool ok = build(x0, y0, theta0, x1, y1, theta1);
     G2LIB_UTILS_ASSERT(
-        ok, "Biarc( x0={}, y0={}, theta0={}, x1={}, y1={}, theta1={}) cannot be computed\n", x0, y0, theta0, x1, y1,
+        ok, "Biarc( x0=%f, y0=%f, theta0=%f, x1=%f, y1=%f, theta1=%f) cannot be computed\n", x0, y0, theta0, x1, y1,
         theta1);
   }
 
@@ -242,7 +242,7 @@ namespace G2lib {
   }
 
   void Biarc::trim(real_type s_begin, real_type s_end) {
-    G2LIB_UTILS_ASSERT(s_end > s_begin, "Biarc::trim( begin={}, s_end={} ) s_end must be > s_begin\n", s_begin, s_end);
+    G2LIB_UTILS_ASSERT(s_end > s_begin, "Biarc::trim( begin=%f, s_end=%f ) s_end must be > s_begin\n", s_begin, s_end);
     real_type L0 = m_C0.length();
     if (s_end <= L0) {
       m_C0.trim(s_begin, s_end);

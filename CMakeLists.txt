@@ -8,11 +8,11 @@
 # modification, are permitted provided that the following conditions are
 # met:
 # 
-#     * Redistributions of source code must retain the above copyright
-#       notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above copyright
-#       notice, this list of conditions and the following disclaimer in
-#       the documentation and/or other materials provided with the distribution
+#  * Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#  * Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in
+#    the documentation and/or other materials provided with the distribution
 # 
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -35,6 +35,10 @@ project(
   VERSION ${CLOTHOIDS_VERSION}
   HOMEPAGE_URL "https://github.com/MatteoRagni/Clothoids-1")
 
+option(CLOTHOIDS_BUILD_SHARED "Build dynamic library" OFF)
+
+add_subdirectory(./deps/PolynomialRoots)
+
 #   ___
 #  / __| ___ _  _ _ _ __ ___ ___
 #  \__ \/ _ \ || | '_/ _/ -_|_-<
@@ -42,6 +46,7 @@ project(
 #
 set(CLOTHOIDS_SRCS
   Utils.hxx
+  Format.hxx
   Constants.cc
   AABBtree.cc
   Biarc.cc
@@ -82,12 +87,17 @@ set(CLOTHOIDS_SRCS_BUILD ${CLOTHOIDS_SRCS_BUILD} src/${s})
 endforeach()
 
 set(CLOTHOIDS_HDRS_BUILD)
+set(CLOTHOIDS_HDRS_INSTALL)
+set(CLOTHOIDS_HDRS_INSTALL_TARGET)
 foreach(h ${CLOTHOIDS_HDRS})
-set(CLOTHOIDS_HDRS_BUILD ${CLOTHOIDS_HDRS_BUILD} include/${h})
+  set(CLOTHOIDS_HDRS_BUILD ${CLOTHOIDS_HDRS_BUILD} 
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/${h}>")
+  set(CLOTHOIDS_HDRS_INSTALL ${CLOTHOIDS_HDRS_INSTALL} 
+    "$<INSTALL_INTERFACE:include/${h}>")
+  set(CLOTHOIDS_HDRS_INSTALL_TARGET ${CLOTHOIDS_HDRS_INSTALL_TARGET} 
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/${h}")
 endforeach()
-
-add_subdirectory(./deps/quarticRootsFlocke)
-add_subdirectory(./deps/fmt)
+set(CLOTHOIDS_HDRS_TARGET ${CLOTHOIDS_HDRS_BUILD} ${CLOTHOIDS_HDRS_INSTALL})
 
 #   _____                  _
 #  |_   _|_ _ _ _ __ _ ___| |_ ___
@@ -95,82 +105,97 @@ add_subdirectory(./deps/fmt)
 #    |_|\__,_|_| \__, \___|\__/__/
 #                |___/
 #
+set(CLOTHOIDS_EXPORT_TARGETS ClothoidsStatic)
 add_library(ClothoidsStatic STATIC)
 target_sources(ClothoidsStatic
   PRIVATE "${CLOTHOIDS_SRCS_BUILD}"
-  PUBLIC "${CLOTHOIDS_HDRS_BUILD}")
+  PUBLIC "${CLOTHOIDS_HDRS_TARGET}")
 target_compile_definitions(ClothoidsStatic PUBLIC "_USE_MATH_DEFINES")
-target_include_directories(ClothoidsStatic PUBLIC "include")
-target_include_directories(ClothoidsStatic PRIVATE "src")
-target_link_libraries(ClothoidsStatic PRIVATE ebertolazzi_quarticRootsFlocke_Static fmt::fmt-header-only)
+target_include_directories(ClothoidsStatic PUBLIC 
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  "$<INSTALL_INTERFACE:include/Clothoids>")
+target_include_directories(ClothoidsStatic PRIVATE 
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>")
+target_link_libraries(ClothoidsStatic PRIVATE PolynomialRootsStatic)
+set_target_properties(ClothoidsStatic PROPERTIES
+  POSITION_INDIPENDENT_CODE ON
+  OUTPUT_NAME Clothoids
+  EXPORT_NAME Clothoids_Targets)
+add_library(Clothoids::Static ALIAS ClothoidsStatic)
 
-#   _____       _
-#  |_   _|__ __| |_ ___
-#    | |/ -_|_-<  _(_-<
-#    |_|\___/__/\__/__/
-#
-# if ( EB_ENABLE_TESTS )
-# 
-#   enable_testing()
-# 
-#   set( EXELISTBIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/bin" )
-#   set( EXELISTCPP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src_tests" )
-# 
-#   set(
-#     EXELISTCPP
-#     testBiarc
-#     testDistance
-#     testDistanceCircuit
-#     testG2
-#     testG2plot
-#     testG2stat
-#     testG2stat2arc
-#     testG2statCLC
-#     testIntersect
-#     testIntersect2
-#     testIntersect3
-#     testPolyline
-#     testTriangle2D
-#   )
-# 
-#   add_custom_target( "${PROJECT_NAME}_all_tests" ALL )
-# 
-#   set( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin )
-#   set( LIBS ${EB_NAMESPACE}_${PROJECT_NAME}_Static ${UTILS} ${ROOTS} ${CMAKE_DL_LIBS} )
-#   foreach( S ${EXELISTCPP} )
-#     add_executable( ${S} ${CMAKE_CURRENT_SOURCE_DIR}/src_tests/${S}.cc )
-#     target_link_libraries( ${S} ${LIBS} )
-#     add_test(
-#       NAME "${S}"
-#       COMMAND ./bin/${S}
-#       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-#     )
-#     add_dependencies( "${PROJECT_NAME}_all_tests" ${S} )
-#   endforeach()
-# 
-# endif()
+if(CLOTHOIDS_BUILD_SHARED)
+  set(CLOTHOIDS_EXPORT_TARGETS ${CLOTHOIDS_EXPORT_TARGETS} "ClothoidsDynamic")
+  add_library(ClothoidsDynamic SHARED)
+  target_sources(ClothoidsDynamic
+    PRIVATE "${CLOTHOIDS_SRCS_BUILD}"
+    PUBLIC "${CLOTHOIDS_HDRS_TARGET}")
+  target_compile_definitions(ClothoidsDynamic PUBLIC "_USE_MATH_DEFINES")
+  target_include_directories(ClothoidsDynamic PUBLIC 
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    "$<INSTALL_INTERFACE:include/Clothoids>")
+  target_include_directories(ClothoidsDynamic PRIVATE 
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>")
+  target_link_libraries(ClothoidsDynamic PRIVATE PolynomialRootsStatic)
+  set_target_properties(ClothoidsDynamic PROPERTIES
+    POSITION_INDIPENDENT_CODE ON
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR}
+    OUTPUT_NAME Clothoids
+    EXPORT_NAME Clothoids_Targets)
+  add_library(Clothoids::Dynamic ALIAS ClothoidsDynamic)
+endif()
 
-#   ___         _        _ _
-#  |_ _|_ _  __| |_ __ _| | |
-#   | || ' \(_-<  _/ _` | | |
-#  |___|_||_/__/\__\__,_|_|_|
-#
-# install(
-#   TARGETS ${TARGETS_TO_BE_INSTALLED}
-#   # EXPORT (da definire)
-#   LIBRARY DESTINATION ${INSTALL_PREFIX}/dll
-#   ARCHIVE DESTINATION ${INSTALL_PREFIX}/lib
-#   RUNTIME DESTINATION ${INSTALL_PREFIX}/bin
-#   PUBLIC_HEADER DESTINATION ${PROJECT_PUBLIC_HEADER_DESTINATION}
-# )
+#  ___         _        _ _ 
+# |_ _|_ _  __| |_ __ _| | |
+#  | || ' \(_-<  _/ _` | | |
+# |___|_||_/__/\__\__,_|_|_|
+#                           
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 
-#   ___         _
-#  | _ \__ _ __| |____ _ __ _ ___
-#  |  _/ _` / _| / / _` / _` / -_)
-#  |_| \__,_\__|_\_\__,_\__, \___|
-#                       |___/
-#
+write_basic_package_version_file(
+  "${PROJECT_NAME}ConfigVersion.cmake"
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion)
 
-# include( ./cmake/CMakeLists-cpack.txt )
-# 
-# ebertolazzi_final_messages()
+set(PROJECT_INSTALL_CMAKEDIR
+  "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+  CACHE STRING "Path To ${PROJECT_NAME} Cmake Files")
+
+install(TARGETS ${CLOTHOIDS_EXPORT_TARGETS}
+  EXPORT "${PROJECT_NAME}_Targets"
+  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+          COMPONENT "${PROJECT_NAME}_Install"
+  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT "${PROJECT_NAME}_Install"
+          NAMELINK_COMPONENT "${PROJECT_NAME}_Install"
+  ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT "${PROJECT_NAME}_Install"
+  INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
+
+install(FILES
+  ${CLOTHOIDS_HDRS_INSTALL_TARGET}
+  DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}"
+  COMPONENT "${PROJECT_NAME}_Install")
+
+# Packaging specific installs
+
+export(EXPORT "${PROJECT_NAME}_Targets"
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}Targets.cmake"
+  NAMESPACE "${PROJECT_NAMESPACE}::")
+
+configure_file("cmake/${PROJECT_NAME}Config.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+  @ONLY)
+
+install(EXPORT "${PROJECT_NAME}_Targets"
+  DESTINATION "${PROJECT_INSTALL_CMAKEDIR}"
+  NAMESPACE "${PROJECT_NAMESPACE}::"
+  FILE "${PROJECT_NAME}Targets.cmake"
+  COMPONENT "${PROJECT_NAME}_Install")
+
+install(FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+  DESTINATION "${PROJECT_INSTALL_CMAKEDIR}"
+  COMPONENT "${PROJECT_NAME}_Install")

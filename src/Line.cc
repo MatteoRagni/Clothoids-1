@@ -56,7 +56,7 @@ namespace G2lib {
       case G2LIB_BIARC_LIST:
       case G2LIB_CLOTHOID_LIST:
       case G2LIB_POLYLINE:
-        G2LIB_UTILS_ERROR("LineSegment constructor cannot convert from: {}\n", CurveType_name[C.type()]);
+        G2LIB_UTILS_ERROR("LineSegment constructor cannot convert from: %s\n", CurveType_name[C.type()]);
     }
   }
 
@@ -273,7 +273,7 @@ namespace G2lib {
     } else {
       G2LIB_UTILS_ERROR(
           "LineSegment bbTriangles found a degenerate line\n"
-          "bbox = [ xmin={}, ymin={}, xmax={}, ymax={} ] max_angle={} max_size={}\n",
+          "bbox = [ xmin=%f, ymin=%f, xmax=%f, ymax=%f ] max_angle=%f max_size=%f\n",
           xmin, ymin, xmax, ymax, max_angle, max_size);
     }
   }
@@ -294,8 +294,8 @@ namespace G2lib {
     } else {
       G2LIB_UTILS_ERROR(
           "LineSegment bbTriangles found a degenerate line\n"
-          "bbox = [ xmin={}, ymin={}, xmax={}, ymax={} ]\n"
-          "offs={} max_angle={} max_size={}\n",
+          "bbox = [ xmin=%f, ymin=%f, xmax=%f, ymax=%f ]\n"
+          "offs=%f max_angle=%f max_size=%f\n",
           xmin, ymin, xmax, ymax, offs, max_angle, max_size);
     }
   }
@@ -567,12 +567,11 @@ namespace G2lib {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   ostream_type & operator<<(ostream_type & stream, LineSegment const & c) {
-    fmt::print(
-        stream,
-        "x0     = {}\n"
-        "y0     = {}\n"
-        "theta0 = {}\n"
-        "L      = {}\n",
+    stream << Utils::format_string(
+        "x0     = %f\n"
+        "y0     = %f\n"
+        "theta0 = %f\n"
+        "L      = %f\n",
         c.m_x0, c.m_y0, c.m_theta0, c.m_L);
     return stream;
   }

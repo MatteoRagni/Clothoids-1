@@ -328,12 +328,11 @@ namespace G2lib {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   ostream_type & operator<<(ostream_type & stream, Triangle2D const & t) {
-    fmt::print(
-        stream,
+    stream << Utils::format_string(
         "Triangle2D\n"
-        "P0 = [{},{}]\n"
-        "P1 = [{},{}]\n"
-        "P2 = [{},{}]\n",
+        "P0 = [%f,%f]\n"
+        "P1 = [%f,%f]\n"
+        "P2 = [%f,%f]\n",
         t.m_p1[0], t.m_p1[1], t.m_p2[0], t.m_p2[1], t.m_p3[0], t.m_p3[1]);
     return stream;
   }

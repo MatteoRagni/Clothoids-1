@@ -26,9 +26,7 @@
  * Enrico Bertolazzi http://ebertolazzi.github.io/Clothoids/
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #include "Clothoids/AABBtree.hxx"
-
-#include "fmt/ostream.h"
-#include "fmt/core.h"
+#include "Utils.hxx"
 
 // Workaround for Visual Studio
 #ifdef min
@@ -147,7 +145,7 @@ namespace G2lib {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   void BBox::print(ostream_type & stream) const {
-    fmt::print(stream, "BBOX (xmin,ymin,xmax,ymax) = ({}, {}, {}, {})\n", m_xmin, m_ymin, m_xmax, m_ymax);
+    stream << Utils::format_string("BBOX (xmin,ymin,xmax,ymax) = (%f, %f, %f, %f)\n", m_xmin, m_ymin, m_xmax, m_ymax);
   }
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -270,8 +268,7 @@ namespace G2lib {
     if (empty()) {
       stream << "[EMPTY AABB tree]\n";
     } else {
-      fmt::print(
-          stream, "BBOX xmin={:<12.4)} ymin={:<12.4)} xmax={:<12.4)} ymax={:<12.4)} level={}\n", pBBox->m_xmin,
+      stream << Utils::format_string("BBOX xmin=%-12.4f ymin=%-12.4f xmax=%-12.4f ymax=%-12.4f\n", pBBox->m_xmin,
           pBBox->m_ymin, pBBox->m_xmax, pBBox->m_ymax);
       vector<PtrAABB>::const_iterator it;
       for (it = children.begin(); it != children.end(); ++it)

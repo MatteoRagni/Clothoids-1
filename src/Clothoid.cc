@@ -73,7 +73,7 @@ namespace G2lib {
       case G2LIB_BIARC_LIST:
       case G2LIB_CLOTHOID_LIST:
       case G2LIB_POLYLINE:
-        G2LIB_UTILS_ERROR("ClothoidList constructor cannot convert from: {}\n", CurveType_name[C.type()]);
+        G2LIB_UTILS_ERROR("ClothoidList constructor cannot convert from: %s\n", CurveType_name[C.type()]);
     }
   }
 
@@ -83,7 +83,7 @@ namespace G2lib {
       real_type _x0, real_type _y0, real_type _theta0, real_type _k, real_type _dk, real_type _L) {
     G2LIB_UTILS_ASSERT(
         _L > 0,
-        "ClothoidCurve::build( x0={}, y0={}, theta0={}, k={}, dk={}, L={} )\n"
+        "ClothoidCurve::build( x0=%f, y0=%f, theta0=%f, k=%f, dk=%f, L=%f )\n"
         "L must be positive!\n",
         _x0, _y0, _theta0, _k, _dk, _L);
     m_CD.x0     = _x0;
@@ -758,17 +758,16 @@ namespace G2lib {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   ostream_type & operator<<(ostream_type & stream, ClothoidCurve const & c) {
-    fmt::print(
-        stream,
-        "x0     = {:<12} x1     = {:<12}\n"
-        "y0     = {:<12} y1     = {:<12}\n"
-        "theta0 = {:<12} theta1 = {:<12}\n"
-        "kappa0 = {:<12} kappa1 = {:<12}\n"
-        "dk     = {:<12} L      = {:<12}\n",
-        fmt::format("{:.6}", c.x_begin()), fmt::format("{:.6}", c.x_end()), fmt::format("{:.6}", c.y_begin()),
-        fmt::format("{:.6}", c.y_end()), fmt::format("{:.6}", c.theta_begin()), fmt::format("{:.6}", c.theta_end()),
-        fmt::format("{:.6}", c.kappa_begin()), fmt::format("{:.6}", c.kappa_end()), fmt::format("{:.6}", c.m_CD.dk),
-        fmt::format("{:.6}", c.m_L));
+    stream << Utils::format_string(
+        "x0     = %-12.6f x1     = %-12.6f\n"
+        "y0     = %-12.6f y1     = %-12.6f\n"
+        "theta0 = %-12.6f theta1 = %-12.6f\n"
+        "kappa0 = %-12.6f kappa1 = %-12.6f\n"
+        "dk     = %-12.6f L      = %-12.6f\n",
+        c.x_begin(), c.x_end(), c.y_begin(),
+        c.y_end(), c.theta_begin(), c.theta_end(),
+        c.kappa_begin(), c.kappa_end(), c.m_CD.dk,
+        c.m_L);
     return stream;
   }
 

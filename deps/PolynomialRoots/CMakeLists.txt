@@ -19,7 +19,6 @@
 # THE SOFTWARE.
 
 cmake_minimum_required(VERSION 3.14)
-project(fmt)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -28,14 +27,20 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include(FetchContent)
 
-# Options
-set(FMT_DOC OFF)
-set(FMT_INSTALL OFF)
-set(FMT_TEST OFF)
+project(PolynomialRoots)
 
-set(CLOTHOIDS_FMT_VERSION "8.1.1" CACHE STRING "libfmt Version to use")
-set(CLOTHOIDS_FMT_DOWNLOAD_URL "https://github.com/fmtlib/fmt/releases/download/${CLOTHOIDS_FMT_VERSION}/fmt-${CLOTHOIDS_FMT_VERSION}.zip"
-  CACHE STRING "Download URL for libfmt library")
+set(POLYNOMIAL_ROOTS_FLOCKE_GIT_REPOSITORY 
+  "https://github.com/MatteoRagni/quarticRootsFlocke.git"
+  CACHE STRING "Sets the origin for the Polynomial Roots repository")
+set(POLYNOMIAL_ROOTS_FLOCKE_GIT_TAG 
+  "v3.0.0"
+  CACHE STRING "Sets the checkout point for Polynomial Roots. Can be a SHA or a git tag")
 
-FetchContent_Declare(fmt URL ${CLOTHOIDS_FMT_DOWNLOAD_URL})
-FetchContent_MakeAvailable(fmt)
+# Dependency Options
+set(POLYNOMIAL_ROOTS_BUILD_SHARED OFF)
+
+FetchContent_Declare(
+  PolynomialRoots
+  GIT_REPOSITORY ${POLYNOMIAL_ROOTS_FLOCKE_GIT_REPOSITORY}
+  GIT_TAG ${POLYNOMIAL_ROOTS_FLOCKE_GIT_TAG})
+FetchContent_MakeAvailable(PolynomialRoots)

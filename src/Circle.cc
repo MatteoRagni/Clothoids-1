@@ -80,7 +80,7 @@ namespace G2lib {
       case G2LIB_BIARC_LIST:
       case G2LIB_CLOTHOID_LIST:
       case G2LIB_POLYLINE:
-        G2LIB_UTILS_ERROR("CircleArc constructor cannot convert from: {}\n", CurveType_name[C.type()]);
+        G2LIB_UTILS_ERROR("CircleArc constructor cannot convert from: %s\n", CurveType_name[C.type()]);
     }
   }
 
@@ -247,7 +247,7 @@ namespace G2lib {
 
   void CircleArc::trim(real_type s_begin, real_type s_end) {
     G2LIB_UTILS_ASSERT(
-        s_end > s_begin, "CircleArc::trim( begin={}, s_end={} ) s_end must be > s_begin\n", s_begin, s_end);
+        s_end > s_begin, "CircleArc::trim( begin=%f, s_end=%f ) s_end must be > s_begin\n", s_begin, s_end);
     real_type x, y;
     eval(s_begin, x, y);
     m_theta0 += s_begin * m_k;
@@ -723,13 +723,12 @@ namespace G2lib {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   ostream_type & operator<<(ostream_type & stream, CircleArc const & c) {
-    fmt::print(
-        stream,
-        "x0     = {}\n"
-        "y0     = {}\n"
-        "theta0 = {}\n"
-        "k      = {}\n"
-        "L      = {}\n",
+    stream << Utils::format_string(
+        "x0     = %f\n"
+        "y0     = %f\n"
+        "theta0 = %f\n"
+        "k      = %f\n"
+        "L      = %f\n",
         c.m_x0, c.m_y0, c.m_theta0, c.m_k, c.m_L);
     return stream;
   }

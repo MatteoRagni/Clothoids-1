@@ -34,36 +34,14 @@
 #include <mutex>
 #include <cmath>
 #include <limits>
+#include <string>
 
-#include "fmt/ostream.h"
-#include "fmt/core.h"
+#include "Format.hxx"
 
 #include "Clothoids/Constants.hxx"
 
 #ifndef GLIB2_TOL_ANGLE
 #define GLIB2_TOL_ANGLE 1e-8
-#endif
-
-#ifndef G2LIB_UTILS_ERROR0
-#define G2LIB_UTILS_ERROR0(MSG) throw std::runtime_error(MSG);
-#endif
-
-#ifndef G2LIB_UTILS_ASSERT0
-#define G2LIB_UTILS_ASSERT0(COND, MSG)                                                                                 \
-  if (!(COND)) {                                                                                                       \
-    G2LIB_UTILS_ERROR0(MSG)                                                                                            \
-  }
-#endif
-
-#ifndef G2LIB_UTILS_ERROR
-#define G2LIB_UTILS_ERROR(...) throw std::runtime_error(fmt::format(__VA_ARGS__));
-#endif
-
-#ifndef G2LIB_UTILS_ASSERT
-#define G2LIB_UTILS_ASSERT(COND, ...)                                                                                  \
-  if (!(COND)) {                                                                                                       \
-    G2LIB_UTILS_ERROR(__VA_ARGS__)                                                                                     \
-  }
 #endif
 
 namespace G2lib {
@@ -90,9 +68,9 @@ namespace G2lib {
       const T_int n = npts - 1;
       G2LIB_UTILS_ASSERT(
           npts > 1 && lastInterval >= 0 && lastInterval < n,
-          "In search_interval( npts={}, X, x={}, lastInterval={}, closed={}, can_extend={})\n"
+          "In search_interval( npts=%d, X, x=%d, lastInterval=%d, closed=%d, can_extend=%d)\n"
           "npts musrt be >= 2 and lastInterval must be in [0,npts-2]\n",
-          npts, lastInterval, closed, can_extend);
+          npts, x, lastInterval, closed, can_extend);
 
       // Handles the "closed" search, by limiting the value of x for the search inside the
       // limit of [X[0], X[n]]. This function will use fmod for detecting multiple "loops".
@@ -110,9 +88,9 @@ namespace G2lib {
       } else {
         G2LIB_UTILS_ASSERT(
             can_extend || (x >= xl && x <= xr),
-            "In search_interval( npts={}, X, x={}, lastInterval={}, closed={}, can_extend={})\n"
-            "out of range: [{},{}]\n",
-            npts, lastInterval, closed, can_extend, xl, xr);
+            "In search_interval( npts=%d, X, x=%f, lastInterval=%d, closed=%d, can_extend=%d)\n"
+            "out of range: [%f,%f]\n",
+            npts, x, lastInterval, closed, can_extend, xl, xr);
       }
 
       // Find the interval of the support of the B-spline, using lastInterval as an hot start
@@ -157,9 +135,9 @@ namespace G2lib {
       // Check the computed interval
       G2LIB_UTILS_ASSERT(
           lastInterval >= 0 && lastInterval < n,
-          "In search_interval( npts={}, X, x={}, lastInterval={}, closed={}, can_extend={})\n"
-          "computed lastInterval of range: [{},{}]\n",
-          npts, lastInterval, closed, can_extend, xl, xr);
+          "In search_interval( npts=%d, X, x=%f, lastInterval=%d, closed=%d, can_extend=%d)\n"
+          "computed lastInterval of range: [%f,%f]\n",
+          npts, x, lastInterval, closed, can_extend, xl, xr);
     }
 
   }  // namespace Utils

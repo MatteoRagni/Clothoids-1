@@ -396,21 +396,21 @@ namespace G2lib {
     G2LIB_UTILS_ASSERT(
         Utils::isRegular(k) && Utils::isRegular(L) && Utils::isRegular(dk),
         "ClothoidList::build, failed first segment found\n"
-        "L = {} k = {} dk = {}\n",
+        "L = %f k = %f dk = %f\n",
         L, k, dk);
     push_back(x0, y0, theta0, k, dk, L);
     for (int_type i = 2; i < n; ++i) {
       k = kappa[i - 1];
       L = s[i] - s[i - 1];
       if (abs(L) < tol) {
-        fmt::print("ClothoidList::build, skipping segment N.{}\n", i);
+        Utils::print_string("ClothoidList::build, skipping segment N.%d", i);
         continue;  // skip too small segment
       }
       dk = (kappa[i] - k) / L;
       G2LIB_UTILS_ASSERT(
           Utils::isRegular(k) && Utils::isRegular(L) && Utils::isRegular(dk),
-          "ClothoidList::build, failed at segment N.{} found\n"
-          "L = {} k = {} dk = {}\n",
+          "ClothoidList::build, failed at segment N.%d found\n"
+          "L = %f k = %f dk = %f\n",
           i, L, k, dk);
       push_back(k, dk, L);
     }
@@ -446,9 +446,9 @@ namespace G2lib {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   ClothoidCurve const & ClothoidList::get(int_type idx) const {
-    G2LIB_UTILS_ASSERT(!m_clotoidList.empty(), "ClothoidList::get( {} ) empty list\n", idx);
+    G2LIB_UTILS_ASSERT(!m_clotoidList.empty(), "ClothoidList::get( %d ) empty list\n", idx);
     G2LIB_UTILS_ASSERT(
-        idx >= 0 && idx < int_type(m_clotoidList.size()), "ClothoidList::get( {} ) bad index, must be in [0,{}]\n", idx,
+        idx >= 0 && idx < int_type(m_clotoidList.size()), "ClothoidList::get( %d ) bad index, must be in [0,%d]\n", idx,
         m_clotoidList.size() - 1);
     return m_clotoidList[idx];
   }
@@ -992,33 +992,6 @@ namespace G2lib {
     ClothoidList newCL;
     this->trim(s_begin, s_end, newCL);
     this->copy(newCL);
-
-#if 0
-   G2LIB_UTILS_ASSERT(
-      s_begin >= m_s0.front() && s_end <= m_s0.back() && s_end > s_begin,
-      "ClothoidList::trim( s_begin={}, s_end={} ) bad range, must be in [{},{}]\n",
-      s_begin, s_end, m_s0.front(), m_s0.back()
-    );
-
-    size_t i_begin = size_t( findAtS( s_begin ) );
-    size_t i_end   = size_t( findAtS( s_end   ) );
-    if ( i_begin == i_end ) {
-      m_clotoidList[i_begin].trim( s_begin-m_s0[i_begin], s_end-m_s0[i_begin] );
-    } else {
-      m_clotoidList[i_begin].trim( s_begin-m_s0[i_begin], m_s0[i_begin+1]-m_s0[i_begin] );
-      m_clotoidList[i_end].trim( 0, s_end-m_s0[i_end] );
-    }
-    m_clotoidList.erase( m_clotoidList.begin()+i_end+1, m_clotoidList.end() );
-    m_clotoidList.erase( m_clotoidList.begin(), m_clotoidList.begin()+i_begin );
-    if ( m_clotoidList.back().m_L <= Utils::machepsi100 ) m_clotoidList.pop_back();
-    vector<ClothoidCurve>::iterator ic = m_clotoidList.begin();
-    m_s0.resize( m_clotoidList.size() + 1 );
-    m_s0[0] = 0;
-    size_t k = 0;
-    for (; ic != m_clotoidList.end(); ++ic, ++k )
-      m_s0[k+1] = m_s0[k] + ic->length();
-    this->resetLastInterval();
-#endif
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1335,7 +1308,7 @@ namespace G2lib {
       ib += nsegs;
     if (ie < 0)
       ie += nsegs;
-    G2LIB_UTILS_ASSERT(ib >= 0 && ie >= 0, "ClothoidList::closest_point_in_range_ISO, ib = {} ie = {}\n", ib, ie);
+    G2LIB_UTILS_ASSERT(ib >= 0 && ie >= 0, "ClothoidList::closest_point_in_range_ISO, ib = %d ie = %d\n", ib, ie);
 
     icurve       = ib;
     int_type res = m_clotoidList[icurve].closest_point_ISO(qx, qy, x, y, s, t, dst);
@@ -1575,7 +1548,7 @@ namespace G2lib {
     G2LIB_UTILS_ASSERT0(!m_clotoidList.empty(), "ClothoidList::findST, empty list\n");
     G2LIB_UTILS_ASSERT(
         ibegin >= 0 && ibegin <= iend && iend < int_type(m_clotoidList.size()),
-        "ClothoidList::findST( ibegin={}, iend={}, x, y, s, t ) bad range not in [0,{}]\n", ibegin, iend,
+        "ClothoidList::findST( ibegin=%d, iend=%d, x, y, s, t ) bad range not in [0,%d]\n", ibegin, iend,
         m_clotoidList.size() - 1);
     s = t         = 0;
     int_type iseg = 0;
@@ -1602,9 +1575,9 @@ namespace G2lib {
     stream << "x\ty\ttheta0\tkappa0\tdkappa\tL\n";
     vector<ClothoidCurve>::const_iterator ic = m_clotoidList.begin();
     for (; ic != m_clotoidList.end(); ++ic)
-      fmt::print(
-          stream, "{}\t{}\t{}\t{}\t{}\t{}\n", ic->x_begin(), ic->y_begin(), ic->theta_begin(), ic->kappa_begin(),
-          ic->dkappa(), ic->length());
+      stream << Utils::format_string("%f\t%f\t%f\t%f\t%f\t%f\n", 
+        ic->x_begin(), ic->y_begin(), ic->theta_begin(), ic->kappa_begin(),
+        ic->dkappa(), ic->length());
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1613,8 +1586,8 @@ namespace G2lib {
     stream << "data = {\n";
     vector<ClothoidCurve>::const_iterator ic = m_clotoidList.begin();
     for (; ic != m_clotoidList.end(); ++ic)
-      fmt::print(
-          stream, "{}\t{}\t{}\t{}\t{}\t{}\n", ic->x_begin(), ic->y_begin(), ic->theta_begin(), ic->kappa_begin(),
+      stream << Utils::format_string("%f\t%f\t%f\t%f\t%f\t%f\n", 
+          ic->x_begin(), ic->y_begin(), ic->theta_begin(), ic->kappa_begin(),
           ic->dkappa(), ic->length());
     stream << "}\n";
   }
@@ -1632,16 +1605,11 @@ namespace G2lib {
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   static void save_segment(ostream_type & stream, ClothoidCurve const & c) {
-    fmt::print(
-        stream,
-        "{:<24}\t{:<24}\t{:<24}\t{:<24}\n"
-        "{:<24}\t{:<24}\t{:<24}\t{:<24}\n",
-        //------------------
-        fmt::format("{:.20}", c.x_begin()), fmt::format("{:.20}", c.y_begin()), fmt::format("{:.20}", c.theta_begin()),
-        fmt::format("{:.20}", c.kappa_begin()),
-        //------------------
-        fmt::format("{:.20}", c.x_end()), fmt::format("{:.20}", c.y_end()), fmt::format("{:.20}", c.theta_end()),
-        fmt::format("{:.20}", c.kappa_end()));
+    stream << Utils::format_string(
+        "%-20.20f\t%-20.20f\t%-20.20f\t%-20.20f\n"
+        "%-20.20f\t%-20.20f\t%-20.20f\t%-20.20f\n",
+        c.x_begin(), c.y_begin(), c.theta_begin(), c.kappa_begin(),
+        c.x_end(), c.y_end(), c.theta_end(), c.kappa_end());
   }
 #endif
 
@@ -1678,7 +1646,7 @@ namespace G2lib {
     G2LIB_UTILS_ASSERT(
         err1 < epsi && err2 < epsi,
         "load_segment, failed tolerance on curvature\n"
-        "begin error = {}, end error = {}\n",
+        "begin error = %f, end error = %f\n",
         err1, err2);
     return true;
   }
