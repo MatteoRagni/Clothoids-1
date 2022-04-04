@@ -61,7 +61,8 @@ set(CLOTHOIDS_SRCS
   G2lib.cc
   Line.cc
   PolyLine.cc
-  Triangle2D.cc)
+  Triangle2D.cc
+  ClothoidSpline-Interpolation.cc)
 
 set(CLOTHOIDS_HDRS
   Clothoids/AABBtree.hxx
@@ -79,6 +80,7 @@ set(CLOTHOIDS_HDRS
   Clothoids/PolyLine.hxx
   Clothoids/Triangle2D.hxx
   Clothoids/Types.hxx
+  Clothoids/ClothoidSpline-Interpolation.hxx
   Clothoids.hh)
 
 set(CLOTHOIDS_SRCS_BUILD)
@@ -184,7 +186,7 @@ export(EXPORT "${PROJECT_NAME}_Targets"
   FILE "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}Targets.cmake"
   NAMESPACE "${PROJECT_NAMESPACE}::")
 
-configure_file("cmake/${PROJECT_NAME}Config.cmake.in"
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
   @ONLY)
 
