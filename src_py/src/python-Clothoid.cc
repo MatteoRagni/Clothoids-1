@@ -453,11 +453,24 @@ namespace G2lib {
         return str.str();
       });
 
+      py::enum_<G2lib::Interpolation::ResultType>(m, "InterpolatorResultType")
+      .value("Success", G2lib::Interpolation::ResultType::Success)
+      .value("NumericalIssue", G2lib::Interpolation::ResultType::NumericalIssue)
+      .value("NoConvergence", G2lib::Interpolation::ResultType::NoConvergence)
+      .value("InvalidInput", G2lib::Interpolation::ResultType::InvalidInput)
+      .value("InternalError", G2lib::Interpolation::ResultType::InternalError);
+
+      py::class_<G2lib::Interpolation::Result>(m, "InterpolatorResult")
+      .def("ok", &G2lib::Interpolation::Result::ok)
+      .def("status", &G2lib::Interpolation::Result::status)
+      .def("objective_value", &G2lib::Interpolation::Result::objective_value)
+      .def("iters", &G2lib::Interpolation::Result::iters)
+
       m.def("buildP1", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys, real_type theta_0, real_type theta_1) -> G2lib::ClothoidList {
         G2lib::ClothoidList result;
         G2lib::Interpolation::Interpolator interpolator(xs, ys);
-        interpolator.buildP1(theta_0, theta_1, result);
-        return result;
+        const auto status = interpolator.buildP1(theta_0, theta_1, result);
+        return std::make_tuple(status, result);
       }, py::arg("xs"), py::arg("ys"), py::arg("theta0"), py::arg("theta1"),
       R"S(
         Builds a clothoid list starting from a list of points. Build a 
@@ -469,14 +482,14 @@ namespace G2lib {
         :param List[float] ys: **y** coordinates of points
         :param float theta0: intial angle
         :param float theta1: final angle 
-        :return: the clothoid list
-        :rtype: ClothodList 
+        :return: a tuple containing the result of the interpolation and the clothoid list
+        :rtype: Tuple[InterpolatorResult, ClothodList] 
       )S")
       .def("buildP2", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
         G2lib::ClothoidList result;
         G2lib::Interpolation::Interpolator interpolator(xs, ys);
-        interpolator.buildP2(result);
-        return result;
+        const auto status = interpolator.buildP2(result);
+        return std::make_tuple(status, result);
       }, py::arg("xs"), py::arg("ys"), 
       R"S(
         Builds a clothoid list starting from a list of points. Build a 
@@ -486,14 +499,14 @@ namespace G2lib {
 
         :param List[float] xs: **x** coordinates of points
         :param List[float] ys: **y** coordinates of points
-        :return: the clothoid list
-        :rtype: ClothodList 
+        :return: a tuple containing the result of the interpolation and the clothoid list
+        :rtype: Tuple[InterpolatorResult, ClothodList] 
       )S")
       .def("buildP4", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
         G2lib::ClothoidList result;
         G2lib::Interpolation::Interpolator interpolator(xs, ys);
-        interpolator.buildP4(result);
-        return result;
+        const auto status = interpolator.buildP4(result);
+        return std::make_tuple(status, result);
       }, py::arg("xs"), py::arg("ys"), 
       R"S(
         Builds a clothoid list starting from a list of points. Build a 
@@ -503,14 +516,14 @@ namespace G2lib {
 
         :param List[float] xs: **x** coordinates of points
         :param List[float] ys: **y** coordinates of points
-        :return: the clothoid list
-        :rtype: ClothodList 
+        :return: a tuple containing the result of the interpolation and the clothoid list
+        :rtype: Tuple[InterpolatorResult, ClothodList] 
       )S")
       .def("buildP5", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
         G2lib::ClothoidList result;
         G2lib::Interpolation::Interpolator interpolator(xs, ys);
-        interpolator.buildP5(result);
-        return result;
+        const auto status = interpolator.buildP5(result);
+        return std::make_tuple(status, result);
       }, py::arg("xs"), py::arg("ys"), 
       R"S(
         Builds a clothoid list starting from a list of points. Build a 
@@ -520,14 +533,14 @@ namespace G2lib {
 
         :param List[float] xs: **x** coordinates of points
         :param List[float] ys: **y** coordinates of points
-        :return: the clothoid list
-        :rtype: ClothodList 
+        :return: a tuple containing the result of the interpolation and the clothoid list
+        :rtype: Tuple[InterpolatorResult, ClothodList] 
       )S")
       .def("buildP6", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
         G2lib::ClothoidList result;
         G2lib::Interpolation::Interpolator interpolator(xs, ys);
-        interpolator.buildP6(result);
-        return result;
+        const auto status = interpolator.buildP6(result);
+        return std::make_tuple(status, result);
       }, py::arg("xs"), py::arg("ys"), 
       R"S(
         Builds a clothoid list starting from a list of points. Build a 
@@ -537,14 +550,14 @@ namespace G2lib {
 
         :param List[float] xs: **x** coordinates of points
         :param List[float] ys: **y** coordinates of points
-        :return: the clothoid list
-        :rtype: ClothodList 
+        :return: a tuple containing the result of the interpolation and the clothoid list
+        :rtype: Tuple[InterpolatorResult, ClothodList] 
       )S")
       .def("buildP7", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
         G2lib::ClothoidList result;
         G2lib::Interpolation::Interpolator interpolator(xs, ys);
-        interpolator.buildP7(result);
-        return result;
+        const auto status = interpolator.buildP7(result);
+        return std::make_tuple(status, result);
       }, py::arg("xs"), py::arg("ys"), 
       R"S(
         Builds a clothoid list starting from a list of points. Build a 
@@ -554,14 +567,14 @@ namespace G2lib {
 
         :param List[float] xs: **x** coordinates of points
         :param List[float] ys: **y** coordinates of points
-        :return: the clothoid list
-        :rtype: ClothodList 
+        :return: a tuple containing the result of the interpolation and the clothoid list
+        :rtype: Tuple[InterpolatorResult, ClothodList] 
       )S")
       .def("buildP8", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
         G2lib::ClothoidList result;
         G2lib::Interpolation::Interpolator interpolator(xs, ys);
-        interpolator.buildP8(result);
-        return result;
+        const auto status = interpolator.buildP8(result);
+        return std::make_tuple(status, result);
       }, py::arg("xs"), py::arg("ys"), 
       R"S(
         Builds a clothoid list starting from a list of points. Build a 
@@ -571,14 +584,14 @@ namespace G2lib {
 
         :param List[float] xs: **x** coordinates of points
         :param List[float] ys: **y** coordinates of points
-        :return: the clothoid list
-        :rtype: ClothodList 
+        :return: a tuple containing the result of the interpolation and the clothoid list
+        :rtype: Tuple[InterpolatorResult, ClothodList] 
       )S")
       .def("buildP9", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
         G2lib::ClothoidList result;
         G2lib::Interpolation::Interpolator interpolator(xs, ys);
-        interpolator.buildP9(result);
-        return result;
+        const auto status = interpolator.buildP9(result);
+        return std::make_tuple(status, result);
       }, py::arg("xs"), py::arg("ys"), 
       R"S(
         Builds a clothoid list starting from a list of points. Build a 
@@ -588,8 +601,8 @@ namespace G2lib {
 
         :param List[float] xs: **x** coordinates of points
         :param List[float] ys: **y** coordinates of points
-        :return: the clothoid list
-        :rtype: ClothodList 
+        :return: a tuple containing the result of the interpolation and the clothoid list
+        :rtype: Tuple[InterpolatorResult, ClothodList] 
       )S");
     }
 
