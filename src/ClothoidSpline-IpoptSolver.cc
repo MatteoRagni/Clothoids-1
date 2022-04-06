@@ -25,10 +25,10 @@
 
 #ifdef G2LIB_IPOPT_CLOTHOID_SPLINE
 
-#include "Clothoids/ClothoidSpline-Interpolator.hxx"
-#include "ClothoidSpline-IpoptSolver.hxx"
+#include "Clothoids/ClothoidSpline-Interpolation.hxx"
 
 #include <IpIpoptApplication.hpp>
+#include <IpSolveStatistics.hpp>
 #include <IpSmartPtr.hpp>
 #include <algorithm>
 #include <stdexcept>
@@ -282,22 +282,20 @@ namespace G2lib {
       }
 
       status = app->OptimizeTNLP(spline_problem);
+      const auto stats = app->Statistics();
       switch (status) {
         case (ApplicationReturnStatus::Solve_Succeeded):
         case (ApplicationReturnStatus::Solved_To_Acceptable_Level):
         case (ApplicationReturnStatus::Feasible_Point_Found):
-          auto stats = app->Statistics();
           return Result(ResultType::Success, stats->FinalObjective(), stats->IterationCount());
           break;
         case (ApplicationReturnStatus::Infeasible_Problem_Detected):
-          auto stats = app->Statistics();
           return Result(ResultType::NumericalIssue, stats->FinalObjective(), stats->IterationCount());
           break;
         case (ApplicationReturnStatus::Search_Direction_Becomes_Too_Small):
         case (ApplicationReturnStatus::Diverging_Iterates):
         case (ApplicationReturnStatus::User_Requested_Stop):
         case (ApplicationReturnStatus::Maximum_Iterations_Exceeded):
-          auto stats = app->Statistics();
           return Result(ResultType::NoConvergence, stats->FinalObjective(), stats->IterationCount());
           break;
         case (ApplicationReturnStatus::Error_In_Step_Computation):
@@ -310,15 +308,13 @@ namespace G2lib {
         case (ApplicationReturnStatus::NonIpopt_Exception_Thrown):
         case (ApplicationReturnStatus::Insufficient_Memory):
         case (ApplicationReturnStatus::Internal_Error):
-          auto stats = app->Statistics();
           return Result(ResultType::InternalError, stats->FinalObjective(), stats->IterationCount());
           break;
         case (ApplicationReturnStatus::Invalid_Problem_Definition):
-          auto stats = app->Statistics();
           return Result(ResultType::InvalidInput, stats->FinalObjective(), stats->IterationCount());
           break;
       }
-      return return Result(ResultType::InternalError);
+      return Result(ResultType::InternalError);
     }
 
     Result Interpolator::buildP4(ClothoidList & result) {

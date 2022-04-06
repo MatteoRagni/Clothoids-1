@@ -28,6 +28,11 @@
 
 cmake_minimum_required(VERSION 3.14)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 file(READ "./VERSION" CLOTHOIDS_VERSION)
 
 project(
@@ -36,9 +41,17 @@ project(
   HOMEPAGE_URL "https://github.com/MatteoRagni/Clothoids-1")
 
 option(CLOTHOIDS_BUILD_SHARED "Build dynamic library" OFF)
+option(CLOTHOIDS_ENABLE_EIGEN_SOLVER "Enable buildP1 and buildP2 interpolator functions" OFF)
+option(CLOTHOIDS_ENABLE_IPOPT_SOLVER 
+  "Enable buildP4, buildP5, buildP6, buildP7, buildP8 and buildP9 interpolator functions" OFF)
 
 add_subdirectory(./deps/PolynomialRoots)
-
+if(CLOTHOIDS_ENABLE_IPOPT_SOLVER)
+add_subdirectory(./deps/Ipopt)
+endif()
+if(CLOTHOIDS_ENABLE_EIGEN_SOLVER)
+add_subdirectory(./deps/Eigen3)
+endif()
 #   ___
 #  / __| ___ _  _ _ _ __ ___ ___
 #  \__ \/ _ \ || | '_/ _/ -_|_-<
@@ -63,6 +76,16 @@ set(CLOTHOIDS_SRCS
   PolyLine.cc
   Triangle2D.cc
   ClothoidSpline-Interpolation.cc)
+
+if(CLOTHOIDS_ENABLE_EIGEN_SOLVER)
+set(CLOTHOIDS_SRCS ${CLOTHOIDS_SRCS}
+  ClothoidSpline-LMSolver.cc)
+endif()
+
+if(CLOTHOIDS_ENABLE_IPOPT_SOLVER)
+set(CLOTHOIDS_SRCS ${CLOTHOIDS_SRCS}
+  ClothoidSpline-IpoptSolver.cc)
+endif()
 
 set(CLOTHOIDS_HDRS
   Clothoids/AABBtree.hxx
@@ -119,6 +142,14 @@ target_include_directories(ClothoidsStatic PUBLIC
 target_include_directories(ClothoidsStatic PRIVATE 
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>")
 target_link_libraries(ClothoidsStatic PRIVATE PolynomialRootsStatic)
+if(CLOTHOIDS_ENABLE_IPOPT_SOLVER)
+target_compile_definitions(ClothoidsStatic PRIVATE G2LIB_IPOPT_CLOTHOID_SPLINE)
+  target_link_libraries(ClothoidsStatic PRIVATE Ipopt::Ipopt)
+endif()
+if(CLOTHOIDS_ENABLE_EIGEN_SOLVER)
+target_compile_definitions(ClothoidsStatic PRIVATE G2LIB_LMSOLVE_CLOTHOID_SPLINE)
+  target_link_libraries(ClothoidsStatic PRIVATE Clothoids::Eigen3)
+endif()
 set_target_properties(ClothoidsStatic PROPERTIES
   POSITION_INDIPENDENT_CODE ON
   OUTPUT_NAME Clothoids
@@ -138,6 +169,14 @@ if(CLOTHOIDS_BUILD_SHARED)
   target_include_directories(ClothoidsDynamic PRIVATE 
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>")
   target_link_libraries(ClothoidsDynamic PRIVATE PolynomialRootsStatic)
+  if(CLOTHOIDS_ENABLE_IPOPT_SOLVER)
+    target_compile_definitions(ClothoidsDynamic PRIVATE G2LIB_IPOPT_CLOTHOID_SPLINE)
+    target_link_libraries(ClothoidsDynamic PRIVATE Ipopt::Ipopt)
+  endif()
+  if(CLOTHOIDS_ENABLE_EIGEN_SOLVER)
+    target_compile_definitions(ClothoidsDynamic PRIVATE G2LIB_LMSOLVE_CLOTHOID_SPLINE)
+    target_link_libraries(ClothoidsDynamic PRIVATE Clothoids::Eigen3)
+  endif()
   set_target_properties(ClothoidsDynamic PROPERTIES
     POSITION_INDIPENDENT_CODE ON
     VERSION ${PROJECT_VERSION}

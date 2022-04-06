@@ -25,7 +25,7 @@
 
 #ifdef G2LIB_LMSOLVE_CLOTHOID_SPLINE
 
-#include "Clothoids/ClothoidSpline-Solver.hxx"
+#include "Clothoids/ClothoidSpline-Interpolation.hxx"
 
 #include <vector>
 #include <algorithm>
@@ -109,10 +109,10 @@ namespace G2lib {
           return Result(ResultType::InvalidInput, lm.fnorm(), lm.iterations());
           break;
       }
-      return false;
+      return Result(ResultType::InternalError);
     }
 
-    void Interpolator::buildP1(real_type theta_0, real_type theta_1, ClothoidList & result) {
+    Result Interpolator::buildP1(real_type theta_0, real_type theta_1, ClothoidList & result) {
       m_spline.setP1(theta_0, theta_1);
       build_clothoid_spline();
       LMSolver solver(m_spline);
@@ -122,7 +122,7 @@ namespace G2lib {
       return status;
     }
 
-    void Interpolator::buildP2(ClothoidList & result) {
+    Result Interpolator::buildP2(ClothoidList & result) {
       m_spline.setP2();
       build_clothoid_spline();
       LMSolver solver(m_spline);
