@@ -155,11 +155,25 @@ namespace G2lib {
         :rtype: Tuple[float, float]
       )S")
       
-      .def("changeCurvilinearOrigin", &CircleArc::changeCurvilinearOrigin,
+      .def("change_curvilinear_origin", &CircleArc::change_curvilinear_origin,
         py::arg("s0"), py::arg("newL"),
       R"S(
         Change the origin of the curvilinear abscissa of the circle arc
         and the length of the arc
+
+        :param float s0: new curvilinear abscissa origin
+        :param float newL: new length of the curve
+        :return: nothing, works in place
+        :rtype: NoneType
+      )S")
+
+      .def("changeCurvilinearOrigin", &CircleArc::change_curvilinear_origin,
+        py::arg("s0"), py::arg("newL"),
+      R"S(
+        Change the origin of the curvilinear abscissa of the circle arc
+        and the length of the arc
+
+        .. warning:: Deprecated for ``change_curvilinear_origin``
 
         :param float s0: new curvilinear abscissa origin
         :param float newL: new length of the curve

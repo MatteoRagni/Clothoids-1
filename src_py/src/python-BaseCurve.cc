@@ -177,7 +177,17 @@ namespace G2lib {
         :rtype: List[Triangle2D]
       )S")
 
-      .def("thetaBegin", &BaseCurve::thetaBegin,
+      .def("thetaBegin", &BaseCurve::theta_begin,
+      R"S(
+        Initial angle of the curve
+
+        .. warning:: Deprecated for ``theta_begin``
+
+        :return: the initial angle of the curve
+        :rtype: float
+      )S")
+
+      .def("theta_begin", &BaseCurve::theta_begin,
       R"S(
         Initial angle of the curve
 
@@ -208,7 +218,17 @@ namespace G2lib {
         :rtype: List[float]
       )S")
 
-      .def("thetaEnd", &BaseCurve::thetaEnd,
+      .def("thetaEnd", &BaseCurve::theta_end,
+      R"S(
+        Final angle of the curve
+
+        .. warning:: deprecated for ``theta_end``
+
+        :return: the final angle of the curve
+        :rtype: float
+      )S")
+
+      .def("theta_end", &BaseCurve::theta_end,
       R"S(
         Final angle of the curve
 
@@ -216,7 +236,17 @@ namespace G2lib {
         :rtype: float
       )S")
 
-      .def("kappaBegin", &BaseCurve::kappaBegin,
+      .def("kappaBegin", &BaseCurve::kappa_begin,
+      R"S(
+        Initial curvature of the curve
+
+        .. warning:: deprecated for ``kappa_begin``
+
+        :return: the initial curvature of the curve
+        :rtype: float
+      )S")
+
+      .def("kappa_begin", &BaseCurve::kappa_begin,
       R"S(
         Initial curvature of the curve
 
@@ -247,7 +277,17 @@ namespace G2lib {
         :rtype: List[float]
       )S")
 
-      .def("kappaEnd", &BaseCurve::kappaEnd, 
+      .def("kappaEnd", &BaseCurve::kappa_end, 
+      R"S(
+        Final curvature of the curve
+
+        .. warning:: deprecated for ``kappa_end``
+
+        :return: the final curvature of the curve
+        :rtype: float
+      )S")
+
+      .def("kappa_end", &BaseCurve::kappa_end, 
       R"S(
         Final curvature of the curve
 
@@ -255,7 +295,17 @@ namespace G2lib {
         :rtype: float
       )S")
       
-      .def("xBegin", &BaseCurve::xBegin,
+      .def("xBegin", &BaseCurve::x_begin,
+      R"S(
+        Initial coordinate **x** of the curve
+
+        .. warning:: deprecated for ``x_begin``
+
+        :return: the initial coordinate **x** of the curve
+        :rtype: float
+      )S")
+
+      .def("x_begin", &BaseCurve::x_begin,
       R"S(
         Initial coordinate **x** of the curve
 
@@ -286,7 +336,17 @@ namespace G2lib {
         :rtype: List[float]
       )S")
 
-      .def("xEnd", &BaseCurve::xEnd, 
+      .def("xEnd", &BaseCurve::x_end, 
+      R"S(
+        Final coordinate **x** of the curve
+
+        .. warning:: deprecated for ``x_end``
+
+        :return: the final coordinate **x** of the curve
+        :rtype: float
+      )S")
+
+      .def("x_end", &BaseCurve::x_end, 
       R"S(
         Final coordinate **x** of the curve
 
@@ -294,7 +354,17 @@ namespace G2lib {
         :rtype: float
       )S")
       
-      .def("yBegin", &BaseCurve::yBegin, 
+      .def("yBegin", &BaseCurve::y_begin, 
+      R"S(
+        Initial coordinate **y** of the curve
+
+        .. warning:: deprecated for ``y_begin``
+
+        :return: the initial coordinate **y** of the curve
+        :rtype: float
+      )S")
+
+      .def("y_begin", &BaseCurve::y_begin, 
       R"S(
         Initial coordinate **y** of the curve
 
@@ -325,7 +395,17 @@ namespace G2lib {
         :rtype: List[float]
       )S")
 
-      .def("yEnd", &BaseCurve::yEnd, 
+      .def("yEnd", &BaseCurve::y_end, 
+      R"S(
+        Final coordinate **y** of the curve
+
+        .. warning:: deprecated for ``y_end``
+
+        :return: the final coordinate **y** of the curve
+        :rtype: float
+      )S")
+
+      .def("y_end", &BaseCurve::y_end, 
       R"S(
         Final coordinate **y** of the curve
 
@@ -333,7 +413,18 @@ namespace G2lib {
         :rtype: float
       )S")
 
-      .def("xBegin_ISO", &BaseCurve::xBegin_ISO, py::arg("offs"),
+      .def("xBegin_ISO", &BaseCurve::x_begin_ISO, py::arg("offs"),
+      R"S(
+        Initial coordinate **x** of the curve, with ISO offset
+
+        .. warning:: Deprecated for ``x_begin_ISO``
+
+        :param float offs: curve ISO offset
+        :return: the initial coordinate **x** of the curve
+        :rtype: float
+      )S")
+
+      .def("x_begin_ISO", &BaseCurve::x_begin_ISO, py::arg("offs"),
       R"S(
         Initial coordinate **x** of the curve, with ISO offset
 
@@ -370,7 +461,18 @@ namespace G2lib {
         :rtype: List[float]
       )S")
 
-      .def("xEnd_ISO", &BaseCurve::xEnd_ISO, py::arg("offs"),
+      .def("xEnd_ISO", &BaseCurve::x_end_ISO, py::arg("offs"),
+      R"S(
+        Final coordinate **x** of the curve, with ISO offset
+
+        .. warning:: deprecated for ``x_end_ISO``
+
+        :param float offs: curve ISO offset
+        :return: the final coordinate **x** of the curve
+        :rtype: float
+      )S")
+      
+      .def("x_end_ISO", &BaseCurve::x_end_ISO, py::arg("offs"),
       R"S(
         Final coordinate **x** of the curve, with ISO offset
 
@@ -379,7 +481,18 @@ namespace G2lib {
         :rtype: float
       )S")
       
-      .def("yBegin_ISO", &BaseCurve::yBegin_ISO, py::arg("offs"), 
+      .def("yBegin_ISO", &BaseCurve::y_begin_ISO, py::arg("offs"), 
+      R"S(
+        Initial coordinate **y** of the curve, with ISO offset
+
+        .. warning:: Deprecated for ``y_begin_iso``
+
+        :param float offs: curve ISO offset
+        :return: the initial coordinate **y** of the curve
+        :rtype: float
+      )S")
+
+      .def("y_begin_ISO", &BaseCurve::y_begin_ISO, py::arg("offs"), 
       R"S(
         Initial coordinate **y** of the curve, with ISO offset
 
@@ -417,7 +530,18 @@ namespace G2lib {
         :rtype: List[float]
       )S")
 
-      .def("yEnd_ISO", &BaseCurve::yEnd_ISO, py::arg("offs"), 
+      .def("yEnd_ISO", &BaseCurve::y_end_ISO, py::arg("offs"), 
+      R"S(
+        Final coordinate **y** of the curve, with ISO offset
+
+        .. warning:: deprecated for ``y_end_ISO``
+
+        :param float offs: curve ISO offset
+        :return: the final coordinate **y** of the curve
+        :rtype: float
+      )S")
+
+      .def("y_end_ISO", &BaseCurve::y_end_ISO, py::arg("offs"), 
       R"S(
         Final coordinate **y** of the curve, with ISO offset
 
@@ -426,7 +550,18 @@ namespace G2lib {
         :rtype: float
       )S")
       
-      .def("xBegin_SAE", &BaseCurve::xBegin_SAE, py::arg("offs"),
+      .def("xBegin_SAE", &BaseCurve::x_begin_SAE, py::arg("offs"),
+      R"S(
+        Initial coordinate **x** of the curve, with SAE offset
+
+        .. warning:: deprecated for ``x_begin_SAE``
+
+        :param float offs: curve SAE offset
+        :return: the initial coordinate **x** of the curve
+        :rtype: float
+      )S")
+
+      .def("x_begin_SAE", &BaseCurve::x_begin_SAE, py::arg("offs"),
       R"S(
         Initial coordinate **x** of the curve, with SAE offset
 
@@ -445,7 +580,18 @@ namespace G2lib {
         :rtype: float
       )S")
 
-      .def("xEnd_SAE", &BaseCurve::xEnd_SAE, py::arg("offs"),
+      .def("xEnd_SAE", &BaseCurve::x_end_SAE, py::arg("offs"),
+      R"S(
+        Final coordinate **x** of the curve, with SAE offset
+
+        .. warning:: deprecated for ``x_end_SAE``
+
+        :param float offs: curve SAE offset
+        :return: the final coordinate **x** of the curve
+        :rtype: float
+      )S")
+
+      .def("x_end_SAE", &BaseCurve::x_end_SAE, py::arg("offs"),
       R"S(
         Final coordinate **x** of the curve, with SAE offset
 
@@ -454,7 +600,18 @@ namespace G2lib {
         :rtype: float
       )S")
       
-      .def("yBegin_SAE", &BaseCurve::yBegin_SAE, py::arg("offs"), 
+      .def("yBegin_SAE", &BaseCurve::y_begin_SAE, py::arg("offs"), 
+      R"S(
+        Initial coordinate **y** of the curve, with SAE offset
+
+        .. warning:: deprecated for ``y_begin_SAE``
+
+        :param float offs: curve SAE offset
+        :return: the initial coordinate **y** of the curve
+        :rtype: float
+      )S")
+
+      .def("y_begin_SAE", &BaseCurve::y_begin_SAE, py::arg("offs"), 
       R"S(
         Initial coordinate **y** of the curve, with SAE offset
 
@@ -474,7 +631,18 @@ namespace G2lib {
         :rtype: float
       )S")
 
-      .def("yEnd_SAE", &BaseCurve::yEnd_SAE, py::arg("offs"), 
+      .def("yEnd_SAE", &BaseCurve::y_end_SAE, py::arg("offs"), 
+      R"S(
+        Final coordinate **y** of the curve, with SAE offset
+
+        .. warning:: deprecated for ``y_end_SAE``
+
+        :param float offs: curve SAE offset
+        :return: the final coordinate **y** of the curve
+        :rtype: float
+      )S")
+
+      .def("y_end_SAE", &BaseCurve::y_end_SAE, py::arg("offs"), 
       R"S(
         Final coordinate **y** of the curve, with SAE offset
 
@@ -1657,6 +1825,20 @@ namespace G2lib {
       )S")
 
       .def("changeOrigin", &BaseCurve::change_origin, py::arg("newx0"), py::arg("newy0"),
+      R"S(
+        Translate the curve so that the origin will be :math:`(x_{0,new}, y_{0,new})`.
+        This method works in place and forces the recalculation of the AABBtree of the
+        curve.
+
+        .. warning:: This function is deprecated for ``change_origin``
+
+        :param float newx0: new origin **x** coordinate
+        :param float newy0: new origin **y** coordinate
+        :return: nothing, works in place
+        :rtype: NoneType
+      )S")
+
+      .def("change_origin", &BaseCurve::change_origin, py::arg("newx0"), py::arg("newy0"),
       R"S(
         Translate the curve so that the origin will be :math:`(x_{0,new}, y_{0,new})`.
         This method works in place and forces the recalculation of the AABBtree of the

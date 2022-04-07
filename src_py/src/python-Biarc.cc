@@ -118,7 +118,17 @@ namespace G2lib {
         :rtype: bool
       )S")
       
-      .def("xMiddle", &Biarc::xMiddle, 
+      .def("xMiddle", &Biarc::x_middle, 
+      R"S(
+        Returns the **x** coordinate of the junction point of the biarc
+
+        .. warning:: deprecated for ``x_middle``
+
+        :return: **x** coordinates of the junction
+        :rtype: float
+      )S")
+
+      .def("x_middle", &Biarc::x_middle, 
       R"S(
         Returns the **x** coordinate of the junction point of the biarc
 
@@ -126,7 +136,17 @@ namespace G2lib {
         :rtype: float
       )S")
       
-      .def("yMiddle", &Biarc::yMiddle,
+      .def("yMiddle", &Biarc::y_middle,
+      R"S(
+        Returns the **y** coordinate of the junction point of the biarc
+
+        .. warning:: deprecated for ``y_middle``
+
+        :return: **y** coordinates of the junction
+        :rtype: float
+      )S")
+
+      .def("y_middle", &Biarc::y_middle,
       R"S(
         Returns the **y** coordinate of the junction point of the biarc
 
@@ -134,7 +154,17 @@ namespace G2lib {
         :rtype: float
       )S")
 
-      .def("thetaMiddle", &Biarc::thetaMiddle,
+      .def("thetaMiddle", &Biarc::theta_middle,
+      R"S(
+        Returns the **x** coordinate of the junction point of the biarc
+
+        .. warning:: deprecated for ``theta_middle``
+
+        :return: **x** coordinates of the junction
+        :rtype: float
+      )S")
+
+      .def("theta_middle", &Biarc::theta_middle,
       R"S(
         Returns the **x** coordinate of the junction point of the biarc
 
@@ -363,7 +393,17 @@ namespace G2lib {
         :rtype: Biarc
       )S")
       
-      .def("numSegments", &BiarcList::numSegments,
+      .def("numSegments", &BiarcList::num_segments,
+      R"S(
+        Returns the number of elements in the BiarcList
+
+        .. warning:: Deprecated for ``num_segments``
+
+        :return: the number of elements
+        :rtype: int
+      )S")
+
+      .def("num_segments", &BiarcList::num_segments,
       R"S(
         Returns the number of elements in the BiarcList
 
@@ -371,7 +411,7 @@ namespace G2lib {
         :rtype: int
       )S")
 
-      .def("__len__", &BiarcList::numSegments,
+      .def("__len__", &BiarcList::num_segments,
       R"S(
         Returns the number of elements in the BiarcList
 
@@ -432,7 +472,7 @@ namespace G2lib {
       )S")
       
       .def("getSTK", [](const BiarcList & self) {
-        const size_t n = self.numSegments();
+        const size_t n = self.num_segments();
         // Avoids segmentation fault for empty list
         if (!n) {
           return make_tuple(std::vector<real_type>(), 
@@ -451,7 +491,7 @@ namespace G2lib {
       )S")
       
       .def("getXY", [](const BiarcList & self) {
-        const size_t n = self.numSegments();
+        const size_t n = self.num_segments();
         // Avoids segmentation fault for empty list
         if (!n) {
           return make_tuple(std::vector<real_type>(), 

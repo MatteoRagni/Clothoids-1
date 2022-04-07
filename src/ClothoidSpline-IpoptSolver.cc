@@ -286,10 +286,10 @@ namespace G2lib {
       switch (status) {
         case (ApplicationReturnStatus::Solve_Succeeded):
         case (ApplicationReturnStatus::Solved_To_Acceptable_Level):
-        case (ApplicationReturnStatus::Feasible_Point_Found):
           return Result(ResultType::Success, stats->FinalObjective(), stats->IterationCount());
           break;
         case (ApplicationReturnStatus::Infeasible_Problem_Detected):
+        case (ApplicationReturnStatus::Feasible_Point_Found):
           return Result(ResultType::NumericalIssue, stats->FinalObjective(), stats->IterationCount());
           break;
         case (ApplicationReturnStatus::Search_Direction_Becomes_Too_Small):
@@ -323,6 +323,7 @@ namespace G2lib {
       IpoptSolver solver(m_spline);
       solver.guess();
       auto status = solver.solve();
+      build_clothoid_list(solver.theta_solution(), result);
       return status;
     }
 
@@ -332,6 +333,7 @@ namespace G2lib {
       IpoptSolver solver(m_spline);
       solver.guess();
       auto status = solver.solve();
+      build_clothoid_list(solver.theta_solution(), result);
       return status;
     }
 

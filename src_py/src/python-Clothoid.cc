@@ -7,7 +7,6 @@
  */
 
 #include "python-Clothoid.hh"
-#include "python-ClothoidSpline-Interpolation.hh"
 #include "pybind11/stl.h"
 #include <stdexcept>
 
@@ -353,10 +352,23 @@ namespace G2lib {
         :rtype: Tuple[float, float]
       )S")
       
-      .def("changeCurvilinearOrigin", &ClothoidCurve::changeCurvilinearOrigin,
+      .def("change_curvilinear_origin", &ClothoidCurve::change_curvilinear_origin,
       R"S(
         Change the origin of the clothoid at :math:`s_0`
         and the length to  :math:`L`.
+         
+        :param float s0:   :math:`s_0`
+        :param float newL: :math:`L`
+        :return: nothing, works in place
+        :rtype: NoneType
+      )S")
+
+      .def("changeCurvilinearOrigin", &ClothoidCurve::change_curvilinear_origin,
+      R"S(
+        Change the origin of the clothoid at :math:`s_0`
+        and the length to  :math:`L`.
+
+        .. warning:: Deprecated for ``change_curvilinear_origin``
          
         :param float s0:   :math:`s_0`
         :param float newL: :math:`L`
@@ -464,9 +476,9 @@ namespace G2lib {
       .def("ok", &G2lib::Interpolation::Result::ok)
       .def("status", &G2lib::Interpolation::Result::status)
       .def("objective_value", &G2lib::Interpolation::Result::objective_value)
-      .def("iters", &G2lib::Interpolation::Result::iters)
+      .def("iters", &G2lib::Interpolation::Result::iters);
 
-      m.def("buildP1", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys, real_type theta_0, real_type theta_1) -> G2lib::ClothoidList {
+      m.def("buildP1", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys, real_type theta_0, real_type theta_1) {
         G2lib::ClothoidList result;
         G2lib::Interpolation::Interpolator interpolator(xs, ys);
         const auto status = interpolator.buildP1(theta_0, theta_1, result);
@@ -485,7 +497,7 @@ namespace G2lib {
         :return: a tuple containing the result of the interpolation and the clothoid list
         :rtype: Tuple[InterpolatorResult, ClothodList] 
       )S")
-      .def("buildP2", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
+      .def("buildP2", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) {
         G2lib::ClothoidList result;
         G2lib::Interpolation::Interpolator interpolator(xs, ys);
         const auto status = interpolator.buildP2(result);
@@ -502,7 +514,7 @@ namespace G2lib {
         :return: a tuple containing the result of the interpolation and the clothoid list
         :rtype: Tuple[InterpolatorResult, ClothodList] 
       )S")
-      .def("buildP4", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
+      .def("buildP4", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) {
         G2lib::ClothoidList result;
         G2lib::Interpolation::Interpolator interpolator(xs, ys);
         const auto status = interpolator.buildP4(result);
@@ -519,7 +531,7 @@ namespace G2lib {
         :return: a tuple containing the result of the interpolation and the clothoid list
         :rtype: Tuple[InterpolatorResult, ClothodList] 
       )S")
-      .def("buildP5", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
+      .def("buildP5", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) {
         G2lib::ClothoidList result;
         G2lib::Interpolation::Interpolator interpolator(xs, ys);
         const auto status = interpolator.buildP5(result);
@@ -536,7 +548,7 @@ namespace G2lib {
         :return: a tuple containing the result of the interpolation and the clothoid list
         :rtype: Tuple[InterpolatorResult, ClothodList] 
       )S")
-      .def("buildP6", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
+      .def("buildP6", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) {
         G2lib::ClothoidList result;
         G2lib::Interpolation::Interpolator interpolator(xs, ys);
         const auto status = interpolator.buildP6(result);
@@ -553,7 +565,7 @@ namespace G2lib {
         :return: a tuple containing the result of the interpolation and the clothoid list
         :rtype: Tuple[InterpolatorResult, ClothodList] 
       )S")
-      .def("buildP7", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
+      .def("buildP7", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) {
         G2lib::ClothoidList result;
         G2lib::Interpolation::Interpolator interpolator(xs, ys);
         const auto status = interpolator.buildP7(result);
@@ -570,7 +582,7 @@ namespace G2lib {
         :return: a tuple containing the result of the interpolation and the clothoid list
         :rtype: Tuple[InterpolatorResult, ClothodList] 
       )S")
-      .def("buildP8", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
+      .def("buildP8", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) {
         G2lib::ClothoidList result;
         G2lib::Interpolation::Interpolator interpolator(xs, ys);
         const auto status = interpolator.buildP8(result);
@@ -587,7 +599,7 @@ namespace G2lib {
         :return: a tuple containing the result of the interpolation and the clothoid list
         :rtype: Tuple[InterpolatorResult, ClothodList] 
       )S")
-      .def("buildP9", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
+      .def("buildP9", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) {
         G2lib::ClothoidList result;
         G2lib::Interpolation::Interpolator interpolator(xs, ys);
         const auto status = interpolator.buildP9(result);
@@ -946,7 +958,17 @@ namespace G2lib {
         :rtype: int
       )S")
 
-      .def("numSegments", &ClothoidList::numSegments,
+      .def("numSegments", &ClothoidList::num_segments,
+      R"S(
+        Returns the number of segments in the list
+
+        .. warning:: Deprecated in favor of ``num_segments`` or better ``len``
+
+        :return: the number of segments
+        :rtype: int
+      )S")
+
+      .def("num_segments", &ClothoidList::num_segments,
       R"S(
         Returns the number of segments in the list
 
@@ -954,7 +976,7 @@ namespace G2lib {
         :rtype: int
       )S")
 
-      .def("__len__", &ClothoidList::numSegments,
+      .def("__len__", &ClothoidList::num_segments,
       R"S(
         Returns the number of segments in the list
 
@@ -1335,7 +1357,7 @@ namespace G2lib {
       )S")
 
       .def("getXY", [](const ClothoidList & self) {
-        const size_t n = self.numSegments();
+        const size_t n = self.num_segments();
         // Avoids segmentation fault for empty list
         if (!n) {
           return make_tuple(std::vector<real_type>(), 
@@ -1353,7 +1375,7 @@ namespace G2lib {
       )S")
 
       .def("getDeltaTheta", [](const ClothoidList & self) {
-        const size_t n = self.numSegments();
+        const size_t n = self.num_segments();
         if (!n) { return std::vector<real_type>(); }
         std::vector<real_type> deltaTheta(n - 1);
         if (n - 1) {
@@ -1369,7 +1391,7 @@ namespace G2lib {
       )S")
 
       .def("getDeltaKappa", [](const ClothoidList & self) {
-        const size_t n = self.numSegments();
+        const size_t n = self.num_segments();
         if (!n) { return std::vector<real_type>(); }
         std::vector<real_type> deltaKappa(n - 1);
         if (n - 1) {
@@ -1508,7 +1530,7 @@ namespace G2lib {
       )S")
 
       .def("as_list", [](const ClothoidList & self) {
-        const size_t n = self.numSegments();
+        const size_t n = self.num_segments();
         std::vector<ClothoidCurve> list;
         list.reserve(n);
         for (size_t i = 0; i < n; i++) {

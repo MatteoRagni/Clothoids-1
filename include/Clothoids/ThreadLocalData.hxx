@@ -73,7 +73,7 @@ namespace G2lib {
         std::lock_guard<std::mutex> l(m_data_mutex);
         auto                        el = m_data.find(id);
         if (el == m_data.end()) {
-          auto data_ptr = std::make_shared<Data>();
+          auto data_ptr = std::make_shared<Data>(Data());
           m_data[id]    = data_ptr;
           return data_ptr;
         } else {

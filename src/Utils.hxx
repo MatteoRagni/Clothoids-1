@@ -53,24 +53,24 @@ namespace G2lib {
       return !(FP_INFINITE == std::fpclassify(x) || FP_NAN == std::fpclassify(x));
     }
 
-    template<typename T_int, typename T_real>
-    void search_interval(
-        T_int npts, T_real const * X, T_real & x, std::shared_ptr<T_int> lastInterval, bool closed, bool can_extend) {
-      int & lastInterval_ = *lastInterval;
-      search_interval<T_int, T_real>(npts, X, x, lastInterval, closed, can_extend);
-    }
+    // template<typename T_int, typename T_real>
+    // void search_interval(
+    //     T_int npts, T_real const * X, T_real & x, std::shared_ptr<T_int> lastInterval, bool closed, bool can_extend) {
+    //   int & lastInterval_ = *lastInterval;
+    //   search_interval<T_int, T_real>(npts, X, x, lastInterval, closed, can_extend);
+    // }
 
     template<typename T_int, typename T_real>
-    void search_interval(T_int npts, T_real const * X, T_real & x, T_int & lastInterval, bool closed, bool can_extend) {
+    void search_interval(T_int npts, T_real const * X, T_real & x, std::shared_ptr<T_int> lastInterval, bool closed, bool can_extend) {
       // For this implementation we must ensure a number of points greater than 1 (there
       // must be at least one interval). The number of intervals is npts - 2. The last
       // point is in n = npts - 1;
       const T_int n = npts - 1;
       G2LIB_UTILS_ASSERT(
-          npts > 1 && lastInterval >= 0 && lastInterval < n,
+          npts > 1 && *lastInterval >= 0 && *lastInterval < n,
           "In search_interval( npts=%d, X, x=%d, lastInterval=%d, closed=%d, can_extend=%d)\n"
           "npts musrt be >= 2 and lastInterval must be in [0,npts-2]\n",
-          npts, x, lastInterval, closed, can_extend);
+          npts, x, *lastInterval, closed, can_extend);
 
       // Handles the "closed" search, by limiting the value of x for the search inside the
       // limit of [X[0], X[n]]. This function will use fmod for detecting multiple "loops".
@@ -90,11 +90,11 @@ namespace G2lib {
             can_extend || (x >= xl && x <= xr),
             "In search_interval( npts=%d, X, x=%f, lastInterval=%d, closed=%d, can_extend=%d)\n"
             "out of range: [%f,%f]\n",
-            npts, x, lastInterval, closed, can_extend, xl, xr);
+            npts, x, *lastInterval, closed, can_extend, xl, xr);
       }
 
       // Find the interval of the support of the B-spline, using lastInterval as an hot start
-      T_real const * XL = X + lastInterval;
+      T_real const * XL = X + *lastInterval;
 
       // We must consider 3 possible scenario:
       // 1. the searched point lies on the right of the current interval
@@ -106,15 +106,15 @@ namespace G2lib {
         // 1.2: the point is in the very next interval
         // 1.3: we must search the interval of the point in the intervals next to the current one, up to last
         if (x >= X[n - 1]) {
-          lastInterval = n - 1;
+          *lastInterval = n - 1;
         } else if (x < XL[2]) {
-          ++lastInterval;
+          ++(*lastInterval);
         } else {
           T_real const * XE = X + n;
-          lastInterval += T_int(std::lower_bound(XL, XE, x) - XL);
-          T_real const * XX = X + lastInterval;
+          *lastInterval += T_int(std::lower_bound(XL, XE, x) - XL);
+          T_real const * XX = X + *lastInterval;
           if (x < XX[0] || isZero(XX[0] - XX[1]))
-            --lastInterval;
+            --(*lastInterval);
         }
       } else if (x < XL[0]) /* situation 2. */ {
         // We considers three situations in order to maximize performances:
@@ -122,22 +122,22 @@ namespace G2lib {
         // 1.2: the point is in the very next interval
         // 1.3: we must search the interval of the point in the intervals next to the current one, up to first
         if (x <= X[1]) {
-          lastInterval = 0;
+          *lastInterval = 0;
         } else if (XL[-1] <= x) {
-          --lastInterval;
+          --(*lastInterval);
         } else {
-          lastInterval      = T_int(lower_bound(X + 1, XL, x) - X);
-          T_real const * XX = X + lastInterval;
+          *lastInterval      = T_int(std::lower_bound(X + 1, XL, x) - X);
+          T_real const * XX = X + *lastInterval;
           if (x < XX[0] || isZero(XX[0] - XX[1]))
-            --lastInterval;
+            --*lastInterval;
         }
       } /* situation 3: Do nothing. */
       // Check the computed interval
       G2LIB_UTILS_ASSERT(
-          lastInterval >= 0 && lastInterval < n,
+          *lastInterval >= 0 && *lastInterval < n,
           "In search_interval( npts=%d, X, x=%f, lastInterval=%d, closed=%d, can_extend=%d)\n"
           "computed lastInterval of range: [%f,%f]\n",
-          npts, x, lastInterval, closed, can_extend, xl, xr);
+          npts, x, *lastInterval, closed, can_extend, xl, xr);
     }
 
   }  // namespace Utils

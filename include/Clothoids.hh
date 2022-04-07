@@ -56,6 +56,7 @@
 #include "Clothoids/PolyLine.hxx"
 #include "Clothoids/BiarcList.hxx"
 #include "Clothoids/ClothoidList.hxx"
+#include "Clothoids/ClothoidSpline-Interpolation.hxx"
 
 #endif
 
