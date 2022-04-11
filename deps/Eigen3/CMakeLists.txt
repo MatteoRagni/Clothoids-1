@@ -35,8 +35,9 @@ if (NOT Eigen3_FOUND)
   FetchContent_Declare(Eigen3
     URL https://gitlab.com/libeigen/eigen/-/archive/3.3.9/eigen-3.3.9.zip)
   FetchContent_MakeAvailable(Eigen3)
+  add_library(Clothoids::Eigen3 ALIAS eigen)
+else()
+  add_library(ClothoidsEigen3 INTERFACE IMPORTED GLOBAL)
+  target_link_libraries(ClothoidsEigen3 INTERFACE Eigen3::Eigen)
+  add_library(Clothoids::Eigen3 ALIAS ClothoidsEigen3)
 endif()
-
-add_library(ClothoidsEigen3 INTERFACE IMPORTED GLOBAL)
-target_link_libraries(ClothoidsEigen3 INTERFACE Eigen3::Eigen)
-add_library(Clothoids::Eigen3 ALIAS ClothoidsEigen3)
