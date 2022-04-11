@@ -6,7 +6,7 @@ build-ubuntu-18.04:
   tags:
   - linux
   image: docker-registry.antemotion.com/utils/docker-images/ubuntu-1804
-  before-script:
+  before_script:
   - apt-get update
   - apt-get install -y --no-install-recommends --no-install-suggests coinor-libipopt-dev libeigen3-dev
   script:
@@ -18,7 +18,7 @@ build-ubuntu-20.04:
   tags:
   - linux
   image: docker-registry.antemotion.com/utils/docker-images/ubuntu-2004
-  before-script:
+  before_script:
   - apt-get update
   - apt-get install -y --no-install-recommends --no-install-suggests coinor-libipopt-dev libeigen3-dev
   script:
