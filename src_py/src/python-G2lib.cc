@@ -20,7 +20,11 @@ namespace py = pybind11;
 using namespace G2lib;
 using namespace G2lib::python;
 
-PYBIND11_MODULE(G2lib, m) {
+#ifndef G2LIB_PROJECT_VERSION
+#define G2LIB_PROJECT_VERSION "dev"
+#endif
+
+PYBIND11_MODULE(_G2lib, m) {
   wrap_BaseCurve(m);
   wrap_AABBtree(m);
   wrap_Triangle2D(m);
@@ -33,7 +37,7 @@ PYBIND11_MODULE(G2lib, m) {
   wrap_ClothoidList(m);
   wrap_ClothoidSplineG2(m);
 
-  m.attr("__version__") = py::str("2.0.9");
+  m.attr("__version__") = std::string(G2LIB_PROJECT_VERSION);
 
   py::class_<Solve2x2>(m, "Solve2x2")
     .def(py::init())
