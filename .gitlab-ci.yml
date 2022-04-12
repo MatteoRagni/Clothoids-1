@@ -34,6 +34,6 @@ build-windows-10-x64:
   script:
   - mkdir build
   - cd build
-  - cmake -A x64 -DCLOTHOIDS_BUILD_SHARED=ON -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON ..
+  - cmake -A x64 -DCLOTHOIDS_BUILD_SHARED=ON -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_FORCE_EIGEN_DOWNLOAD=ON ..
   - cmake --build .
 

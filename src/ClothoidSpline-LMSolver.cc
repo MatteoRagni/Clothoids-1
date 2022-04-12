@@ -97,16 +97,16 @@ namespace G2lib {
 
       switch (info) {
         case (Eigen::Success):
-          return Result(ResultType::Success, lm.fnorm(), lm.iterations());
+          return Result(ResultType::Success, lm.fnorm(), static_cast<int_type>(lm.iterations()));
           break;
         case (Eigen::NumericalIssue):
-          return Result(ResultType::NumericalIssue, lm.fnorm(), lm.iterations());
+          return Result(ResultType::NumericalIssue, lm.fnorm(), static_cast<int_type>(lm.iterations()));
           break;
         case (Eigen::NoConvergence):
-          return Result(ResultType::NoConvergence, lm.fnorm(), lm.iterations());
+          return Result(ResultType::NoConvergence, lm.fnorm(), static_cast<int_type>(lm.iterations()));
           break;
         case (Eigen::InvalidInput):
-          return Result(ResultType::InvalidInput, lm.fnorm(), lm.iterations());
+          return Result(ResultType::InvalidInput, lm.fnorm(), static_cast<int_type>(lm.iterations()));
           break;
       }
       return Result(ResultType::InternalError);

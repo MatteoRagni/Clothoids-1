@@ -29,15 +29,20 @@ include(FetchContent)
 
 project(Eigen)
 
+option(CLOTHOIDS_FORCE_EIGEN_DOWNLOAD 
+  "Force download of eigen instead of using system version" OFF)
+
+if(NOT CLOTHOIDS_FORCE_EIGEN_DOWNLOAD)
 find_package(Eigen3 3.3 NO_MODULE)
-if (NOT Eigen3_FOUND)
+endif()
+if (Eigen3_FOUND)
+  add_library(ClothoidsEigen3 INTERFACE IMPORTED GLOBAL)
+  target_link_libraries(ClothoidsEigen3 INTERFACE Eigen3::Eigen)
+  add_library(Clothoids::Eigen3 ALIAS ClothoidsEigen3)
+else()
   message(STATUS "Eigen3 not found, downloading from repository")
   FetchContent_Declare(Eigen3
     URL https://gitlab.com/libeigen/eigen/-/archive/3.3.9/eigen-3.3.9.zip)
   FetchContent_MakeAvailable(Eigen3)
   add_library(Clothoids::Eigen3 ALIAS eigen)
-else()
-  add_library(ClothoidsEigen3 INTERFACE IMPORTED GLOBAL)
-  target_link_libraries(ClothoidsEigen3 INTERFACE Eigen3::Eigen)
-  add_library(Clothoids::Eigen3 ALIAS ClothoidsEigen3)
 endif()

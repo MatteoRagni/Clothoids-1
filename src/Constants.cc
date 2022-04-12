@@ -28,15 +28,15 @@
 
 namespace G2lib {
   namespace Utils {
-    constexpr real_type m_pi         = M_PI;
-    constexpr real_type m_2pi        = m_pi * 2;
-    constexpr real_type m_pi_2       = M_PI_2;
-    constexpr real_type m_1_pi       = M_1_PI;
-    constexpr real_type m_1_sqrt_pi  = 0.564189583547756286948079451561;  // 1/sqrt(pi)
-    constexpr real_type machepsi     = std::numeric_limits<real_type>::epsilon();
-    constexpr real_type machepsi10   = 10 * machepsi;
-    constexpr real_type machepsi100  = 100 * machepsi;
-    constexpr real_type machepsi1000 = 1000 * machepsi;
+    const real_type m_pi         = M_PI;
+    const real_type m_2pi        = m_pi * 2;
+    const real_type m_pi_2       = M_PI_2;
+    const real_type m_1_pi       = M_1_PI;
+    const real_type m_1_sqrt_pi  = 0.564189583547756286948079451561;  // 1/sqrt(pi)
+    const real_type machepsi     = std::numeric_limits<real_type>::epsilon();
+    const real_type machepsi10   = 10 * machepsi;
+    const real_type machepsi100  = 100 * machepsi;
+    const real_type machepsi1000 = 1000 * machepsi;
     const real_type     sqrtMachepsi = std::sqrt(machepsi);
   }  // namespace Utils
 }  // namespace G2lib
