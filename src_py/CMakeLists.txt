@@ -52,9 +52,18 @@ target_include_directories(_G2lib
 target_compile_features(_G2lib PRIVATE cxx_std_14)
 target_link_libraries(_G2lib PRIVATE Clothoids::Static)
 set_target_properties(_G2lib PROPERTIES
-  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
+  # ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib")
+if(MSVC)
+  set_target_properties(_G2lib PROPERTIES
+    # ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
+    LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
+    # ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
+    LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib")
+endif()
 
 pybind11_add_module(_G2lib_Interpolation MODULE ${G2LIB_INTERPOLATION_SOURCES})
 target_include_directories(_G2lib_Interpolation 
@@ -62,9 +71,15 @@ target_include_directories(_G2lib_Interpolation
 target_compile_features(_G2lib_Interpolation PRIVATE cxx_std_14)
 target_link_libraries(_G2lib_Interpolation PRIVATE Clothoids::Static)
 set_target_properties(_G2lib_Interpolation PROPERTIES
-  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
+  # ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib")
-
-# set(INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/../lib/lib)
-# install(TARGETS G2lib DESTINATION ${INSTALL_PREFIX})
+if(MSVC)
+  set_target_properties(_G2lib_Interpolation PROPERTIES
+    # ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
+    LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
+    # ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
+    LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib")
+endif()
