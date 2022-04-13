@@ -7,10 +7,7 @@
 
 import sys
 import os
-if sys.platform != 'win32':
-    sys.path.insert(0, os.path.normpath(os.path.join(__file__, "../../build")))
-else:
-    sys.path.insert(0, os.path.normpath(os.path.join(__file__, "../../build/Release")))
+sys.path.insert(0, os.path.normpath(os.path.join(__file__, "../../distrib/G2lib")))
 
 import unittest
 import G2lib

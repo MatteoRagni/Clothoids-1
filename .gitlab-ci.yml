@@ -1,11 +1,26 @@
+stages:
+- build-library
+- build-python
+# - test-python
+# - package-library
+# - package-python
+# - deploy-python
+# - deploy-library
+
 variables:
   CMAKE_BUILD_TYPE: RelWithDebInfo
   DEBIAN_FRONTEND: noninteractive
 
+#  ___      _ _    _   _    _ _                 _        
+# | _ )_  _(_) |__| | | |  (_) |__ _ _ __ _ _ _(_)___ ___
+# | _ \ || | | / _` | | |__| | '_ \ '_/ _` | '_| / -_|_-<
+# |___/\_,_|_|_\__,_| |____|_|_.__/_| \__,_|_| |_\___/__/
+#                                                        
 build-ubuntu-18.04:
+  stage: build-library
   tags:
   - linux
-  image: docker-registry.antemotion.com/utils/docker-images/ubuntu-1804
+  image: docker-registry.antemotion.com/utils/docker-images/ubuntu-1804:latest
   before_script:
   - apt-get update
   - apt-get install -y --no-install-recommends --no-install-suggests liblapack-dev gfortran coinor-libipopt-dev libeigen3-dev
@@ -16,9 +31,10 @@ build-ubuntu-18.04:
   - cmake --build .
 
 build-ubuntu-20.04:
+  stage: build-library
   tags:
   - linux
-  image: docker-registry.antemotion.com/utils/docker-images/ubuntu-2004
+  image: docker-registry.antemotion.com/utils/docker-images/ubuntu-2004:latest
   before_script:
   - apt-get update
   - apt-get install -y --no-install-recommends --no-install-suggests liblapack-dev gfortran coinor-libipopt-dev libeigen3-dev
@@ -29,6 +45,7 @@ build-ubuntu-20.04:
   - cmake --build .
 
 build-windows-10-x64:
+  stage: build-library
   tags:
   - win
   script:
@@ -37,3 +54,188 @@ build-windows-10-x64:
   - cmake -A x64 -DCLOTHOIDS_BUILD_SHARED=ON -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_FORCE_EIGEN_DOWNLOAD=ON ..
   - cmake --build .
 
+#  ___      _ _    _   ___      _   _             
+# | _ )_  _(_) |__| | | _ \_  _| |_| |_  ___ _ _  
+# | _ \ || | | / _` | |  _/ || |  _| ' \/ _ \ ' \ 
+# |___/\_,_|_|_\__,_| |_|  \_, |\__|_||_\___/_||_|
+#                          |__/                   
+
+build-py27-linux:
+  stage: build-python
+  tags: 
+  - linux
+  image: docker-registry.antemotion.com/utils/docker-images/python-27:latest
+  before_script:
+  - apt-get update
+  - apt-get install -y --no-install-recommends --no-install-suggests liblapack-dev gfortran coinor-libipopt-dev libeigen3-dev
+  script:
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_BUILD_SHARED=ON -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_ENABLE_IPOPT_SOLVER=ON -DPYTHON_EXECUTABLE=$PYTHON_BIN ..
+  - cmake --build .
+  variables:
+    PYTHON_BIN: /usr/bin/python2.7
+  artifacts:
+    paths:
+    - src_py/distrib
+
+build-py36-linux:
+  stage: build-python
+  tags: 
+  - linux
+  image: docker-registry.antemotion.com/utils/docker-images/python-36:latest
+  before_script:
+  - apt-get update
+  - apt-get install -y --no-install-recommends --no-install-suggests liblapack-dev gfortran coinor-libipopt-dev libeigen3-dev
+  script:
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_BUILD_SHARED=ON -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_ENABLE_IPOPT_SOLVER=ON -DPYTHON_EXECUTABLE=$PYTHON_BIN ..
+  - cmake --build .
+  variables:
+    PYTHON_BIN: /usr/bin/python3.6
+  artifacts:
+    paths:
+    - src_py/distrib
+
+build-py37-linux:
+  stage: build-python
+  tags: 
+  - linux
+  image: docker-registry.antemotion.com/utils/docker-images/python-37:latest
+  before_script:
+  - apt-get update
+  - apt-get install -y --no-install-recommends --no-install-suggests liblapack-dev gfortran coinor-libipopt-dev libeigen3-dev
+  script:
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_BUILD_SHARED=ON -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_ENABLE_IPOPT_SOLVER=ON -DPYTHON_EXECUTABLE=$PYTHON_BIN ..
+  - cmake --build .
+  variables:
+    PYTHON_BIN: /usr/bin/python3.7
+  artifacts:
+    paths:
+    - src_py/distrib
+
+build-py38-linux:
+  stage: build-python
+  tags: 
+  - linux
+  image: docker-registry.antemotion.com/utils/docker-images/python-38:latest
+  before_script:
+  - apt-get update
+  - apt-get install -y --no-install-recommends --no-install-suggests liblapack-dev gfortran coinor-libipopt-dev libeigen3-dev
+  script:
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_BUILD_SHARED=ON -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_ENABLE_IPOPT_SOLVER=ON -DPYTHON_EXECUTABLE=$PYTHON_BIN ..
+  - cmake --build .
+  variables:
+    PYTHON_BIN: /usr/bin/python3.8
+  artifacts:
+    paths:
+    - src_py/distrib
+
+build-py39-linux:
+  stage: build-python
+  tags: 
+  - linux
+  image: docker-registry.antemotion.com/utils/docker-images/python-39:latest
+  before_script:
+  - apt-get update
+  - apt-get install -y --no-install-recommends --no-install-suggests liblapack-dev gfortran coinor-libipopt-dev libeigen3-dev
+  script:
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_BUILD_SHARED=ON -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_ENABLE_IPOPT_SOLVER=ON -DPYTHON_EXECUTABLE=$PYTHON_BIN ..
+  - cmake --build .
+  variables:
+    PYTHON_BIN: /usr/bin/python3.9
+  artifacts:
+    paths:
+    - src_py/distrib
+
+build-py27-win:
+  stage: build-python
+  tags: 
+  - win
+  script:
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_BUILD_SHARED=ON -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DPYTHON_EXECUTABLE=$PYTHON_BIN ..
+  - cmake --build .
+  variables:
+    PYTHON_BIN: C:\Python27\python.exe
+  artifacts:
+    paths:
+    - src_py/distrib
+
+build-py36-win:
+  stage: build-python
+  tags: 
+  - win
+  script:
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_BUILD_SHARED=ON -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DPYTHON_EXECUTABLE=$PYTHON_BIN ..
+  - cmake --build .
+  variables:
+    PYTHON_BIN: C:\Python36\python.exe
+  artifacts:
+    paths:
+    - src_py/distrib
+
+build-py37-win:
+  stage: build-python
+  tags: 
+  - win
+  script:
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_BUILD_SHARED=ON -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DPYTHON_EXECUTABLE=$PYTHON_BIN ..
+  - cmake --build .
+  variables:
+    PYTHON_BIN: C:\Python37\python.exe
+  artifacts:
+    paths:
+    - src_py/distrib
+
+build-py38-win:
+  stage: build-python
+  tags: 
+  - win
+  script:
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_BUILD_SHARED=ON -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DPYTHON_EXECUTABLE=$PYTHON_BIN ..
+  - cmake --build .
+  variables:
+    PYTHON_BIN: C:\Python38\python.exe
+  artifacts:
+    paths:
+    - src_py/distrib
+
+build-py39-win:
+  stage: build-python
+  tags: 
+  - win
+  script:
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_BUILD_SHARED=ON -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DPYTHON_EXECUTABLE=$PYTHON_BIN ..
+  - cmake --build .
+  variables:
+    PYTHON_BIN: C:\Python39\python.exe
+  artifacts:
+    paths:
+    - src_py/distrib

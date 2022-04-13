@@ -1500,8 +1500,8 @@ namespace G2lib {
     int_type closest_point_in_s_range_SAE(
         real_type   qx,
         real_type   qy,
-        int_type    s_begin,
-        int_type    s_end,
+        real_type   s_begin,
+        real_type   s_end,
         real_type & x,
         real_type & y,
         real_type & s,

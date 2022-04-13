@@ -42,7 +42,7 @@ namespace G2lib {
 
     void Interpolator::build_clothoid_spline() {
       check_input();
-      m_spline.build(xs().data(), ys().data(), xs().size());
+      m_spline.build(xs().data(), ys().data(), static_cast<int_type>(xs().size()));
     }
 
     void Interpolator::check_input() {
@@ -56,7 +56,7 @@ namespace G2lib {
         throw std::runtime_error("Input size too small");
       }
 
-      const int_type         size = xs().size();
+      const int_type         size = static_cast<int_type>(xs().size());
       std::vector<real_type> chk;
       for (int_type i = 1; i < size; i++) {
         const real_type x_diff2 = std::pow(xs()[i] - xs()[i - 1], 2);
@@ -78,7 +78,7 @@ namespace G2lib {
         throw std::runtime_error("Result has only two values??");
       }
       result.init();
-      result.reserve(theta.size() - 1);
+      result.reserve(static_cast<int_type>(theta.size()) - 1);
       for (int_type i = 0; i < static_cast<int_type>(theta.size()) - 1; i++)
         result.push_back_G1(xs()[i], ys()[i], theta[i], xs()[i + 1], ys()[i + 1], theta[i + 1]);
     }

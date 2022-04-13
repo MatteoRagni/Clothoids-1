@@ -28,7 +28,7 @@ sys.path.insert(0, __g2lib_bin_path__)
 from _G2lib import *
 
 try:
-    from _G2lib_Interpolator import *
+    from _G2lib_Interpolation import *
 except ImportError:
     def buildP1(*args, **kwargs): 
         raise RuntimeError("Interpolation library cannot be loaded: " 

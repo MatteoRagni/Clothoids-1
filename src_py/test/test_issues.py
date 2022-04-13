@@ -7,10 +7,7 @@
 
 import sys
 import os
-if sys.platform != 'win32':
-    sys.path.insert(0, os.path.normpath(os.path.join(__file__, "../../build")))
-else:
-    sys.path.insert(0, os.path.normpath(os.path.join(__file__, "../../build/Release")))
+sys.path.insert(0, os.path.normpath(os.path.join(__file__, "../../distrib/G2lib")))
 
 import unittest
 import G2lib
@@ -105,37 +102,38 @@ class TestIssue2(unittest.TestCase):
         [self.assertAlmostEqual(a, b,  places=6) for a, b in zip(ns, RESULT_N)]
 
 
-# class TestIssue3(unittest.TestCase):
-# 
-#     def setUp(self):
-#         X = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]
-#         Y = [2.0, 1.0, 5.0, 3.0, 4.0, 0.0]
-#         _, self.cloth = G2lib.buildP5(X, Y)
-#         self.x = 1.5916858361759525
-#         self.y = 2.769657501900653
-#         self.s = 3.8487782381907865
-#         self.t = -0.46880499443796325
-#         self.dst = 0.46880499443796336
-#         self.i = 1
-# 
-#     def test_closestPointInSRange_ISO(self):
-#         _, x, y, s, t, dst, i = self.cloth.closestPointInSRange_ISO(2.0, 3.0, 0.0, self.cloth.length() / 2.0)
-#         import pdb; pdb.set_trace()
-#         self.assertAlmostEqual(x, self.x, places=6)
-#         self.assertAlmostEqual(y, self.y, places=6)
-#         self.assertAlmostEqual(s, self.s, places=6)
-#         self.assertAlmostEqual(t, self.t, places=6)
-#         self.assertAlmostEqual(dst, self.dst, places=6)
-#         self.assertEqual(i, self.i)
-# 
-#     def test_closestPointInSRange_SAE(self):
-#         _, x, y, s, t, dst, i = self.cloth.closestPointInSRange_SAE(2.0, 3.0, 0.0, self.cloth.length() / 2.0)
-#         self.assertAlmostEqual(x, self.x, places=6)
-#         self.assertAlmostEqual(y, self.y, places=6)
-#         self.assertAlmostEqual(s, self.s, places=6)
-#         self.assertAlmostEqual(t, -self.t, places=6)
-#         self.assertAlmostEqual(dst, self.dst, places=6)
-#         self.assertEqual(i, self.i)
+class TestIssue3(unittest.TestCase):
+
+    def setUp(self):
+        X = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]
+        Y = [2.0, 1.0, 5.0, 3.0, 4.0, 0.0]
+        _, self.cloth = G2lib.buildP5(X, Y)
+        self.x = 1.5916858361759525
+        self.y = 2.769657501900653
+        self.s = 3.8487782381907865
+        self.t = -0.46880499443796325
+        self.dst = 0.46880499443796336
+        self.i = 1
+
+    @unittest.skip("Known issue with backend library")
+    def test_closestPointInSRange_ISO(self):
+        _, x, y, s, t, dst, i = self.cloth.closestPointInSRange_ISO(2.0, 3.0, 0.0, self.cloth.length() / 2.0)
+        self.assertAlmostEqual(x, self.x, places=6)
+        self.assertAlmostEqual(y, self.y, places=6)
+        self.assertAlmostEqual(s, self.s, places=6)
+        self.assertAlmostEqual(t, self.t, places=6)
+        self.assertAlmostEqual(dst, self.dst, places=6)
+        self.assertEqual(i, self.i)
+
+    @unittest.skip("Known issue with backend library")
+    def test_closestPointInSRange_SAE(self):
+        _, x, y, s, t, dst, i = self.cloth.closestPointInSRange_SAE(2.0, 3.0, 0.0, self.cloth.length() / 2.0)
+        self.assertAlmostEqual(x, self.x, places=6)
+        self.assertAlmostEqual(y, self.y, places=6)
+        self.assertAlmostEqual(s, self.s, places=6)
+        self.assertAlmostEqual(t, -self.t, places=6)
+        self.assertAlmostEqual(dst, self.dst, places=6)
+        self.assertEqual(i, self.i)
 
 
 # class TestIssue3bis(unittest.TestCase):
