@@ -135,7 +135,7 @@ namespace G2lib {
         :rtype: float
       )S")
 
-      .def("thetaTotalVariation", &CircleArc::thetaTotalVariation,
+      .def("thetaTotalVariation", &CircleArc::theta_total_variation,
       R"S(
         Return the absolute value of the tangent angle variation in the circle arc.
 
@@ -145,7 +145,7 @@ namespace G2lib {
 
       .def("thetaMinMax", [](const CircleArc & self) {
         real_type th_min, th_max;
-        self.thetaMinMax(th_min, th_max);
+        self.theta_min_max(th_min, th_max);
         return std::make_tuple(th_min, th_max);
       }, 
       R"S(
@@ -155,11 +155,25 @@ namespace G2lib {
         :rtype: Tuple[float, float]
       )S")
       
-      .def("changeCurvilinearOrigin", &CircleArc::changeCurvilinearOrigin,
+      .def("change_curvilinear_origin", &CircleArc::change_curvilinear_origin,
         py::arg("s0"), py::arg("newL"),
       R"S(
         Change the origin of the curvilinear abscissa of the circle arc
         and the length of the arc
+
+        :param float s0: new curvilinear abscissa origin
+        :param float newL: new length of the curve
+        :return: nothing, works in place
+        :rtype: NoneType
+      )S")
+
+      .def("changeCurvilinearOrigin", &CircleArc::change_curvilinear_origin,
+        py::arg("s0"), py::arg("newL"),
+      R"S(
+        Change the origin of the curvilinear abscissa of the circle arc
+        and the length of the arc
+
+        .. warning:: Deprecated for ``change_curvilinear_origin``
 
         :param float s0: new curvilinear abscissa origin
         :param float newL: new length of the curve

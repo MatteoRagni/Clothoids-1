@@ -179,6 +179,16 @@ namespace G2lib {
           py::arg("b"), py::arg("tol"))
         .def(py::init<ClothoidList const &, real_type>(),
           py::arg("b"), py::arg("tol"))
+        .def(py::init([](const std::vector<real_type> & xs, const std::vector<real_type> & ys) {
+            const size_t n = std::min(xs.size(), ys.size());
+            G2lib::PolyLine result;
+            for (size_t i = 0; i < n - 1; i++) {
+              G2lib::LineSegment seg;
+              seg.build_2P(xs[i], ys[i], xs[i+1], ys[i+1]);
+              result.push_back(seg);
+            }
+            return result;
+          }), py::arg("xs"), py::arg("ys"))
       
         .def("getSegment", &PolyLine::getSegment,
           py::arg("n"),
@@ -200,7 +210,17 @@ namespace G2lib {
           :rtype: LineSegment
         )S")
 
-        .def("numSegments", &PolyLine::numSegments,
+        .def("numSegments", &PolyLine::num_segments,
+        R"S(
+          Returns the amount of segments of the poly line
+
+          .. warning:: This method is deprecated for ``numSegments`` or better ``len``
+
+          :return: amount of segments of the poly line
+          :rtype: int
+        )S")
+
+        .def("num_segments", &PolyLine::num_segments,
         R"S(
           Returns the amount of segments of the poly line
 
@@ -208,7 +228,7 @@ namespace G2lib {
           :rtype: int
         )S")
 
-        .def("__len__", &PolyLine::numSegments,
+        .def("__len__", &PolyLine::num_segments,
         R"S(
           Returns the amount of segments of the poly line
 
@@ -225,7 +245,7 @@ namespace G2lib {
         )S")
 
         .def("polygon", [](const PolyLine & self) {
-          int_type n = self.numSegments();
+          int_type n = self.num_segments();
           std::vector<std::tuple<real_type, real_type>> ret;
 
           std::vector<real_type> x(n);

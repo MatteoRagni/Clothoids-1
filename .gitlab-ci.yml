@@ -1,129 +1,316 @@
-linux_python3_7:
-  tags: 
-  - linux
-  only:
-  - develop
-  image: matteoragni/clothoids.build.antemotion.com:latest
-  before_script:
-  - apt install -y --no-install-recommends --no-install-suggests python3-pytest
-  script:
-  - |
-    cd src_py
-    mkdir build
-    cd build
-    cmake -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN ..
-    make
-    $PYTHON_BIN -m pytest --junitxml=$TEST_REPORT $CI_PROJECT_DIR/src_py/test
-    cp $PRODUCT_NAME $CI_PROJECT_DIR
-  artifacts:
-    paths:
-    - $PRODUCT_NAME
-    reports:
-      junit: $TEST_REPORT
-  variables:
-    GIT_SUBMODULE_STRATEGY: recursive
-    PYTHON_BIN: /usr/bin/python3.7
-    PRODUCT_NAME: G2lib.cpython-37m-x86_64-linux-gnu.so
-    TEST_REPORT: $CI_PROJECT_DIR/test_report.xml
+stages:
+- build-library
+- build-python
+# - package-library
+- package-python
 
-linux_python3_6:
-  tags: 
-  - linux
-  only:
-  - develop
-  image: matteoragni/clothoids.build.antemotion.com:latest
-  before_script:
-  - apt install -y --no-install-recommends --no-install-suggests python3-pytest
-  script:
-  - |
-    cd src_py
-    mkdir build
-    cd build
-    cmake -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN ..
-    make
-    $PYTHON_BIN -m pytest --junitxml=$TEST_REPORT $CI_PROJECT_DIR/src_py/test
-    cp $PRODUCT_NAME $CI_PROJECT_DIR
-  artifacts:
-    paths:
-    - $PRODUCT_NAME
-    reports:
-      junit: $TEST_REPORT
-  variables:
-    GIT_SUBMODULE_STRATEGY: recursive
-    PYTHON_BIN: /usr/bin/python3.6
-    PRODUCT_NAME: G2lib.cpython-36m-x86_64-linux-gnu.so
-    TEST_REPORT: $CI_PROJECT_DIR/test_report.xml
+variables:
+  DEBIAN_FRONTEND: noninteractive
+  TEST_REPORT: $CI_PROJECT_DIR/test_report.xml
+  TWINE_USERNAME: __token__
+  TWINE_PASSWORD: $PYPI_ACCESS_TOKEN_MATTEORAGNI
 
-linux_python2_7:
+#  ___      _ _    _   _    _ _                 _        
+# | _ )_  _(_) |__| | | |  (_) |__ _ _ __ _ _ _(_)___ ___
+# | _ \ || | | / _` | | |__| | '_ \ '_/ _` | '_| / -_|_-<
+# |___/\_,_|_|_\__,_| |____|_|_.__/_| \__,_|_| |_\___/__/
+#                                                        
+build-ubuntu-18.04:
+  stage: build-library
+  tags:
+  - linux
+  image: docker-registry.antemotion.com/utils/docker-images/ubuntu-1804:latest
+  before_script:
+  - apt-get update
+  - apt-get install -y --no-install-recommends --no-install-suggests liblapack-dev gfortran coinor-libipopt-dev libeigen3-dev
+  script:
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_BUILD_SHARED=ON -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_ENABLE_IPOPT_SOLVER=ON ..
+  - cmake --build . --config Release
+
+build-ubuntu-20.04:
+  stage: build-library
+  tags:
+  - linux
+  image: docker-registry.antemotion.com/utils/docker-images/ubuntu-2004:latest
+  before_script:
+  - apt-get update
+  - apt-get install -y --no-install-recommends --no-install-suggests liblapack-dev gfortran coinor-libipopt-dev libeigen3-dev
+  script:
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_BUILD_SHARED=ON -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_ENABLE_IPOPT_SOLVER=ON ..
+  - cmake --build . --config Release
+
+build-windows-10-x64:
+  stage: build-library
+  tags:
+  - win
+  script:
+  - mkdir build
+  - cd build
+  - cmake -A x64 -DCLOTHOIDS_BUILD_SHARED=ON -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_FORCE_EIGEN_DOWNLOAD=ON ..
+  - cmake --build . --config Release
+
+#  ___      _ _    _   ___      _   _             
+# | _ )_  _(_) |__| | | _ \_  _| |_| |_  ___ _ _  
+# | _ \ || | | / _` | |  _/ || |  _| ' \/ _ \ ' \ 
+# |___/\_,_|_|_\__,_| |_|  \_, |\__|_||_\___/_||_|
+#                          |__/                   
+
+# Python 
+.build-py27-linux:
+  stage: build-python
   tags: 
   - linux
-  only:
-  - develop
-  image: matteoragni/clothoids.build.antemotion.com:latest
+  image: docker-registry.antemotion.com/utils/docker-images/python-27:latest
   before_script:
-  - apt install -y --no-install-recommends --no-install-suggests python-pytest
+  - apt-get update
+  - apt-get install -y --no-install-recommends --no-install-suggests liblapack-dev gfortran coinor-libipopt-dev libeigen3-dev
+  - $PYTHON_BIN -m pip install -U pytest
   script:
-  - |
-    cd src_py
-    mkdir build
-    cd build
-    cmake -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN ..
-    make
-    $PYTHON_BIN -m pytest --junitxml=$TEST_REPORT $CI_PROJECT_DIR/src_py/test
-    cp $PRODUCT_NAME $CI_PROJECT_DIR
-  artifacts:
-    paths:
-    - $PRODUCT_NAME
-    reports:
-      junit: $TEST_REPORT
+  # Building
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_ENABLE_IPOPT_SOLVER=ON -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN ..
+  - cmake --build . --config Release
+  - cd ..
+  # Testing
+  - $PYTHON_BIN -m pytest --junitxml=$TEST_REPORT test
   variables:
-    GIT_SUBMODULE_STRATEGY: recursive
     PYTHON_BIN: /usr/bin/python2.7
-    PRODUCT_NAME: G2lib.so
-    TEST_REPORT: $CI_PROJECT_DIR/test_report.xml
-
-windows_python3_7:
-  tags: 
-  - win
-  only:
-  - develop
-  script:
-  - |
-    cd src_py
-    mkdir build
-    cd build
-    cmake -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN -A x64 ..
-    cmake --build . --config Release
-    py.exe -3 -m pytest --junitxml=$TEST_REPORT $CI_PROJECT_DIR/src_py/test
-    cp Release/$PRODUCT_NAME $CI_PROJECT_DIR
   artifacts:
     paths:
-    - $PRODUCT_NAME
-  variables:
-    GIT_SUBMODULE_STRATEGY: recursive
-    PYTHON_BIN: C:\Python37\python.exe
-    PRODUCT_NAME: G2lib.cp37-win_amd64.pyd
-    TEST_REPORT: $CI_PROJECT_DIR/test_report.xml
+    - src_py/distrib
+    reports:
+      junit: $TEST_REPORT
 
-windows_python2_7:
+build-py36-linux:
+  stage: build-python
   tags: 
-  - win
-  only:
-  - develop
+  - linux
+  image: docker-registry.antemotion.com/utils/docker-images/python-36:latest
+  before_script:
+  - apt-get update
+  - apt-get install -y --no-install-recommends --no-install-suggests liblapack-dev gfortran coinor-libipopt-dev libeigen3-dev
   script:
-  - |
-    cd src_py
-    mkdir build
-    cd build
-    cmake -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN -A x64 ..
-    cmake --build . --config Release
-    py.exe -2 -m pytest --junitxml=$TEST_REPORT $CI_PROJECT_DIR/src_py/test
-    cp Release/$PRODUCT_NAME $CI_PROJECT_DIR
+  # Building
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_ENABLE_IPOPT_SOLVER=ON -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN ..
+  - cmake --build . --config Release
+  - cd ..
+  # Testing
+  - $PYTHON_BIN -m pytest --junitxml=$TEST_REPORT test
+  variables:
+    PYTHON_BIN: /usr/bin/python3.6
   artifacts:
     paths:
-    - $PRODUCT_NAME
+    - src_py/distrib
+    reports:
+      junit: $TEST_REPORT
+
+build-py37-linux:
+  stage: build-python
+  tags: 
+  - linux
+  image: docker-registry.antemotion.com/utils/docker-images/python-37:latest
+  before_script:
+  - apt-get update
+  - apt-get install -y --no-install-recommends --no-install-suggests liblapack-dev gfortran coinor-libipopt-dev libeigen3-dev
+  script:
+  # Building
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_ENABLE_IPOPT_SOLVER=ON -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN ..
+  - cmake --build . --config Release
+  - cd ..
+  # Testing
+  - $PYTHON_BIN -m pytest --junitxml=$TEST_REPORT test
   variables:
-    GIT_SUBMODULE_STRATEGY: recursive
+    PYTHON_BIN: /usr/bin/python3.7
+  artifacts:
+    paths:
+    - src_py/distrib
+    reports:
+      junit: $TEST_REPORT
+
+build-py38-linux:
+  stage: build-python
+  tags: 
+  - linux
+  image: docker-registry.antemotion.com/utils/docker-images/python-38:latest
+  before_script:
+  - apt-get update
+  - apt-get install -y --no-install-recommends --no-install-suggests liblapack-dev gfortran coinor-libipopt-dev libeigen3-dev
+  script:
+  # Building
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_ENABLE_IPOPT_SOLVER=ON -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN ..
+  - cmake --build . --config Release
+  - cd ..
+  # Testing
+  - $PYTHON_BIN -m pytest --junitxml=$TEST_REPORT test
+  variables:
+    PYTHON_BIN: /usr/bin/python3.8
+  artifacts:
+    paths:
+    - src_py/distrib
+    reports:
+      junit: $TEST_REPORT
+
+build-py39-linux:
+  stage: build-python
+  tags: 
+  - linux
+  image: docker-registry.antemotion.com/utils/docker-images/python-39:latest
+  before_script:
+  - apt-get update
+  - apt-get install -y --no-install-recommends --no-install-suggests liblapack-dev gfortran coinor-libipopt-dev libeigen3-dev
+  script:
+  # Building
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_ENABLE_IPOPT_SOLVER=ON -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN ..
+  - cmake --build . --config Release
+  - cd ..
+  # Testing
+  - $PYTHON_BIN -m pytest --junitxml=$TEST_REPORT test
+  variables:
+    PYTHON_BIN: /usr/bin/python3.9
+  artifacts:
+    paths:
+    - src_py/distrib
+    reports:
+      junit: $TEST_REPORT
+
+.build-py27-win:
+  stage: build-python
+  tags: 
+  - win
+  script:
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_FORCE_EIGEN_DOWNLOAD=ON -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN ..
+  - cmake --build . --config Release
+  variables:
     PYTHON_BIN: C:\Python27\python.exe
-    PRODUCT_NAME: G2lib.pyd
-    TEST_REPORT: $CI_PROJECT_DIR/test_report.xml
+  artifacts:
+    paths:
+    - src_py/distrib
+
+build-py36-win:
+  stage: build-python
+  tags: 
+  - win
+  script:
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_FORCE_EIGEN_DOWNLOAD=ON -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN ..
+  - cmake --build . --config Release
+  variables:
+    PYTHON_BIN: C:\Python36\python.exe
+  artifacts:
+    paths:
+    - src_py/distrib
+
+build-py37-win:
+  stage: build-python
+  tags: 
+  - win
+  script:
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_FORCE_EIGEN_DOWNLOAD=ON -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN ..
+  - cmake --build . --config Release
+  variables:
+    PYTHON_BIN: C:\Python37\python.exe
+  artifacts:
+    paths:
+    - src_py/distrib
+
+build-py38-win:
+  stage: build-python
+  tags: 
+  - win
+  script:
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_FORCE_EIGEN_DOWNLOAD=ON -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN ..
+  - cmake --build . --config Release
+  variables:
+    PYTHON_BIN: C:\Python38\python.exe
+  artifacts:
+    paths:
+    - src_py/distrib
+
+build-py39-win:
+  stage: build-python
+  tags: 
+  - win
+  script:
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_FORCE_EIGEN_DOWNLOAD=ON -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN ..
+  - cmake --build . --config Release
+  variables:
+    PYTHON_BIN: C:\Python39\python.exe
+  artifacts:
+    paths:
+    - src_py/distrib
+
+#  ___         _                   ___      _   _             
+# | _ \__ _ __| |____ _ __ _ ___  | _ \_  _| |_| |_  ___ _ _  
+# |  _/ _` / _| / / _` / _` / -_) |  _/ || |  _| ' \/ _ \ ' \ 
+# |_| \__,_\__|_\_\__,_\__, \___| |_|  \_, |\__|_||_\___/_||_|
+#                      |___/           |__/                   
+
+package-python:
+  stage: package-python
+  image: docker-registry.antemotion.com/utils/docker-images/python-38:latest
+  tags:
+  - linux
+  needs:
+  # - job: build-py27-linux
+  #   artifacts: true
+  - job: build-py36-linux
+    artifacts: true
+  - job: build-py37-linux
+    artifacts: true
+  - job: build-py38-linux
+    artifacts: true
+  - job: build-py39-linux
+    artifacts: true
+  # - job: build-py27-win
+  #   artifacts: true
+  - job: build-py36-win
+    artifacts: true
+  - job: build-py37-win
+    artifacts: true
+  - job: build-py38-win
+    artifacts: true
+  - job: build-py39-win
+    artifacts: true
+  before_script:
+  - python3 -m pip install -U twine
+  script:
+  - cd src_py/distrib/G2lib
+  - python3 setup.py sdist
+  - python3 -m twine upload dist/*
+  artifacts:
+    paths:
+    - src_py/distrib/G2lib/dist
+  
+  

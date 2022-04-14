@@ -7,7 +7,6 @@
  */
 
 #include "python-Clothoid.hh"
-#include "python-ClothoidSpline-Interpolation.hh"
 #include "pybind11/stl.h"
 #include <stdexcept>
 
@@ -200,7 +199,7 @@ namespace G2lib {
         :rtype: float
       )S")
         
-      .def("thetaTotalVariation", &ClothoidCurve::thetaTotalVariation,
+      .def("thetaTotalVariation", &ClothoidCurve::theta_total_variation,
       R"S(
         Clothoid curve total angle variation
 
@@ -210,7 +209,7 @@ namespace G2lib {
 
       .def("thetaMinMax", [](const ClothoidCurve & self) {
         real_type th_min, th_max;
-        self.thetaMinMax(th_min, th_max);
+        self.theta_min_max(th_min, th_max);
         return std::make_tuple(th_min, th_max);
       },
       R"S(
@@ -312,7 +311,7 @@ namespace G2lib {
       
       .def("closestPointBySample", [](ClothoidCurve * self, real_type ds, int_type qx, real_type qy) {
         real_type x, y, s;
-        real_type v = self->closestPointBySample(ds, qx, qy, x, y, s);
+        real_type v = self->closest_point_by_sample(ds, qx, qy, x, y, s);
         return std::make_tuple(v, x, y, s);
       }, py::arg("ds"), py::arg("qx"), py::arg("qy"),
       R"S(
@@ -353,10 +352,23 @@ namespace G2lib {
         :rtype: Tuple[float, float]
       )S")
       
-      .def("changeCurvilinearOrigin", &ClothoidCurve::changeCurvilinearOrigin,
+      .def("change_curvilinear_origin", &ClothoidCurve::change_curvilinear_origin,
       R"S(
         Change the origin of the clothoid at :math:`s_0`
         and the length to  :math:`L`.
+         
+        :param float s0:   :math:`s_0`
+        :param float newL: :math:`L`
+        :return: nothing, works in place
+        :rtype: NoneType
+      )S")
+
+      .def("changeCurvilinearOrigin", &ClothoidCurve::change_curvilinear_origin,
+      R"S(
+        Change the origin of the clothoid at :math:`s_0`
+        and the length to  :math:`L`.
+
+        .. warning:: Deprecated for ``change_curvilinear_origin``
          
         :param float s0:   :math:`s_0`
         :param float newL: :math:`L`
@@ -452,145 +464,6 @@ namespace G2lib {
         self->info(str);
         return str.str();
       });
-
-      m.def("buildP1", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys, real_type theta_0, real_type theta_1) -> G2lib::ClothoidList {
-        G2lib::ClothoidList result;
-        G2lib::Interpolation::Interpolator interpolator(xs, ys);
-        interpolator.buildP1(theta_0, theta_1, result);
-        return result;
-      }, py::arg("xs"), py::arg("ys"), py::arg("theta0"), py::arg("theta1"),
-      R"S(
-        Builds a clothoid list starting from a list of points. Build a 
-        clothoids between each point pair.
-
-        Uses target P1. Requires Eigen library during compilation
-
-        :param List[float] xs: **x** coordinates of points
-        :param List[float] ys: **y** coordinates of points
-        :param float theta0: intial angle
-        :param float theta1: final angle 
-        :return: the clothoid list
-        :rtype: ClothodList 
-      )S")
-      .def("buildP2", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
-        G2lib::ClothoidList result;
-        G2lib::Interpolation::Interpolator interpolator(xs, ys);
-        interpolator.buildP2(result);
-        return result;
-      }, py::arg("xs"), py::arg("ys"), 
-      R"S(
-        Builds a clothoid list starting from a list of points. Build a 
-        clothoids between each point pair.
-
-        Uses target P2. Requires Eigen library during compilation
-
-        :param List[float] xs: **x** coordinates of points
-        :param List[float] ys: **y** coordinates of points
-        :return: the clothoid list
-        :rtype: ClothodList 
-      )S")
-      .def("buildP4", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
-        G2lib::ClothoidList result;
-        G2lib::Interpolation::Interpolator interpolator(xs, ys);
-        interpolator.buildP4(result);
-        return result;
-      }, py::arg("xs"), py::arg("ys"), 
-      R"S(
-        Builds a clothoid list starting from a list of points. Build a 
-        clothoids between each point pair.
-
-        Uses target P4. Requires IPOPT library during compilation
-
-        :param List[float] xs: **x** coordinates of points
-        :param List[float] ys: **y** coordinates of points
-        :return: the clothoid list
-        :rtype: ClothodList 
-      )S")
-      .def("buildP5", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
-        G2lib::ClothoidList result;
-        G2lib::Interpolation::Interpolator interpolator(xs, ys);
-        interpolator.buildP5(result);
-        return result;
-      }, py::arg("xs"), py::arg("ys"), 
-      R"S(
-        Builds a clothoid list starting from a list of points. Build a 
-        clothoids between each point pair.
-
-        Uses target P5. Requires IPOPT library during compilation
-
-        :param List[float] xs: **x** coordinates of points
-        :param List[float] ys: **y** coordinates of points
-        :return: the clothoid list
-        :rtype: ClothodList 
-      )S")
-      .def("buildP6", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
-        G2lib::ClothoidList result;
-        G2lib::Interpolation::Interpolator interpolator(xs, ys);
-        interpolator.buildP6(result);
-        return result;
-      }, py::arg("xs"), py::arg("ys"), 
-      R"S(
-        Builds a clothoid list starting from a list of points. Build a 
-        clothoids between each point pair.
-
-        Uses target P6. Requires IPOPT library during compilation
-
-        :param List[float] xs: **x** coordinates of points
-        :param List[float] ys: **y** coordinates of points
-        :return: the clothoid list
-        :rtype: ClothodList 
-      )S")
-      .def("buildP7", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
-        G2lib::ClothoidList result;
-        G2lib::Interpolation::Interpolator interpolator(xs, ys);
-        interpolator.buildP7(result);
-        return result;
-      }, py::arg("xs"), py::arg("ys"), 
-      R"S(
-        Builds a clothoid list starting from a list of points. Build a 
-        clothoids between each point pair.
-
-        Uses target P7. Requires IPOPT library during compilation
-
-        :param List[float] xs: **x** coordinates of points
-        :param List[float] ys: **y** coordinates of points
-        :return: the clothoid list
-        :rtype: ClothodList 
-      )S")
-      .def("buildP8", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
-        G2lib::ClothoidList result;
-        G2lib::Interpolation::Interpolator interpolator(xs, ys);
-        interpolator.buildP8(result);
-        return result;
-      }, py::arg("xs"), py::arg("ys"), 
-      R"S(
-        Builds a clothoid list starting from a list of points. Build a 
-        clothoids between each point pair.
-
-        Uses target P8. Requires IPOPT library during compilation
-
-        :param List[float] xs: **x** coordinates of points
-        :param List[float] ys: **y** coordinates of points
-        :return: the clothoid list
-        :rtype: ClothodList 
-      )S")
-      .def("buildP9", [](const std::vector<real_type> & xs, const std::vector<real_type> & ys) -> G2lib::ClothoidList {
-        G2lib::ClothoidList result;
-        G2lib::Interpolation::Interpolator interpolator(xs, ys);
-        interpolator.buildP9(result);
-        return result;
-      }, py::arg("xs"), py::arg("ys"), 
-      R"S(
-        Builds a clothoid list starting from a list of points. Build a 
-        clothoids between each point pair.
-
-        Uses target P9. Requires IPOPT library during compilation
-
-        :param List[float] xs: **x** coordinates of points
-        :param List[float] ys: **y** coordinates of points
-        :return: the clothoid list
-        :rtype: ClothodList 
-      )S");
     }
 
     void wrap_ClothoidList(py::module & m) {
@@ -933,7 +806,17 @@ namespace G2lib {
         :rtype: int
       )S")
 
-      .def("numSegments", &ClothoidList::numSegments,
+      .def("numSegments", &ClothoidList::num_segments,
+      R"S(
+        Returns the number of segments in the list
+
+        .. warning:: Deprecated in favor of ``num_segments`` or better ``len``
+
+        :return: the number of segments
+        :rtype: int
+      )S")
+
+      .def("num_segments", &ClothoidList::num_segments,
       R"S(
         Returns the number of segments in the list
 
@@ -941,7 +824,7 @@ namespace G2lib {
         :rtype: int
       )S")
 
-      .def("__len__", &ClothoidList::numSegments,
+      .def("__len__", &ClothoidList::num_segments,
       R"S(
         Returns the number of segments in the list
 
@@ -1003,7 +886,7 @@ namespace G2lib {
         :rtype: float
       )S")
 
-      .def("closestSegment", &ClothoidList::closestSegment, py::arg("qx"), py::arg("qy"),
+      .def("closestSegment", &ClothoidList::closest_segment, py::arg("qx"), py::arg("qy"),
       R"S(
         Given a point, returns the index of the closest segment to that point
 
@@ -1016,7 +899,7 @@ namespace G2lib {
       .def("closestPointInRange", [](const ClothoidList & self, real_type qx, real_type qy, int_type icurve_begin, int_type icurve_end) {
         real_type x, y, s, t, dst;
         int_type icurve;
-        int_type ret = self.closestPointInRange_ISO(qx, qy, icurve_begin, icurve_end, x, y, s, t, dst, icurve);
+        int_type ret = self.closest_point_in_range_ISO(qx, qy, icurve_begin, icurve_end, x, y, s, t, dst, icurve);
         return std::make_tuple(ret, x, y, s, t, dst, icurve);
       }, 
         py::arg("qx"), py::arg("qy"), py::arg("icurve_begin"), py::arg("icurve_end"),
@@ -1052,7 +935,7 @@ namespace G2lib {
         for (size_t i = 0; i < n; i++) {
           real_type x, y, s, t, dst;
           int_type icurve;
-          int_type ret = self.closestPointInRange_ISO(qx[i], qy[i], icurve_begin, icurve_end, x, y, s, t, dst, icurve);
+          int_type ret = self.closest_point_in_range_ISO(qx[i], qy[i], icurve_begin, icurve_end, x, y, s, t, dst, icurve);
           data[i] = std::make_tuple(ret, x, y, s, t, dst, icurve);
         } 
         return data;
@@ -1087,7 +970,7 @@ namespace G2lib {
       .def("closestPointInRange_ISO", [](const ClothoidList & self, real_type qx, real_type qy, int_type icurve_begin, int_type icurve_end) {
         real_type x, y, s, t, dst;
         int_type icurve;
-        int_type ret = self.closestPointInRange_ISO(qx, qy, icurve_begin, icurve_end, x, y, s, t, dst, icurve);
+        int_type ret = self.closest_point_in_range_ISO(qx, qy, icurve_begin, icurve_end, x, y, s, t, dst, icurve);
         return std::make_tuple(ret, x, y, s, t, dst, icurve);
       }, 
         py::arg("qx"), py::arg("qy"), py::arg("icurve_begin"), py::arg("icurve_end"),
@@ -1120,7 +1003,7 @@ namespace G2lib {
       .def("closestPointInRange_SAE", [](const ClothoidList & self, real_type qx, real_type qy, int_type icurve_begin, int_type icurve_end) {
         real_type x, y, s, t, dst;
         int_type icurve;
-        int_type ret = self.closestPointInRange_SAE(qx, qy, icurve_begin, icurve_end, x, y, s, t, dst, icurve);
+        int_type ret = self.closest_point_in_range_SAE(qx, qy, icurve_begin, icurve_end, x, y, s, t, dst, icurve);
         return std::make_tuple(ret, x, y, s, t, dst, icurve);
       }, 
         py::arg("qx"), py::arg("qy"), py::arg("icurve_begin"), py::arg("icurve_end"),
@@ -1153,7 +1036,7 @@ namespace G2lib {
       .def("closestPointInSRange", [](const ClothoidList & self, real_type qx, real_type qy, real_type s_begin, real_type s_end) {
         real_type x, y, s, t, dst;
         int_type icurve;
-        int_type ret = self.closestPointInSRange_ISO(qx, qy, s_begin, s_begin, x, y, s, t, dst, icurve);
+        int_type ret = self.closest_point_in_s_range_ISO(qx, qy, s_begin, s_begin, x, y, s, t, dst, icurve);
         return std::make_tuple(ret, x, y, s, t, dst, icurve);
       }, 
         py::arg("qx"), py::arg("qy"), py::arg("s_begin"), py::arg("s_end"),
@@ -1189,7 +1072,7 @@ namespace G2lib {
         for (size_t i = 0; i < n; i++) {
           real_type x, y, s, t, dst;
           int_type icurve;
-          int_type ret = self.closestPointInSRange_ISO(qx[i], qy[i], s_begin, s_end, x, y, s, t, dst, icurve);
+          int_type ret = self.closest_point_in_s_range_ISO(qx[i], qy[i], s_begin, s_end, x, y, s, t, dst, icurve);
           data[i] = std::make_tuple(ret, x, y, s, t, dst, icurve);
         } 
         return data;
@@ -1222,7 +1105,7 @@ namespace G2lib {
       .def("closestPointInSRange_ISO", [](const ClothoidList & self, real_type qx, real_type qy, real_type s_begin, real_type s_end) {
         real_type x, y, s, t, dst;
         int_type icurve;
-        int_type ret = self.closestPointInSRange_ISO(qx, qy, s_begin, s_begin, x, y, s, t, dst, icurve);
+        int_type ret = self.closest_point_in_s_range_ISO(qx, qy, s_begin, s_begin, x, y, s, t, dst, icurve);
         return std::make_tuple(ret, x, y, s, t, dst, icurve);
       }, 
         py::arg("qx"), py::arg("qy"), py::arg("s_begin"), py::arg("s_end"),
@@ -1255,7 +1138,7 @@ namespace G2lib {
       .def("closestPointInSRange_SAE", [](const ClothoidList & self, real_type qx, real_type qy, real_type s_begin, real_type s_end) {
         real_type x, y, s, t, dst;
         int_type icurve;
-        int_type ret = self.closestPointInSRange_SAE(qx, qy, s_begin, s_begin, x, y, s, t, dst, icurve);
+        int_type ret = self.closest_point_in_s_range_SAE(qx, qy, s_begin, s_begin, x, y, s, t, dst, icurve);
         return std::make_tuple(ret, x, y, s, t, dst, icurve);
       }, 
         py::arg("qx"), py::arg("qy"), py::arg("s_begin"), py::arg("s_end"),
@@ -1322,7 +1205,7 @@ namespace G2lib {
       )S")
 
       .def("getXY", [](const ClothoidList & self) {
-        const size_t n = self.numSegments();
+        const size_t n = self.num_segments();
         // Avoids segmentation fault for empty list
         if (!n) {
           return make_tuple(std::vector<real_type>(), 
@@ -1340,7 +1223,7 @@ namespace G2lib {
       )S")
 
       .def("getDeltaTheta", [](const ClothoidList & self) {
-        const size_t n = self.numSegments();
+        const size_t n = self.num_segments();
         if (!n) { return std::vector<real_type>(); }
         std::vector<real_type> deltaTheta(n - 1);
         if (n - 1) {
@@ -1356,7 +1239,7 @@ namespace G2lib {
       )S")
 
       .def("getDeltaKappa", [](const ClothoidList & self) {
-        const size_t n = self.numSegments();
+        const size_t n = self.num_segments();
         if (!n) { return std::vector<real_type>(); }
         std::vector<real_type> deltaKappa(n - 1);
         if (n - 1) {
@@ -1495,7 +1378,7 @@ namespace G2lib {
       )S")
 
       .def("as_list", [](const ClothoidList & self) {
-        const size_t n = self.numSegments();
+        const size_t n = self.num_segments();
         std::vector<ClothoidCurve> list;
         list.reserve(n);
         for (size_t i = 0; i < n; i++) {

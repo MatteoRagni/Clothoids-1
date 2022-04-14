@@ -1,115 +1,128 @@
-############################################################################
-#                                                                          #
-#  file: CMakeLists.txt                                                    #
-#  Copyright (C) 2016                                                      #
-#      Enrico Bertolazzi                                                   #
-#      Dipartimento di Ingegneria Industriale                              #
-#      Universita` degli Studi di Trento                                   #
-#      email: enrico.bertolazzi@ing.unitn.it                               #
-#                                                                          #
-############################################################################
+# Copyright (c) 2020, Matteo Ragni
+# All rights reserved.
+# 
+#   Based on the work of Enrico Bertolazzi
+#   http://ebertolazzi.github.io/Clothoids/
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+# 
+#  * Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#  * Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in
+#    the documentation and/or other materials provided with the distribution
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
 
 cmake_minimum_required(VERSION 3.14)
 
-project( Clothoids )
-include(./cmake/CMakeLists-common.txt)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" CLOTHOIDS_VERSION)
 
 project(
-  ${PROJECT_NAME}
-  VERSION ${EB_PROJECT_VERSION}
-  HOMEPAGE_URL "https://ebertolazzi.github.io/Clothoids/"
-)
+  Clothoids
+  VERSION ${CLOTHOIDS_VERSION}
+  HOMEPAGE_URL "https://github.com/MatteoRagni/Clothoids-1")
 
-include(./cmake/CMakeLists-cflags.txt)
-include(./cmake/CMakeLists-utilities.txt)
+option(CLOTHOIDS_BUILD_SHARED "Build dynamic library" OFF)
+option(CLOTHOIDS_ENABLE_EIGEN_SOLVER "Enable buildP1 and buildP2 interpolator functions" OFF)
+option(CLOTHOIDS_ENABLE_IPOPT_SOLVER 
+  "Enable buildP4, buildP5, buildP6, buildP7, buildP8 and buildP9 interpolator functions" OFF)
 
-# Evaluating the suffix to append to target built by this CMake file
-ebertolazzi_artifacts_suffix(ARTIFACTS_STATIC_SUFFIX TRUE)
-if( EB_BUILD_SHARED )
-  ebertolazzi_artifacts_suffix(ARTIFACTS_DYNAMIC_SUFFIX FALSE)
+add_subdirectory(./deps/PolynomialRoots)
+if(CLOTHOIDS_ENABLE_IPOPT_SOLVER)
+add_subdirectory(./deps/Ipopt)
 endif()
-
-message( STATUS "Compiler used: ${CMAKE_CXX_COMPILER_ID}" )
-message( STATUS "BASE SUFFIXES = ${ARTIFACTS_STATIC_SUFFIX} ${ARTIFACTS_DYNAMIC_SUFFIX}" )
-
+if(CLOTHOIDS_ENABLE_EIGEN_SOLVER)
+add_subdirectory(./deps/Eigen3)
+endif()
 #   ___
 #  / __| ___ _  _ _ _ __ ___ ___
 #  \__ \/ _ \ || | '_/ _/ -_|_-<
 #  |___/\___/\_,_|_| \__\___/__/
 #
-set( SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src" )
+set(CLOTHOIDS_SRCS
+  Utils.hxx
+  Format.hxx
+  Constants.cc
+  AABBtree.cc
+  Biarc.cc
+  BiarcList.cc
+  Circle.cc
+  Clothoid.cc
+  ClothoidDistance.cc
+  ClothoidG2.cc
+  ClothoidList.cc
+  Fresnel.cc
+  G2lib_intersect.cc
+  G2lib.cc
+  Line.cc
+  PolyLine.cc
+  Triangle2D.cc
+  ClothoidSpline-Interpolation.cc)
 
-set( SOURCES )
-file( GLOB S ${SOURCE_DIR}/*.cc )
-foreach(F ${S})
-  # build relative path respect to source directory
-  file( RELATIVE_PATH RF ${SOURCE_DIR} "${F}" )
-  list( APPEND SOURCES ${RF} )
-endforeach(F ${S})
-
-#   _  _             _
-#  | || |___ __ _ __| |___ _ _ ___
-#  | __ / -_) _` / _` / -_) '_(_-<
-#  |_||_\___\__,_\__,_\___|_| /__/
-#
-set( PUBLIC_HEADERS )
-file(
-  GLOB S
-  ${SOURCE_DIR}/*.h*
-  ${SOURCE_DIR}/*/*.h*
-)
-foreach (F ${S})
-  # build relative path respect to source directory
-  file( RELATIVE_PATH RF ${SOURCE_DIR} "${F}" )
-  list( APPEND PUBLIC_HEADERS ${RF} )
-endforeach(F ${S})
-
-# extra include directory for compilation
-include_directories( ./lib3rd/include )
-
-#       _                           _                 _
-#    __| | ___ _ __   ___ _ __   __| | ___ _ __   ___(_) ___  ___
-#   / _` |/ _ \ '_ \ / _ \ '_ \ / _` |/ _ \ '_ \ / __| |/ _ \/ __|
-#  | (_| |  __/ |_) |  __/ | | | (_| |  __/ | | | (__| |  __/\__ \
-#   \__,_|\___| .__/ \___|_| |_|\__,_|\___|_| |_|\___|_|\___||___/
-#             |_|
-#
-set(DEPEND_TARGETS)
-
-# DEPENDENCIES (TRY TO USE ALREADY COMPILED SUBMODULE IN LARGE PROJECT)
-set(UPDIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
-find_library(
-  UTILS Utils${ARTIFACTS_STATIC_SUFFIX}
-  HINTS ${UPDIR}/Utils/lib/lib
-  NO_DEFAULT_PATH
-)
-if( UTILS )
-  message("Found Utils${ARTIFACTS_STATIC_SUFFIX}")
-  include_directories(${UPDIR}/Utils/lib/include)
-else()
-  message("NOT Found Utils${ARTIFACTS_STATIC_SUFFIX}")
-  add_subdirectory(./submodules/Utils)
-  include_directories(./submodules/Utils/src)
-  set( UTILS ebertolazzi_Utils_Static )
-  set( DEPEND_TARGETS ${DEPEND_TARGETS} ${UTILS} )
+if(CLOTHOIDS_ENABLE_EIGEN_SOLVER)
+set(CLOTHOIDS_SRCS ${CLOTHOIDS_SRCS}
+  ClothoidSpline-LMSolver.cc)
 endif()
 
-# DEPENDENCIES (TRY TO USE ALREADY COMPILED SUBMODULE IN LARGE PROJECT)
-find_library(
-  ROOTS quarticRootsFlocke${ARTIFACTS_STATIC_SUFFIX}
-  HINTS ${UPDIR}/quarticRootsFlocke/lib/lib
-  NO_DEFAULT_PATH
-)
-if( ROOTS )
-  message("Found quarticRootsFlocke${ARTIFACTS_STATIC_SUFFIX}")
-  include_directories(${UPDIR}/quarticRootsFlocke/lib/include)
-else()
-  message("NOT Found quarticRootsFlocke${ARTIFACTS_STATIC_SUFFIX}")
-  add_subdirectory(./submodules/quarticRootsFlocke)
-  include_directories(./submodules/quarticRootsFlocke/src)
-  set( ROOTS ebertolazzi_quarticRootsFlocke_Static )
-  set( DEPEND_TARGETS ${DEPEND_TARGETS} ${ROOTS} )
+if(CLOTHOIDS_ENABLE_IPOPT_SOLVER)
+set(CLOTHOIDS_SRCS ${CLOTHOIDS_SRCS}
+  ClothoidSpline-IpoptSolver.cc)
 endif()
+
+set(CLOTHOIDS_HDRS
+  Clothoids/AABBtree.hxx
+  Clothoids/BaseCurve_using.hxx
+  Clothoids/BaseCurve.hxx
+  Clothoids/Biarc.hxx
+  Clothoids/BiarcList.hxx
+  Clothoids/Circle.hxx
+  Clothoids/Clothoid.hxx
+  Clothoids/ClothoidList.hxx
+  Clothoids/Constants.hxx
+  Clothoids/Fresnel.hxx
+  Clothoids/G2lib.hxx
+  Clothoids/Line.hxx
+  Clothoids/PolyLine.hxx
+  Clothoids/Triangle2D.hxx
+  Clothoids/Types.hxx
+  Clothoids/ClothoidSpline-Interpolation.hxx
+  Clothoids.hh)
+
+set(CLOTHOIDS_SRCS_BUILD)
+foreach(s ${CLOTHOIDS_SRCS})
+set(CLOTHOIDS_SRCS_BUILD ${CLOTHOIDS_SRCS_BUILD} src/${s})
+endforeach()
+
+set(CLOTHOIDS_HDRS_BUILD)
+set(CLOTHOIDS_HDRS_INSTALL)
+set(CLOTHOIDS_HDRS_INSTALL_TARGET)
+foreach(h ${CLOTHOIDS_HDRS})
+  set(CLOTHOIDS_HDRS_BUILD ${CLOTHOIDS_HDRS_BUILD} 
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/${h}>")
+  set(CLOTHOIDS_HDRS_INSTALL ${CLOTHOIDS_HDRS_INSTALL} 
+    "$<INSTALL_INTERFACE:include/${h}>")
+  set(CLOTHOIDS_HDRS_INSTALL_TARGET ${CLOTHOIDS_HDRS_INSTALL_TARGET} 
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/${h}")
+endforeach()
+set(CLOTHOIDS_HDRS_TARGET ${CLOTHOIDS_HDRS_BUILD} ${CLOTHOIDS_HDRS_INSTALL})
 
 #   _____                  _
 #  |_   _|_ _ _ _ __ _ ___| |_ ___
@@ -117,98 +130,113 @@ endif()
 #    |_|\__,_|_| \__, \___|\__/__/
 #                |___/
 #
-# define target
-ebertolazzi_setup_target(
-  ${PROJECT_NAME}
-  TRUE # build static
-  "${SOURCE_DIR}"
-  "${SOURCES}"
-  "${SOURCE_DIR}"
-  "${PUBLIC_HEADERS}"
-)
-if ( EB_BUILD_SHARED )
-  ebertolazzi_setup_target(
-    ${PROJECT_NAME}
-    FALSE # build dynamic
-    "${SOURCE_DIR}"
-    "${SOURCES}"
-    "${SOURCE_DIR}"
-    "${PUBLIC_HEADERS}"
-  )
-  target_link_libraries( ${EB_NAMESPACE}_${PROJECT_NAME} ${ROOTS} ${UTILS} )
+set(CLOTHOIDS_EXPORT_TARGETS ClothoidsStatic)
+add_library(ClothoidsStatic STATIC)
+target_sources(ClothoidsStatic
+  PRIVATE "${CLOTHOIDS_SRCS_BUILD}"
+  PUBLIC "${CLOTHOIDS_HDRS_TARGET}")
+target_compile_definitions(ClothoidsStatic PUBLIC "_USE_MATH_DEFINES")
+target_include_directories(ClothoidsStatic PUBLIC 
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  "$<INSTALL_INTERFACE:include/Clothoids>")
+target_include_directories(ClothoidsStatic PRIVATE 
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>")
+target_link_libraries(ClothoidsStatic PRIVATE PolynomialRootsStatic)
+if(CLOTHOIDS_ENABLE_IPOPT_SOLVER)
+target_compile_definitions(ClothoidsStatic PRIVATE G2LIB_IPOPT_CLOTHOID_SPLINE)
+  target_link_libraries(ClothoidsStatic PRIVATE Ipopt::Ipopt)
+endif()
+if(CLOTHOIDS_ENABLE_EIGEN_SOLVER)
+target_compile_definitions(ClothoidsStatic PRIVATE G2LIB_LMSOLVE_CLOTHOID_SPLINE)
+  target_link_libraries(ClothoidsStatic PRIVATE Clothoids::Eigen3)
+endif()
+set_target_properties(ClothoidsStatic PROPERTIES
+  POSITION_INDIPENDENT_CODE ON
+  OUTPUT_NAME Clothoids
+  EXPORT_NAME Clothoids_Targets)
+add_library(Clothoids::Static ALIAS ClothoidsStatic)
+
+if(CLOTHOIDS_BUILD_SHARED)
+  set(CLOTHOIDS_EXPORT_TARGETS ${CLOTHOIDS_EXPORT_TARGETS} "ClothoidsDynamic")
+  add_library(ClothoidsDynamic SHARED)
+  target_sources(ClothoidsDynamic
+    PRIVATE "${CLOTHOIDS_SRCS_BUILD}"
+    PUBLIC "${CLOTHOIDS_HDRS_TARGET}")
+  target_compile_definitions(ClothoidsDynamic PUBLIC "_USE_MATH_DEFINES")
+  target_include_directories(ClothoidsDynamic PUBLIC 
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    "$<INSTALL_INTERFACE:include/Clothoids>")
+  target_include_directories(ClothoidsDynamic PRIVATE 
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>")
+  target_link_libraries(ClothoidsDynamic PRIVATE PolynomialRootsStatic)
+  if(CLOTHOIDS_ENABLE_IPOPT_SOLVER)
+    target_compile_definitions(ClothoidsDynamic PRIVATE G2LIB_IPOPT_CLOTHOID_SPLINE)
+    target_link_libraries(ClothoidsDynamic PRIVATE Ipopt::Ipopt)
+  endif()
+  if(CLOTHOIDS_ENABLE_EIGEN_SOLVER)
+    target_compile_definitions(ClothoidsDynamic PRIVATE G2LIB_LMSOLVE_CLOTHOID_SPLINE)
+    target_link_libraries(ClothoidsDynamic PRIVATE Clothoids::Eigen3)
+  endif()
+  set_target_properties(ClothoidsDynamic PROPERTIES
+    POSITION_INDIPENDENT_CODE ON
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR}
+    OUTPUT_NAME Clothoids
+    EXPORT_NAME Clothoids_Targets)
+  add_library(Clothoids::Dynamic ALIAS ClothoidsDynamic)
 endif()
 
-if ( DEPEND_TARGETS )
-  add_dependencies( ${EB_NAMESPACE}_${PROJECT_NAME}_Static ${DEPEND_TARGETS} )
-endif()
+#  ___         _        _ _ 
+# |_ _|_ _  __| |_ __ _| | |
+#  | || ' \(_-<  _/ _` | | |
+# |___|_||_/__/\__\__,_|_|_|
+#                           
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 
-#   _____       _
-#  |_   _|__ __| |_ ___
-#    | |/ -_|_-<  _(_-<
-#    |_|\___/__/\__/__/
-#
-if ( EB_ENABLE_TESTS )
+write_basic_package_version_file(
+  "${PROJECT_NAME}ConfigVersion.cmake"
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion)
 
-  enable_testing()
+set(PROJECT_INSTALL_CMAKEDIR
+  "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+  CACHE STRING "Path To ${PROJECT_NAME} Cmake Files")
 
-  set( EXELISTBIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/bin" )
-  set( EXELISTCPP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src_tests" )
+install(TARGETS ${CLOTHOIDS_EXPORT_TARGETS}
+  EXPORT "${PROJECT_NAME}_Targets"
+  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+          COMPONENT "${PROJECT_NAME}_Install"
+  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT "${PROJECT_NAME}_Install"
+          NAMELINK_COMPONENT "${PROJECT_NAME}_Install"
+  ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT "${PROJECT_NAME}_Install"
+  INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
 
-  set(
-    EXELISTCPP
-    testBiarc
-    testDistance
-    testDistanceCircuit
-    testG2
-    testG2plot
-    testG2stat
-    testG2stat2arc
-    testG2statCLC
-    testIntersect
-    testIntersect2
-    testIntersect3
-    testPolyline
-    testTriangle2D
-  )
+install(FILES
+  ${CLOTHOIDS_HDRS_INSTALL_TARGET}
+  DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}"
+  COMPONENT "${PROJECT_NAME}_Install")
 
-  add_custom_target( "${PROJECT_NAME}_all_tests" ALL )
+# Packaging specific installs
 
-  set( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin )
-  set( LIBS ${EB_NAMESPACE}_${PROJECT_NAME}_Static ${UTILS} ${ROOTS} ${CMAKE_DL_LIBS} )
-  foreach( S ${EXELISTCPP} )
-    add_executable( ${S} ${CMAKE_CURRENT_SOURCE_DIR}/src_tests/${S}.cc )
-    target_link_libraries( ${S} ${LIBS} )
-    add_test(
-      NAME "${S}"
-      COMMAND ./bin/${S}
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    )
-    add_dependencies( "${PROJECT_NAME}_all_tests" ${S} )
-  endforeach()
+export(EXPORT "${PROJECT_NAME}_Targets"
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/${PROJECT_NAME}Targets.cmake"
+  NAMESPACE "${PROJECT_NAMESPACE}::")
 
-endif()
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+  @ONLY)
 
-#   ___         _        _ _
-#  |_ _|_ _  __| |_ __ _| | |
-#   | || ' \(_-<  _/ _` | | |
-#  |___|_||_/__/\__\__,_|_|_|
-#
-install(
-  TARGETS ${TARGETS_TO_BE_INSTALLED}
-  # EXPORT (da definire)
-  LIBRARY DESTINATION ${INSTALL_PREFIX}/dll
-  ARCHIVE DESTINATION ${INSTALL_PREFIX}/lib
-  RUNTIME DESTINATION ${INSTALL_PREFIX}/bin
-  PUBLIC_HEADER DESTINATION ${PROJECT_PUBLIC_HEADER_DESTINATION}
-)
+install(EXPORT "${PROJECT_NAME}_Targets"
+  DESTINATION "${PROJECT_INSTALL_CMAKEDIR}"
+  NAMESPACE "${PROJECT_NAMESPACE}::"
+  FILE "${PROJECT_NAME}Targets.cmake"
+  COMPONENT "${PROJECT_NAME}_Install")
 
-#   ___         _
-#  | _ \__ _ __| |____ _ __ _ ___
-#  |  _/ _` / _| / / _` / _` / -_)
-#  |_| \__,_\__|_\_\__,_\__, \___|
-#                       |___/
-#
-
-include( ./cmake/CMakeLists-cpack.txt )
-
-ebertolazzi_final_messages()
+install(FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+  DESTINATION "${PROJECT_INSTALL_CMAKEDIR}"
+  COMPONENT "${PROJECT_NAME}_Install")
