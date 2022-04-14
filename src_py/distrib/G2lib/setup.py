@@ -5,7 +5,7 @@ import sys
 
 #############################
 PACKAGE_NAME = "G2lib"
-PACKAGE_VERSION = open("./VERSION").read().strip()
+PACKAGE_VERSION = "3.0.0"
 #############################
 
 #  ___      _             
