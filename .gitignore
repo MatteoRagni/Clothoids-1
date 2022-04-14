@@ -70,3 +70,5 @@ docs_build/sphinx_matlab/api-cpp
 __pycache__
 *.pyc
 .pytest_cache
+src_py/distrib/G2lib/G2lib.egg-info
+src_py/distrib/G2lib/dist

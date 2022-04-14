@@ -21,7 +21,9 @@ setup(
     packages=find_packages(exclude=["test"]),
     description="Geometric manipulation library for curves",
     zip_safe=False,
-    
+    package_data={
+        "": ["*.so", "*.pyd"]
+    },
     install_requires=[
         "setuptools"
     ],
@@ -40,7 +42,9 @@ setup(
         "Topic :: Scientific/Engineering :: Mathematics",
         "Topic :: Software Development :: Libraries"
     ],
-    package_data={
-        "": ["*.so", "*.pyd"]
-    }
+    project_urls={
+        "Source": "https://github.com/MatteoRagni/Clothoids-1",
+        "Tracker": "https://github.com/MatteoRagni/Clothoids-1"
+    },
+    url="https://github.com/MatteoRagni/Clothoids-1"
 )
