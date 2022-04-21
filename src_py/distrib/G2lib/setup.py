@@ -5,7 +5,7 @@ import sys
 
 #############################
 PACKAGE_NAME = "G2lib"
-PACKAGE_VERSION = "3.0.0"
+PACKAGE_VERSION = "3.0.0-1"
 #############################
 
 #  ___      _             
