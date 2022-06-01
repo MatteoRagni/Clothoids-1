@@ -67,10 +67,6 @@ namespace G2lib {
   namespace Utils {
     static constexpr size_t _format_buffer_size = G2LIB_FORMAT_BUFFER_SIZE;
 
-    inline void rtrim(std::string& s) {
-      s.erase(std::find(s.begin(), s.end(), '\0'), s.end());
-    }
-
     // Formatting Utilities
     inline std::string format_string(const std::string & format) {
       return std::string(format);
@@ -78,9 +74,12 @@ namespace G2lib {
 
     template <typename... Ts>
     inline std::string format_string(const std::string & format, const Ts &... inputs) {
-      std::string output(std::max(_format_buffer_size, 2 * format.size()), '\0');
+      int size = std::snprintf(nullptr, 0, format.data(), inputs...) + 1;
+      if (size <= 0) {
+        throw std::runtime_error("Error in formatting string, cannot create it");
+      }
+      std::string output(static_cast<size_t>(size), '\0');
       std::snprintf(&output.front(), output.size(), format.data(), inputs...);
-      rtrim(output);
       return output;
     }
 
