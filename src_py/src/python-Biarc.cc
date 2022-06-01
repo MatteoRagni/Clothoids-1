@@ -18,9 +18,69 @@
 #endif
 #endif
 
+using namespace pybind11::literals;
+
 namespace G2lib {
   namespace python {
+    
+    py::dict biarc_to_dict(const Biarc & self) {
+      return py::dict(
+        "x0"_a = self.x_begin(),
+        "y0"_a = self.y_begin(),
+        "theta0"_a = self.theta_begin(),
+        "x1"_a = self.x_end(),
+        "y1"_a = self.y_end(),
+        "theta1"_a = self.theta_end(),
+        "length"_a = self.length()
+      );
+    };
+
+    Biarc biarc_from_dict(const py::dict & state) {
+      const std::vector<std::string> keys({"x0", "y0", "theta0", "x1", "y1", "theta1"});
+      for (const auto & key: keys) {
+        if (!state.contains(key)) { 
+          char error[128];
+          std::snprintf(error, 128, "Missing `%s` in state for Biarc", key.c_str());
+          throw std::runtime_error(error); 
+        }
+
+        if (state[py::cast(key)].is_none()) {
+          char error[128];
+          std::snprintf(error, 128, "Missing `%s` in state for Biarc (is None)", key.c_str());
+          throw std::runtime_error(error); 
+        }
+      }
+
+      return Biarc(
+        py::cast<real_type>(state["x0"]),
+        py::cast<real_type>(state["y0"]),
+        py::cast<real_type>(state["theta0"]),
+        py::cast<real_type>(state["x1"]),
+        py::cast<real_type>(state["y1"]),
+        py::cast<real_type>(state["theta1"]));
+    };
+
+    py::list biarc_list_to_dict(const BiarcList & self) {
+      py::list state;
+      size_t size = self.num_segments();
+      for (size_t i = 0; i < size; i++) {
+        const auto & biarc = self.get(i);
+        state.append(biarc_to_dict(biarc));
+      }
+      return state;
+    };
+
+    BiarcList biarc_list_from_dict(const py::list & state) {
+      BiarcList biarc_list;
+      for (const auto & element: state) {
+        py::dict biarc_dict = element.cast<py::dict>();
+        biarc_list.push_back(biarc_from_dict(biarc_dict));
+      }
+      return biarc_list;
+    };
+    
     void wrap_Biarc(py::module & m) {
+
       py::class_<Biarc, BaseCurve>(m, "Biarc",
       R"S(
         Compute biarc fitting by Hermite data
@@ -52,6 +112,20 @@ namespace G2lib {
         py::arg("x0"), py::arg("y0"), py::arg("theta0"), 
         py::arg("x1"), py::arg("y1"), py::arg("theta1"))
       .def(py::init<BaseCurve const &>(), py::arg("curve"))
+
+      .def(py::pickle(&biarc_to_dict, &biarc_from_dict))
+
+      .def("to_dict", &biarc_to_dict)
+
+      .def_static("from_dict", &biarc_from_dict, py::arg("state"),
+      R"S(
+        Creates an object from a dictionary, compatible with the 
+        one created with ``to_dict``.
+
+        :param state: the input dictionary
+        :return: a new object
+        :raises RuntimeError: if the state object is not compatible
+      )S")
       
       .def("copy", [](const Biarc & self) -> Biarc {
         Biarc other;
@@ -232,6 +306,12 @@ namespace G2lib {
       .def(py::init<LineSegment const &>())
       .def(py::init<CircleArc const &>())
       .def(py::init<Biarc const &>())
+
+      .def(py::pickle(&biarc_list_to_dict, &biarc_list_from_dict))
+
+      .def("to_dict", &biarc_list_to_dict)
+      
+      .def_static("from_dict", &biarc_list_from_dict)
       
       .def("get", &BiarcList::get, py::arg("idx"),
       R"S(

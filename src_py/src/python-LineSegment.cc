@@ -9,9 +9,69 @@
 #include "python-LineSegment.hh"
 #include "pybind11/stl.h"
 
+using namespace pybind11::literals;
+
 namespace G2lib {
   namespace python {
-    void wrap_LineSegment(py::module & m) {
+
+    py::dict linesegment_to_dict(const LineSegment & self) {
+      return py::dict(
+        "x0"_a = self.x_begin(),
+        "y0"_a = self.y_begin(),
+        "theta0"_a = self.theta_begin(),
+        "l"_a = self.length());
+    }
+
+    LineSegment linesegment_from_dict(const py::dict & state) {
+    const std::vector<std::string> keys({"x0", "y0", "theta0", "l"});
+    for (const auto & key: keys) {
+      if (!state.contains(key)) { 
+        char error[128];
+        std::snprintf(error, 128, "Missing `%s` in state for LineSegment", key.c_str());
+        throw std::runtime_error(error); 
+      }
+
+      if (state[py::cast(key)].is_none()) {
+        char error[128];
+        std::snprintf(error, 128, "Missing `%s` in state for LineSegment (is None)", key.c_str());
+        throw std::runtime_error(error); 
+      }
+    }
+
+    return LineSegment(
+      py::cast<real_type>(state["x0"]),
+      py::cast<real_type>(state["y0"]),
+      py::cast<real_type>(state["theta0"]),
+      py::cast<real_type>(state["l"]));
+  };
+
+  py::list polyline_to_dict(const PolyLine & self) {
+    py::list state;
+    size_t size = self.num_segments();
+    for (size_t i = 0; i < size; i++) {
+      const auto & segment = self.getSegment(i);
+      state.append(linesegment_to_dict(segment));
+    }
+    return state;
+  };
+
+  PolyLine polyline_from_dict(const py::list & state) {
+    PolyLine polyline;
+    bool first_segment = true;
+    for (const auto & element: state) {
+      py::dict segment_dict = element.cast<py::dict>();      
+      const LineSegment segment = linesegment_from_dict(segment_dict);
+      if (first_segment) {
+        first_segment = false;
+        polyline.init(segment.x_begin(), segment.y_begin());
+      }
+      polyline.push_back(segment);
+    }
+    return polyline;
+  }
+    
+  void wrap_LineSegment(py::module & m) {
+
       py::class_<G2lib::LineSegment, G2lib::BaseCurve>(m, "LineSegment",
       R"S(
         Class that manages a line segment. There are several possible
@@ -33,6 +93,12 @@ namespace G2lib {
         .def(py::init<G2lib::LineSegment const &>(), py::arg("s"))
         .def(py::init<real_type, real_type, real_type, real_type>(),
           py::arg("x0"), py::arg("y0"), py::arg("theta0"), py::arg("l"))
+
+        .def(py::pickle(&linesegment_to_dict, &linesegment_from_dict))
+
+        .def("to_dict", &linesegment_to_dict)
+
+        .def_static("from_dict", &linesegment_from_dict)
 
         .def("copy", [](const LineSegment & self) {
           LineSegment other;
@@ -189,7 +255,13 @@ namespace G2lib {
             }
             return result;
           }), py::arg("xs"), py::arg("ys"))
-      
+
+        .def(py::pickle(&polyline_to_dict, &polyline_from_dict))
+
+        .def("to_dict", &polyline_to_dict)
+
+        .def_static("from_dict", &polyline_from_dict)
+
         .def("getSegment", &PolyLine::getSegment,
           py::arg("n"),
         R"S(
@@ -408,6 +480,20 @@ namespace G2lib {
 
           :param ClothoidList cl: clothoid list to use to build the poly line
           :param float tol: tolerance
+          :return: nothing, works in place
+          :rtype: NoneType
+        )S")
+
+        .def("build", [](PolyLine & self, const std::vector<real_type> & xs, const std::vector<real_type> & ys) {
+          size_t size = std::min(xs.size(), ys.size());
+          self = PolyLine();
+          self.build(xs.data(), ys.data(), static_cast<int_type>(size));
+        }, py::arg("xs"), py::arg("ys"),
+        R"S(
+          Builds a poly line from the list of passed points
+
+          :param xs: list of x coordinates
+          :param ys: list of y coordinates
           :return: nothing, works in place
           :rtype: NoneType
         )S")

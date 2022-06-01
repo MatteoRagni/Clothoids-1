@@ -12,6 +12,8 @@
 #include <string>
 #include <sstream>
 
+using namespace pybind11::literals;
+
 namespace G2lib {
   namespace python {
     void wrap_AABBtree(py::module & m) {
@@ -19,6 +21,42 @@ namespace G2lib {
       using PyVecPtrBBox = std::vector<PyPtrBBox>;
       using PyPairBBox = std::pair<PyPtrBBox, PyPtrBBox>;
       using PyVecPairBBox = std::vector<PyPairBBox>;
+
+      const auto bbox_to_dict = [](const BBox & self) {
+        return py::dict(
+          "xmin"_a=self.Xmin(),
+          "ymin"_a=self.Ymin(),
+          "xmax"_a=self.Xmax(),
+          "ymax"_a=self.Ymax(),
+          "id"_a=self.Id(),
+          "ipos"_a=self.Ipos()
+        );
+      };
+
+      const auto bbox_from_dict = [](const py::dict & state) {
+        const std::vector<std::string> keys({"xmin", "ymin", "xmax", "ymax", "id", "ipos"});
+        for (const auto & key: keys) {
+          if (!state.contains(key)) { 
+            char error[128];
+            std::snprintf(error, 128, "Missing `%s` in state for BBox", key.c_str());
+            throw std::runtime_error(error); 
+          }
+
+          if (state[py::cast(key)].is_none()) {
+            char error[128];
+            std::snprintf(error, 128, "Missing `%s` in state for BBox (is None)", key.c_str());
+            throw std::runtime_error(error); 
+          }
+        }
+        
+        real_type xmin = py::cast<real_type>(state["xmin"]);
+        real_type ymin = py::cast<real_type>(state["ymin"]);
+        real_type xmax = py::cast<real_type>(state["xmax"]);
+        real_type ymax = py::cast<real_type>(state["ymax"]);
+        int_type id = py::cast<int_type>(state["id"]);
+        int_type ipos = py::cast<int_type>(state["ipos"]);
+        return std::make_shared<BBox>(xmin, ymin, xmax, ymax, id, ipos);
+      };
 
       py::class_<BBox, PyPtrBBox>(m, "BBox", 
       R"S(
@@ -68,7 +106,20 @@ namespace G2lib {
         return std::make_shared<BBox>(x_min, y_min, x_max, y_max, id, ipos);
       }), py::arg("extrema"), py::arg("id"), py::arg("ipos"))
 
-      
+      .def(py::pickle(bbox_to_dict, bbox_from_dict))
+
+      .def("to_dict", bbox_to_dict)
+
+      .def_static("from_dict", bbox_from_dict, py::arg("state"),
+      R"S(
+        Creates an object from a dictionary, compatible with the 
+        one created with ``to_dict``.
+
+        :param state: the input dictionary
+        :return: a new BBox object
+        :raises RuntimeError: if the state object is not compatible
+      )S")
+
       .def("Xmin", &BBox::Xmin,
       R"S(
         Minimum **x** coordinate of the bounding box
