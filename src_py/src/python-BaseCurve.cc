@@ -2161,6 +2161,35 @@ namespace G2lib {
         :rtype: Tuple[bool, float, float]
       )S")
 
+      .def("findST_ISO", [](const BaseCurve & self, std::vector<real_type> xs, std::vector<real_type> ys) {
+        const size_t size = std::min(xs.size(), ys.size());
+        std::vector<bool> ret(size);
+        std::vector<real_type> s(size), t(size);
+        for (size_t i = 0; i < size; i++) {
+          real_type s_, t_;
+          bool ret_ = self.findST_ISO(xs[i], ys[i], s_, t_);
+          ret[i] = ret_;
+          s[i] = s_;
+          t[i] = t_;
+        }
+        return std::make_tuple(ret, s, t);
+      }, py::arg("x"), py::arg("y"), 
+      R"S(
+        Find the curvilinear coordinate of point :math:`P = (x, y)`
+        with respect to the curve, such that: :math:`P = C(s) + t\,N(s)`
+        where :math:`C(s)` is the curve position respect to the curvilinear 
+        coordinates and :math:`t` is the normal :math:`N(s)` at the point.
+        It uses the ISO reference frame.
+
+        Vectorial version
+       
+        :param float x: **x** component
+        :param float y: **y** component
+        :return: a tuple with a boolean value (projection found or not) and
+                 the **s** and **t** coordinates on the curve.
+        :rtype: Tuple[bool, float, float]
+      )S")
+
       .def("findST_SAE", [](const BaseCurve & self, real_type x, real_type y) {
         real_type s, t;
         bool ret = self.findST_SAE(x, y, s, t);

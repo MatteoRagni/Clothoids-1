@@ -19,8 +19,66 @@
 #endif
 #endif
 
+using namespace pybind11::literals;
+
 namespace G2lib {
   namespace python {
+    py::dict clothoidcurve_to_dict(const ClothoidCurve & self) {
+      return py::dict(
+        "x0"_a = self.x_begin(),
+        "y0"_a = self.y_begin(),
+        "theta0"_a = self.theta_begin(),
+        "k"_a = self.kappa_begin(),
+        "dk"_a = self.dkappa(),
+        "L"_a = self.length()
+      );
+    }
+
+    ClothoidCurve clothoidcurve_from_dict(const py::dict & state) {
+      const std::vector<std::string> keys({"x0", "y0", "theta0", "k", "dk", "L"});
+      for (const auto & key: keys) {
+        if (!state.contains(key)) { 
+          char error[128];
+          std::snprintf(error, 128, "Missing `%s` in state for ClothoidCurve", key.c_str());
+          throw std::runtime_error(error); 
+        }
+
+        if (state[py::cast(key)].is_none()) {
+          char error[128];
+          std::snprintf(error, 128, "Missing `%s` in state for ClothoidCurve (is None)", key.c_str());
+          throw std::runtime_error(error); 
+        }
+      }
+
+      return ClothoidCurve(
+        py::cast<real_type>(state["x0"]),
+        py::cast<real_type>(state["y0"]),
+        py::cast<real_type>(state["theta0"]),
+        py::cast<real_type>(state["k"]),
+        py::cast<real_type>(state["dk"]),
+        py::cast<real_type>(state["L"])
+      );
+    }
+
+    py::list clothoidlist_to_dict(const ClothoidList & self) {
+      py::list state;
+      for (int_type i = 0; i < self.num_segments(); i++) {
+        const auto & cloth = self.get(i);
+        state.append(clothoidcurve_to_dict(cloth));
+      }
+      return state;
+    }
+
+    ClothoidList clothoidlist_from_dict(const py::list & state) {
+      ClothoidList cloth_list;
+      for (const auto & element: state) {
+        py::dict cloth_dict = element.cast<py::dict>();
+        cloth_list.push_back(clothoidcurve_from_dict(cloth_dict));
+      }
+      return cloth_list;
+    }
+
+
     void wrap_ClothoidCurve(py::module & m) {
       py::class_<ClothoidCurve, BaseCurve>(m, "ClothoidCurve",
       R"S(
@@ -64,6 +122,12 @@ namespace G2lib {
         real_type _P1[2] = {std::get<0>(P1), std::get<1>(P1)};
         return ClothoidCurve(_P0, theta0, _P1, theta1);
       }), py::arg("p0"), py::arg("theta0"), py::arg("p1"), py::arg("theta1"))
+
+      .def(py::pickle(&clothoidcurve_to_dict, &clothoidcurve_from_dict))
+
+      .def("to_dict", &clothoidcurve_to_dict)
+
+      .def_static("from_dict", &clothoidcurve_from_dict)
 
       .def("copy", [](const ClothoidCurve & self) {
         ClothoidCurve other;
@@ -493,6 +557,12 @@ namespace G2lib {
       .def(py::init<PolyLine const &>())
       .def(py::init<BaseCurve const &>())
       
+      .def(py::pickle(&clothoidlist_to_dict, &clothoidlist_from_dict))
+
+      .def("to_dict", &clothoidlist_to_dict)
+
+      .def_static("from_dict", &clothoidlist_from_dict)
+
       .def("get", &ClothoidList::get, py::arg("idx"),
       R"S(
         Returns the `idx`-th element of the list

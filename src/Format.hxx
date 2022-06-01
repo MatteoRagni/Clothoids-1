@@ -74,7 +74,11 @@ namespace G2lib {
 
     template <typename... Ts>
     inline std::string format_string(const std::string & format, const Ts &... inputs) {
-      std::string output(std::max(_format_buffer_size, 2 * format.size()), '\0');
+      int size = std::snprintf(nullptr, 0, format.data(), inputs...) + 1;
+      if (size <= 0) {
+        throw std::runtime_error("Error in formatting string, cannot create it");
+      }
+      std::string output(static_cast<size_t>(size), '\0');
       std::snprintf(&output.front(), output.size(), format.data(), inputs...);
       return output;
     }

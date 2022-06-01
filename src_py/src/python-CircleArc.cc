@@ -9,8 +9,43 @@
 #include "python-CircleArc.hh"
 #include "pybind11/stl.h"
 
+using namespace pybind11::literals;
+
 namespace G2lib {
   namespace python {
+    py::dict circlearc_to_dict(const CircleArc & self) {
+      return py::dict(
+        "x0"_a = self.x_begin(),
+        "y0"_a = self.y_begin(),
+        "theta0"_a = self.theta_begin(),
+        "k"_a = self.kappa_begin(),
+        "l"_a = self.length()
+      );
+    }
+
+    CircleArc circlearc_from_dict(const py::dict & state) {
+      const std::vector<std::string> keys({"x0", "y0", "theta0", "k", "l"});
+      for (const auto & key: keys) {
+        if (!state.contains(key)) { 
+          char error[128];
+          std::snprintf(error, 128, "Missing `%s` in state for CircleArc", key.c_str());
+          throw std::runtime_error(error); 
+        }
+
+        if (state[py::cast(key)].is_none()) {
+          char error[128];
+          std::snprintf(error, 128, "Missing `%s` in state for CircleArc (is None)", key.c_str());
+          throw std::runtime_error(error); 
+        }
+      }
+      real_type x0 = py::cast<real_type>(state["x0"]);
+      real_type y0 = py::cast<real_type>(state["y0"]);
+      real_type theta0 = py::cast<real_type>(state["theta0"]);
+      real_type k = py::cast<real_type>(state["k"]);
+      int_type l = py::cast<real_type>(state["l"]);
+      return CircleArc(x0, y0, theta0, k, l);
+    }
+
     void wrap_CircleArc(py::module & m) {
       py::class_<CircleArc, BaseCurve>(m, "CircleArc",
       R"S(
@@ -38,6 +73,12 @@ namespace G2lib {
       .def(py::init<real_type, real_type, real_type, real_type, real_type>(),
         py::arg("x0"), py::arg("y0"), py::arg("theta0"), py::arg("k"), py::arg("l"))
       
+      .def(py::pickle(&circlearc_to_dict, &circlearc_from_dict))
+
+      .def("to_dict", &circlearc_to_dict)
+
+      .def_static("from_dict", &circlearc_from_dict)
+
       .def("copy", [](const CircleArc & self) {
         CircleArc other;
         other.copy(self);
