@@ -5,7 +5,7 @@ import sys
 
 #############################
 PACKAGE_NAME = "G2lib"
-PACKAGE_VERSION = "3.1.0-0"
+PACKAGE_VERSION = "3.1.0-1"
 #############################
 
 #  ___      _             
@@ -46,5 +46,6 @@ setup(
         "Source": "https://github.com/MatteoRagni/Clothoids-1",
         "Tracker": "https://github.com/MatteoRagni/Clothoids-1"
     },
-    url="https://github.com/MatteoRagni/Clothoids-1"
+    url="https://github.com/MatteoRagni/Clothoids-1",
+    include_package_data=True
 )

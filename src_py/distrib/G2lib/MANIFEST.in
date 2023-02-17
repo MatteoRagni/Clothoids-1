@@ -1,0 +1,4 @@
+include LICENSE
+include VERSION
+include G2lib/_G2lib.*
+include G2lib/_G2lib_Interpolation.*
