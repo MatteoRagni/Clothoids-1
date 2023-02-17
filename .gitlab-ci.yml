@@ -197,7 +197,7 @@ build-py310-linux:
   # Testing
   - $PYTHON_BIN -m pytest --junitxml=$TEST_REPORT test
   variables:
-    PYTHON_BIN: /usr/bin/python3.9
+    PYTHON_BIN: /usr/bin/python3.10
   artifacts:
     paths:
     - src_py/distrib
