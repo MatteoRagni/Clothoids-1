@@ -52,68 +52,11 @@ namespace G2lib {
    |  |_|_| |_|\__\___|_|  |___/\___|\___|\__|
   \*/
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-  typedef pair<CurveType, CurveType> Ppair;
-
-  // check if compiler is C++11
-  static map<Ppair, CurveType> const promote_map = {
-    { Ppair(G2LIB_LINE, G2LIB_LINE), G2LIB_LINE },
-    { Ppair(G2LIB_LINE, G2LIB_CIRCLE), G2LIB_CIRCLE },
-    { Ppair(G2LIB_LINE, G2LIB_CLOTHOID), G2LIB_CLOTHOID },
-    { Ppair(G2LIB_LINE, G2LIB_BIARC), G2LIB_BIARC_LIST },
-    { Ppair(G2LIB_LINE, G2LIB_BIARC_LIST), G2LIB_BIARC_LIST },
-    { Ppair(G2LIB_LINE, G2LIB_CLOTHOID_LIST), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_LINE, G2LIB_POLYLINE), G2LIB_POLYLINE },
-
-    { Ppair(G2LIB_CIRCLE, G2LIB_LINE), G2LIB_CIRCLE },
-    { Ppair(G2LIB_CIRCLE, G2LIB_CIRCLE), G2LIB_CIRCLE },
-    { Ppair(G2LIB_CIRCLE, G2LIB_CLOTHOID), G2LIB_CLOTHOID },
-    { Ppair(G2LIB_CIRCLE, G2LIB_BIARC), G2LIB_BIARC_LIST },
-    { Ppair(G2LIB_CIRCLE, G2LIB_BIARC_LIST), G2LIB_BIARC_LIST },
-    { Ppair(G2LIB_CIRCLE, G2LIB_CLOTHOID_LIST), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_CIRCLE, G2LIB_POLYLINE), G2LIB_CLOTHOID_LIST },
-
-    { Ppair(G2LIB_BIARC, G2LIB_LINE), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_BIARC, G2LIB_CIRCLE), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_BIARC, G2LIB_CLOTHOID), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_BIARC, G2LIB_BIARC), G2LIB_BIARC },
-    { Ppair(G2LIB_BIARC, G2LIB_BIARC_LIST), G2LIB_BIARC_LIST },
-    { Ppair(G2LIB_BIARC, G2LIB_CLOTHOID_LIST), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_BIARC, G2LIB_POLYLINE), G2LIB_CLOTHOID_LIST },
-
-    { Ppair(G2LIB_CLOTHOID, G2LIB_LINE), G2LIB_CLOTHOID },
-    { Ppair(G2LIB_CLOTHOID, G2LIB_CIRCLE), G2LIB_CLOTHOID },
-    { Ppair(G2LIB_CLOTHOID, G2LIB_CLOTHOID), G2LIB_CLOTHOID },
-    { Ppair(G2LIB_CLOTHOID, G2LIB_BIARC), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_CLOTHOID, G2LIB_BIARC_LIST), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_CLOTHOID, G2LIB_CLOTHOID_LIST), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_CLOTHOID, G2LIB_POLYLINE), G2LIB_CLOTHOID_LIST },
-
-    { Ppair(G2LIB_CLOTHOID_LIST, G2LIB_LINE), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_CLOTHOID_LIST, G2LIB_CIRCLE), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_CLOTHOID_LIST, G2LIB_CLOTHOID), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_CLOTHOID_LIST, G2LIB_BIARC), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_CLOTHOID_LIST, G2LIB_BIARC_LIST), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_CLOTHOID_LIST, G2LIB_CLOTHOID_LIST), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_CLOTHOID_LIST, G2LIB_POLYLINE), G2LIB_CLOTHOID_LIST },
-
-    { Ppair(G2LIB_POLYLINE, G2LIB_LINE), G2LIB_POLYLINE },
-    { Ppair(G2LIB_POLYLINE, G2LIB_CIRCLE), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_POLYLINE, G2LIB_CLOTHOID), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_POLYLINE, G2LIB_BIARC), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_POLYLINE, G2LIB_BIARC_LIST), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_POLYLINE, G2LIB_CLOTHOID_LIST), G2LIB_CLOTHOID_LIST },
-    { Ppair(G2LIB_POLYLINE, G2LIB_POLYLINE), G2LIB_POLYLINE }
-  };
-
-#endif
-
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   bool collision(BaseCurve const & obj1, BaseCurve const & obj2) {
     bool ok = false;
-    switch (promote_map.at(Ppair(obj1.type(), obj2.type()))) {
+    switch (curve_promote(obj1.type(), obj2.type())) {
       case G2LIB_LINE: {
         LineSegment L1(obj1);
         LineSegment L2(obj2);
@@ -157,7 +100,7 @@ namespace G2lib {
 
   bool collision_ISO(BaseCurve const & obj1, real_type offs1, BaseCurve const & obj2, real_type offs2) {
     bool ok = false;
-    switch (promote_map.at(Ppair(obj1.type(), obj2.type()))) {
+    switch (curve_promote(obj1.type(), obj2.type())) {
       case G2LIB_LINE: {
         LineSegment L1(obj1);
         LineSegment L2(obj2);
@@ -200,7 +143,7 @@ namespace G2lib {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void intersect(BaseCurve const & obj1, BaseCurve const & obj2, IntersectList & ilist, bool swap_s_vals) {
-    switch (promote_map.at(Ppair(obj1.type(), obj2.type()))) {
+    switch (curve_promote(obj1.type(), obj2.type())) {
       case G2LIB_LINE: {
         LineSegment L1(obj1);
         LineSegment L2(obj2);
@@ -248,7 +191,7 @@ namespace G2lib {
       real_type         offs2,
       IntersectList &   ilist,
       bool              swap_s_vals) {
-    switch (promote_map.at(Ppair(obj1.type(), obj2.type()))) {
+    switch (curve_promote(obj1.type(), obj2.type())) {
       case G2LIB_LINE: {
         LineSegment L1(obj1);
         LineSegment L2(obj2);

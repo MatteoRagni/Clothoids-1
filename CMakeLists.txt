@@ -28,7 +28,7 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -154,6 +154,7 @@ set_target_properties(ClothoidsStatic PROPERTIES
   POSITION_INDIPENDENT_CODE ON
   OUTPUT_NAME Clothoids
   EXPORT_NAME Clothoids_Targets)
+target_compile_features(ClothoidsStatic PRIVATE cxx_std_17)
 add_library(Clothoids::Static ALIAS ClothoidsStatic)
 
 if(CLOTHOIDS_BUILD_SHARED)
@@ -183,6 +184,7 @@ if(CLOTHOIDS_BUILD_SHARED)
     SOVERSION ${PROJECT_VERSION_MAJOR}
     OUTPUT_NAME Clothoids
     EXPORT_NAME Clothoids_Targets)
+  target_compile_features(ClothoidsDynamic PRIVATE cxx_std_17)
   add_library(Clothoids::Dynamic ALIAS ClothoidsDynamic)
 endif()
 

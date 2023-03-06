@@ -27,6 +27,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #pragma once
 #include "Types.hxx"
+#include "Constants.hxx"
 
 //!
 //! Clothoid computations routine
@@ -326,6 +327,12 @@ namespace G2lib {
       real_type *       theta_max,
       real_type *       omega,
       real_type *       len);
+
+
+  // Without inline it will not compile.
+  inline CurveType curve_promote(CurveType A, CurveType B) {
+    return promote_map.at(Ppair(A, B));
+  }
 
 }  // namespace G2lib
 
