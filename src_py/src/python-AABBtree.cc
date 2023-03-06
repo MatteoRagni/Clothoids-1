@@ -120,7 +120,47 @@ namespace G2lib {
         :raises RuntimeError: if the state object is not compatible
       )S")
 
-      .def("Xmin", &BBox::Xmin,
+      .def("Xmin", [](BBox const & self) { return self.x_min(); },
+      R"S(
+        Minimum **x** coordinate of the bounding box
+
+        .. warning:: Depracated: use ``x_min``
+
+        :return: minimum **x** coordinate of the bounding box
+        :rtype: float
+      )S")
+      
+      .def("Ymin", [](BBox const & self) { return self.y_min(); }, 
+      R"S(
+        Minimum **y** coordinate of the bounding box
+
+        .. warning:: Depracated: use ``y_min``
+
+        :return: minimum **y** coordinate of the bounding box
+        :rtype: float
+      )S")
+      
+      .def("Xmax", [](BBox const & self) { return self.x_max(); },
+      R"S(
+        Maximum **x** coordinate of the bounding box
+
+        .. warning:: Depracated: use ``x_max``
+        
+        :return: maximum **x** coordinate of the bounding box
+        :rtype: float
+      )S")
+      
+      .def("Ymax", [](BBox const & self) { return self.y_max(); },
+      R"S(
+        Maximum **y** coordinate of the bounding box
+
+        .. warning:: Depracated: use ``y_max``
+
+        :return: maximum **y** coordinate of the bounding box
+        :rtype: float
+      )S")
+
+      .def("x_min", [](BBox const & self) { return self.x_min(); },
       R"S(
         Minimum **x** coordinate of the bounding box
 
@@ -128,7 +168,7 @@ namespace G2lib {
         :rtype: float
       )S")
       
-      .def("Ymin", &BBox::Ymin, 
+      .def("y_min", [](BBox const & self) { return self.y_min(); }, 
       R"S(
         Minimum **y** coordinate of the bounding box
 
@@ -136,21 +176,57 @@ namespace G2lib {
         :rtype: float
       )S")
       
-      .def("Xmax", &BBox::Xmax,
+      .def("x_max", [](BBox const & self) { return self.x_max(); },
       R"S(
         Maximum **x** coordinate of the bounding box
-        
+
         :return: maximum **x** coordinate of the bounding box
         :rtype: float
       )S")
       
-      .def("Ymax", &BBox::Ymax,
+      .def("y_max", [](BBox const & self) { return self.y_max(); },
       R"S(
         Maximum **y** coordinate of the bounding box
 
         :return: maximum **y** coordinate of the bounding box
         :rtype: float
       )S")
+
+      .def("x_min", [](BBox & self, real_type v) -> real_type { self.x_min() = v; return self.x_min(); },
+      R"S(
+        Set minimum **x** coordinate of the bounding box
+
+        :param v: value to set
+        :return: minimum **x** coordinate of the bounding box
+        :rtype: float
+      )S", py::arg("v"))
+      
+      .def("y_min", [](BBox & self, real_type v) -> real_type { self.y_min() = v; return self.y_min(); }, 
+      R"S(
+        Set minimum **y** coordinate of the bounding box
+
+        :param v: value to set
+        :return: minimum **y** coordinate of the bounding box
+        :rtype: float
+      )S", py::arg("v"))
+      
+      .def("x_max", [](BBox & self, real_type v) -> real_type { self.x_max() = v; return self.x_max(); },
+      R"S(
+        Set maximum **x** coordinate of the bounding box
+
+        :param v: value to set
+        :return: maximum **x** coordinate of the bounding box
+        :rtype: float
+      )S", py::arg("v"))
+      
+      .def("y_max", [](BBox & self, real_type v) -> real_type { self.y_max() = v; return self.y_max(); },
+      R"S(
+        Set maximum **y** coordinate of the bounding box
+
+        :param v: value to set
+        :return: maximum **y** coordinate of the bounding box
+        :rtype: float
+      )S", py::arg("v"))
       
       .def("Id", &BBox::Id,
       R"S(

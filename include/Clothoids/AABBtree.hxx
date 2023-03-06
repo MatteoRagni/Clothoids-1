@@ -57,10 +57,7 @@ namespace G2lib {
     typedef shared_ptr<BBox const> PtrBBox;
 
    private:
-    real_type m_xmin;  //!< left bottom
-    real_type m_ymin;  //!< left bottom
-    real_type m_xmax;  //!< right top
-    real_type m_ymax;  //!< right top
+    real_type m_bbox[4]{0.0, 0.0, 0.0, 0.0}; //!< bounds of the box: [xmin, ymin, xmax, ymax]
     int_type  m_id;    //!< id of the bbox
     int_type  m_ipos;  //!< rank of the bounding box used in external algorithms
 
@@ -81,10 +78,10 @@ namespace G2lib {
     //! \param[in] ipos ranking position of the box
     //!
     BBox(real_type xmin, real_type ymin, real_type xmax, real_type ymax, int_type id, int_type ipos) {
-      m_xmin = xmin;
-      m_ymin = ymin;
-      m_xmax = xmax;
-      m_ymax = ymax;
+      x_min() = xmin;
+      y_min() = ymin;
+      x_max() = xmax;
+      y_max() = ymax;
       m_id   = id;
       m_ipos = ipos;
     }
@@ -104,10 +101,31 @@ namespace G2lib {
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    real_type Xmin() const { return m_xmin; }  //!< x-minimum coordinate of the bbox
-    real_type Ymin() const { return m_ymin; }  //!< y-minimum coordinate of the bbox
-    real_type Xmax() const { return m_xmax; }  //!< x-maximum coordinate of the bbox
-    real_type Ymax() const { return m_ymax; }  //!< y-maximum coordinate of the bbox
+    real_type const * bbox() { return m_bbox; }
+    real_type const * bbox_min() { return m_bbox; }
+    real_type const * bbox_max() { return m_bbox + 2; }
+
+    // Deprecated: retrocompatibility
+    real_type Xmin() const { return m_bbox[0]; }  //!< x-minimum coordinate of the bbox
+    real_type Ymin() const { return m_bbox[1]; }  //!< y-minimum coordinate of the bbox
+    real_type Xmax() const { return m_bbox[2]; }  //!< x-maximum coordinate of the bbox
+    real_type Ymax() const { return m_bbox[3]; }  //!< y-maximum coordinate of the bbox
+
+    // Deprecated: retrocompatibility
+    real_type & Xmin() { return m_bbox[0]; }  //!< x-minimum coordinate of the bbox
+    real_type & Ymin() { return m_bbox[1]; }  //!< y-minimum coordinate of the bbox
+    real_type & Xmax() { return m_bbox[2]; }  //!< x-maximum coordinate of the bbox
+    real_type & Ymax() { return m_bbox[3]; }  //!< y-maximum coordinate of the bbox
+
+    real_type x_min() const { return m_bbox[0]; }  //!< x-minimum coordinate of the bbox
+    real_type y_min() const { return m_bbox[1]; }  //!< y-minimum coordinate of the bbox
+    real_type x_max() const { return m_bbox[2]; }  //!< x-maximum coordinate of the bbox
+    real_type y_max() const { return m_bbox[3]; }  //!< y-maximum coordinate of the bbox
+
+    real_type & x_min() { return m_bbox[0]; }  //!< x-minimum coordinate of the bbox
+    real_type & y_min() { return m_bbox[1]; }  //!< y-minimum coordinate of the bbox
+    real_type & x_max() { return m_bbox[2]; }  //!< x-maximum coordinate of the bbox
+    real_type & y_max() { return m_bbox[3]; }  //!< y-maximum coordinate of the bbox
 
     int_type const & Id() const { return m_id; }      //!< return BBOX id
     int_type const & Ipos() const { return m_ipos; }  //!< return BBOX position
@@ -172,11 +190,11 @@ namespace G2lib {
   //!
   class AABBtree {
    public:
-    typedef shared_ptr<BBox const> PtrBBox;
-    typedef shared_ptr<AABBtree>   PtrAABB;
-    typedef pair<PtrBBox, PtrBBox> PairPtrBBox;
-    typedef vector<PtrBBox>        VecPtrBBox;
-    typedef vector<PairPtrBBox>    VecPairPtrBBox;
+    using PtrBBox = shared_ptr<BBox const>;
+    using PtrAABB = shared_ptr<AABBtree>;
+    using PairPtrBBox = pair<PtrBBox, PtrBBox>;
+    using VecPtrBBox = vector<PtrBBox>;
+    using VecPairPtrBBox = vector<PairPtrBBox>;
 
    private:
     // bbox of the tree
@@ -235,10 +253,10 @@ namespace G2lib {
     //! \param[in] ymax y-maximum box coordinate
     //!
     void bbox(real_type & xmin, real_type & ymin, real_type & xmax, real_type & ymax) const {
-      xmin = pBBox->m_xmin;
-      ymin = pBBox->m_ymin;
-      xmax = pBBox->m_xmax;
-      ymax = pBBox->m_ymax;
+      xmin = pBBox->x_min();
+      ymin = pBBox->y_min();
+      xmax = pBBox->x_max();
+      ymax = pBBox->y_max();
     }
 
     //!
