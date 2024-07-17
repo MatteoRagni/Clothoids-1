@@ -204,6 +204,58 @@ build-py310-linux:
     reports:
       junit: $TEST_REPORT
 
+build-py311-linux:
+  stage: build-python
+  tags: 
+  - linux
+  image: docker-registry.antemotion.com/utils/docker-images/python-311:latest
+  before_script:
+  - apt-get update
+  - apt-get install -y --no-install-recommends --no-install-suggests liblapack-dev gfortran coinor-libipopt-dev libeigen3-dev
+  script:
+  # Building
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_ENABLE_IPOPT_SOLVER=ON -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN -DPYBIND_CHECKOUT="2.13.1" ..
+  - cmake --build . --config Release
+  - cd ..
+  # Testing
+  - $PYTHON_BIN -m pytest --junitxml=$TEST_REPORT test
+  variables:
+    PYTHON_BIN: /usr/bin/python3.11
+  artifacts:
+    paths:
+    - src_py/distrib
+    reports:
+      junit: $TEST_REPORT
+
+build-py312-linux:
+  stage: build-python
+  tags: 
+  - linux
+  image: docker-registry.antemotion.com/utils/docker-images/python-312:latest
+  before_script:
+  - apt-get update
+  - apt-get install -y --no-install-recommends --no-install-suggests liblapack-dev gfortran coinor-libipopt-dev libeigen3-dev
+  script:
+  # Building
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_ENABLE_IPOPT_SOLVER=ON -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN -DPYBIND_CHECKOUT="2.13.1" ..
+  - cmake --build . --config Release
+  - cd ..
+  # Testing
+  - $PYTHON_BIN -m pytest --junitxml=$TEST_REPORT test
+  variables:
+    PYTHON_BIN: /usr/bin/python3.12
+  artifacts:
+    paths:
+    - src_py/distrib
+    reports:
+      junit: $TEST_REPORT
+
 build-py36-win:
   stage: build-python
   tags: 
@@ -284,6 +336,38 @@ build-py310-win:
     paths:
     - src_py/distrib
 
+build-py311-win:
+  stage: build-python
+  tags: 
+  - win
+  script:
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_FORCE_EIGEN_DOWNLOAD=ON -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN -DPYBIND_CHECKOUT="2.13.1" ..
+  - cmake --build . --config Release
+  variables:
+    PYTHON_BIN: C:\Python311\python.exe
+  artifacts:
+    paths:
+    - src_py/distrib
+
+build-py312-win:
+  stage: build-python
+  tags: 
+  - win
+  script:
+  - cd src_py
+  - mkdir build
+  - cd build
+  - cmake -DCLOTHOIDS_ENABLE_EIGEN_SOLVER=ON -DCLOTHOIDS_FORCE_EIGEN_DOWNLOAD=ON -DPYTHON_EXECUTABLE:FILEPATH=$PYTHON_BIN -DPYBIND_CHECKOUT="2.13.1" ..
+  - cmake --build . --config Release
+  variables:
+    PYTHON_BIN: C:\Python312\python.exe
+  artifacts:
+    paths:
+    - src_py/distrib
+
 #  ___         _                   ___      _   _             
 # | _ \__ _ __| |____ _ __ _ ___  | _ \_  _| |_| |_  ___ _ _  
 # |  _/ _` / _| / / _` / _` / -_) |  _/ || |  _| ' \/ _ \ ' \ 
@@ -306,6 +390,10 @@ package-python:
     artifacts: true
   - job: build-py310-linux
     artifacts: true
+  - job: build-py311-linux
+    artifacts: true
+  - job: build-py312-linux
+    artifacts: true
   - job: build-py36-win
     artifacts: true
   - job: build-py37-win
@@ -315,6 +403,10 @@ package-python:
   - job: build-py39-win
     artifacts: true
   - job: build-py310-win
+    artifacts: true
+  - job: build-py311-win
+    artifacts: true
+  - job: build-py312-win
     artifacts: true
   script:
   - cd src_py/distrib/G2lib

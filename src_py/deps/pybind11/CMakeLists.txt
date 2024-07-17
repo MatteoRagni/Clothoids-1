@@ -29,6 +29,8 @@ include(FetchContent)
 
 project(pybind11)
 
+set(PYBIND_CHECKOUT "2.8.1" CACHE STRING "Checkout tag for Pybind dependency")
+
 # Dependency Options
 set(PYBIND11_TEST OFF)
 set(PYBIND11_INSTALL OFF)
@@ -36,5 +38,5 @@ set(PYBIND11_INSTALL OFF)
 FetchContent_Declare(
   pybind11
   GIT_REPOSITORY "https://github.com/pybind/pybind11.git"
-  GIT_TAG "v2.8.1")
+  GIT_TAG ${PYBIND_CHECKOUT})
 FetchContent_MakeAvailable(pybind11)
