@@ -29,7 +29,7 @@ include(FetchContent)
 
 project(pybind11)
 
-set(PYBIND_CHECKOUT "2.8.1" CACHE STRING "Checkout tag for Pybind dependency")
+set(PYBIND_CHECKOUT "v2.8.1" CACHE STRING "Checkout tag for Pybind dependency")
 
 # Dependency Options
 set(PYBIND11_TEST OFF)
