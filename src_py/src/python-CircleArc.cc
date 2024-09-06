@@ -242,18 +242,7 @@ namespace G2lib {
         :rtype: float
       )S")
 
-      .def("paramNURBS", [](const CircleArc & self) {
-        int_type n_pnts, n_knots;
-        self.paramNURBS(n_knots, n_pnts);
-        return std::make_tuple(n_knots, n_pnts);
-      },
-      R"S(
-        Return the number of knots and points for the nurbs of the circle
-
-        :return: knots count and point count
-        :rtype: Tuple[int, int]
-      )S")
-
+#ifndef __APPLE__
       .def("toNURBS", [](const CircleArc & self){
         using Point = real_type[3];
         using TPoint = std::tuple<float, float, float>;
@@ -279,6 +268,19 @@ namespace G2lib {
 
         :return: nurbs parameters
         :rtype: Tuple[List[float], List[Tuple[float, float, float]]]
+      )S")
+#endif
+
+      .def("paramNURBS", [](const CircleArc & self) {
+        int_type n_pnts, n_knots;
+        self.paramNURBS(n_knots, n_pnts);
+        return std::make_tuple(n_knots, n_pnts);
+      },
+      R"S(
+        Return the number of knots and points for the nurbs of the circle
+
+        :return: knots count and point count
+        :rtype: Tuple[int, int]
       )S");
     }
   }

@@ -176,7 +176,8 @@ namespace G2lib {
           :rtype: Tuple[int, int]
         )S")
 
-        .def("toNURBS", [](const LineSegment & self){
+#ifndef __APPLE__
+       .def("toNURBS", [](const LineSegment & self){
           using Point = real_type[3];
           using TPoint = std::tuple<float, float, float>;
 
@@ -202,6 +203,7 @@ namespace G2lib {
           :return: nurbs parameters
           :rtype: Tuple[List[float], List[Tuple[float, float, float]]]
         )S")
+#endif
 
         .def("toBS", [](const LineSegment & self){
           real_type knots[4], Poly[2][2];

@@ -22,7 +22,7 @@
 # SOFTWARE.
 cmake_minimum_required(VERSION 3.14)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE)
@@ -51,7 +51,7 @@ set(G2LIB_INTERPOLATION_SOURCES
 pybind11_add_module(_G2lib MODULE ${G2LIB_SOURCES})
 target_include_directories(_G2lib 
   PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
-target_compile_features(_G2lib PRIVATE cxx_std_14)
+target_compile_features(_G2lib PRIVATE cxx_std_17)
 target_link_libraries(_G2lib PRIVATE Clothoids::Static)
 set_target_properties(_G2lib PROPERTIES
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
@@ -67,7 +67,7 @@ endif()
 pybind11_add_module(_G2lib_Interpolation MODULE ${G2LIB_INTERPOLATION_SOURCES})
 target_include_directories(_G2lib_Interpolation 
   PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
-target_compile_features(_G2lib_Interpolation PRIVATE cxx_std_14)
+target_compile_features(_G2lib_Interpolation PRIVATE cxx_std_17)
 target_link_libraries(_G2lib_Interpolation PRIVATE Clothoids::Static)
 set_target_properties(_G2lib_Interpolation PROPERTIES
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/distrib/G2lib/G2lib"
