@@ -25,7 +25,7 @@ using namespace G2lib::python;
 #endif
 
 PYBIND11_MODULE(_G2lib, m) {
-  m.def("_pybind11_compatibility_id", []() { return std::string(PYBIND11_INTERNALS_ID);}
+  m.def("_pybind11_compatibility_id", []() { return std::string(PYBIND11_INTERNALS_ID); });
 
   wrap_BaseCurve(m);
   wrap_AABBtree(m);
